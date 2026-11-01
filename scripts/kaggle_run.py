@@ -4,6 +4,8 @@
     python scripts/kaggle_run.py status --week 1
     python scripts/kaggle_run.py fetch --week 1         # results zip -> reports/week1/kaggle/
     python scripts/kaggle_run.py stage --week 1         # build upload folders locally only (dry run)
+    python scripts/kaggle_run.py run --week 1 --attach models/week1_run3/sft/adapter=qwen-sql-week1-adapter
+                                                        # also upload a local dir as a private dataset
 
 Code reaches Kaggle as a private dataset holding `git archive HEAD` (plus a COMMIT file), so
 every run is tied to an exact commit and no public GitHub repo is needed. Uncommitted changes
@@ -48,7 +50,7 @@ def kernel_slug(week: int) -> str:
     return f"qwen-sql-week{week}"
 
 
-def stage(week: int, user: str) -> tuple[Path, Path, str]:
+def stage(week: int, user: str, attach: list[tuple[Path, str]] = ()) -> tuple[Path, Path, str]:
     if sh("git", "-C", str(ROOT), "status", "--porcelain", "--untracked-files=no").strip():
         print("warning: uncommitted changes to tracked files are not uploaded")
     commit = sh("git", "-C", str(ROOT), "rev-parse", "--short", "HEAD").strip()
@@ -59,9 +61,6 @@ def stage(week: int, user: str) -> tuple[Path, Path, str]:
     tar = code / "src.tar"
     sh("git", "-C", str(ROOT), "archive", "--format=tar", "-o", str(tar), "HEAD")
     (code / "COMMIT").write_text(commit + "\n")
-    (code / "dataset-metadata.json").write_text(json.dumps({
-        "title": CODE_SLUG, "id": f"{user}/{CODE_SLUG}", "licenses": [{"name": "CC0-1.0"}],
-    }, indent=2))
 
     nb_src = ROOT / "notebooks" / f"week{week}_kaggle.ipynb"
     if not nb_src.exists():
@@ -79,7 +78,7 @@ def stage(week: int, user: str) -> tuple[Path, Path, str]:
         "enable_gpu": "true",
         "enable_internet": "true",
         "machine_shape": ACCELERATOR,
-        "dataset_sources": [f"{user}/{CODE_SLUG}"],
+        "dataset_sources": [f"{user}/{CODE_SLUG}", *(f"{user}/{slug}" for _, slug in attach)],
         "competition_sources": [],
         "kernel_sources": [],
         "model_sources": [],
@@ -87,20 +86,34 @@ def stage(week: int, user: str) -> tuple[Path, Path, str]:
     return code, kern, commit
 
 
-def upload_code(code: Path, user: str, commit: str) -> None:
-    exists = f"{user}/{CODE_SLUG}" in kaggle("datasets", "list", "--mine", "-s", CODE_SLUG, check=False)
+def upload_dataset(folder: Path, user: str, slug: str, message: str) -> None:
+    """Create or version a private dataset from `folder` and wait until Kaggle has processed it."""
+    meta = folder / "dataset-metadata.json"
+    if not meta.exists():
+        meta.write_text(json.dumps({"title": slug, "id": f"{user}/{slug}",
+                                    "licenses": [{"name": "CC0-1.0"}]}, indent=2))
+    exists = f"{user}/{slug}" in kaggle("datasets", "list", "--mine", "-s", slug, check=False)
     if exists:
-        kaggle("datasets", "version", "-p", str(code), "-m", f"commit {commit}")
+        kaggle("datasets", "version", "-p", str(folder), "-m", message)
     else:
-        kaggle("datasets", "create", "-p", str(code))  # private by default
+        kaggle("datasets", "create", "-p", str(folder))  # private by default
     # The kernel must not start before the new dataset version is processed.
-    for _ in range(60):
-        st = kaggle("datasets", "status", f"{user}/{CODE_SLUG}", check=False).strip().lower()
+    for _ in range(90):
+        st = kaggle("datasets", "status", f"{user}/{slug}", check=False).strip().lower()
         if "ready" in st:
-            print(f"code dataset ready (commit {commit})")
+            print(f"dataset {slug} ready ({message})")
             return
         time.sleep(10)
-    sys.exit(f"dataset not ready after 10 min: {st}")
+    sys.exit(f"dataset {slug} not ready after 15 min: {st}")
+
+
+def stage_attachment(src: Path, slug: str) -> Path:
+    """Copy a local dir into the staging area so the dataset metadata file never lands in it."""
+    if not src.is_dir():
+        sys.exit(f"--attach source is not a directory: {src}")
+    dest = STAGE / f"attach-{slug}"
+    shutil.copytree(src, dest)
+    return dest
 
 
 def status(week: int, user: str) -> str:
@@ -125,6 +138,8 @@ def main() -> None:
     p.add_argument("action", choices=["stage", "run", "status", "fetch"])
     p.add_argument("--week", type=int, required=True)
     p.add_argument("--no-wait", action="store_true", help="push and return without polling")
+    p.add_argument("--attach", action="append", default=[], metavar="DIR=SLUG",
+                   help="upload a local dir as private dataset SLUG and attach it to the run")
     a = p.parse_args()
     user = username()
 
@@ -135,12 +150,16 @@ def main() -> None:
         fetch(a.week, user)
         return
 
-    code, kern, commit = stage(a.week, user)
+    attach = [(Path(spec.split("=", 1)[0]), spec.split("=", 1)[1]) for spec in a.attach]
+    code, kern, commit = stage(a.week, user, attach)
+    staged_attach = [(stage_attachment(src, slug), slug) for src, slug in attach]
     print(f"staged commit {commit} -> {STAGE}")
     if a.action == "stage":
         return
 
-    upload_code(code, user, commit)
+    upload_dataset(code, user, CODE_SLUG, f"commit {commit}")
+    for folder, slug in staged_attach:
+        upload_dataset(folder, user, slug, f"attached to commit {commit}")
     print(kaggle("kernels", "push", "-p", str(kern), "--accelerator", ACCELERATOR))
     print(f"https://www.kaggle.com/code/{user}/{kernel_slug(a.week)}")
     if a.no_wait:
