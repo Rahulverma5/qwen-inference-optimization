@@ -1,0 +1,15 @@
+# vLLM server profiles. Week 3 experiments inherit `baseline` and change one flag each,
+# so every result differs from the baseline by exactly what its profile says.
+# Flags are written out even where they match vLLM 0.19 defaults: a default that changes in
+# a new version would otherwise change the baseline silently.
+served_model_name: qwen-sql
+profiles:
+  baseline:
+    dtype: float16                   # T4 has no bf16 hardware
+    max-model-len: 4096
+    gpu-memory-utilization: 0.9
+    max-num-seqs: 256
+    attention-backend: TRITON_ATTN   # FlashInfer JIT fails to link on Kaggle (Week 1, run 2)
+    enable-prefix-caching: true      # V1 default; turned off in the Week 3 ablation
+    enable-chunked-prefill: true     # V1 default
+    seed: 0

@@ -1,0 +1,21 @@
+# Frozen benchmark workloads. Change a workload => bump its name, never edit in place,
+# so CSVs from earlier runs stay comparable.
+seed: 1234
+workloads:
+  short_v1:          {num_prompts: 200, prompt_tokens: 128,  output_tokens: 128}
+  long_v1:           {num_prompts: 100, prompt_tokens: 2048, output_tokens: 256}
+  shared_prefix_v1:  {num_prompts: 200, prompt_tokens: 1536, output_tokens: 256, shared_prefix_tokens: 1024}
+  spider_v1:         {num_prompts: 300, source: spider_dev, output_tokens: 128}
+sweep:
+  concurrency: [1, 2, 4, 8, 16, 32, 64]
+  warmup_requests: 10
+# Provisional T4 SLOs (seconds, p95), fixed before the baseline run; revisit once, with reasons,
+# in docs/weeks/week2.md. Rationale:
+#   TPOT 50 ms = 20 tok/s, faster than anyone reads a streamed answer.
+#   TTFT scales with prompt length (prefill); 2k-token prompts get a looser bound.
+#   Text-to-SQL is consumed whole (the SQL runs only when complete), so spider also gets E2E.
+slo:
+  short_v1:         {ttft_s_p95: 0.5, tpot_s_p95: 0.050}
+  long_v1:          {ttft_s_p95: 2.0, tpot_s_p95: 0.050}
+  shared_prefix_v1: {ttft_s_p95: 1.0, tpot_s_p95: 0.050}
+  spider_v1:        {ttft_s_p95: 1.0, tpot_s_p95: 0.050, e2e_s_p95: 3.0}
