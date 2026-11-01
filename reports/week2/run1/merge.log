@@ -1,0 +1,43 @@
+`torch_dtype` is deprecated! Use `dtype` instead!
+
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]
+Fetching 2 files:  50%|█████     | 1/2 [00:07<00:07,  7.80s/it]
+Fetching 2 files: 100%|██████████| 2/2 [00:07<00:00,  3.90s/it]
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:11<00:11, 11.75s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:12<00:00,  5.08s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:12<00:00,  6.08s/it]
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/kaggle/working/repo/finetune/merge.py", line 38, in <module>
+    main()
+    ~~~~^^
+  File "/kaggle/working/repo/finetune/merge.py", line 28, in main
+    merged = PeftModel.from_pretrained(base, a.adapter).merge_and_unload()
+             ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/peft/peft_model.py", line 619, in from_pretrained
+    load_result = model.load_adapter(
+        model_id,
+    ...<5 lines>...
+        **kwargs,
+    )
+  File "/usr/local/lib/python3.13/dist-packages/peft/peft_model.py", line 1484, in load_adapter
+    adapters_weights = load_peft_weights(
+        model_id, device=torch_device, key_mapping=key_mapping, **hf_hub_download_kwargs
+    )
+  File "/usr/local/lib/python3.13/dist-packages/peft/utils/save_and_load.py", line 1043, in load_peft_weights
+    has_remote_safetensors_file = file_exists(
+        repo_id=model_id,
+    ...<3 lines>...
+        token=token,
+    )
+  File "/usr/local/lib/python3.13/dist-packages/huggingface_hub/utils/_validators.py", line 106, in _inner_fn
+    validate_repo_id(arg_value)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/huggingface_hub/utils/_validators.py", line 154, in validate_repo_id
+    raise HFValidationError(
+    ...<2 lines>...
+    )
+huggingface_hub.errors.HFValidationError: Repo id must be in the form 'repo_name' or 'namespace/repo_name': '/kaggle/input/datasets/rahulverma52/qwen-inference-optimization-src/src/reports/week1/run3'. Use `repo_type` argument if needed.

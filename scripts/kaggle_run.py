@@ -125,7 +125,7 @@ def fetch(week: int, user: str) -> Path:
     dest.mkdir(parents=True, exist_ok=True)
     # Only the small results bundle and the log; model weights stay on Kaggle as kernel output.
     kaggle("kernels", "output", f"{user}/{kernel_slug(week)}", "-p", str(dest), "-o",
-           "--file-pattern", rf"(week{week}_results\.zip|.*\.log)$")
+           "--file-pattern", rf"^(week{week}_results\.zip|[^/]+\.log)$")  # top level only
     zips = list(dest.glob(f"week{week}_results.zip"))
     if zips:
         shutil.unpack_archive(zips[0], dest / "results")

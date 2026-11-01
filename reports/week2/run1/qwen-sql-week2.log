@@ -1,0 +1,93 @@
+[{"stream_name":"stderr","time":6.662017169,"data":"/usr/local/lib/python3.13/dist-packages/nbformat/validator.py:434: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.\n"}
+,{"stream_name":"stderr","time":6.662060544,"data":"  _validate(nbdict, ref, version, version_minor, relax_add_props)\n"}
+,{"stream_name":"stderr","time":7.604865374,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":7.604889538,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":7.604892626,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":7.604895138,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":8.2155713,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":8.215599562,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":8.215604142,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":8.215607694,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":9.459303559,"data":"secret MLFLOW_TRACKING_URI not set; that integration stays off\n"}
+,{"stream_name":"stdout","time":9.459325892,"data":"secret MLFLOW_TRACKING_USERNAME not set; that integration stays off\n"}
+,{"stream_name":"stdout","time":9.459330385,"data":"secret MLFLOW_TRACKING_PASSWORD not set; that integration stays off\n"}
+,{"stream_name":"stdout","time":14.900693503,"data":"code commit: 53d9507\n"}
+,{"stream_name":"stdout","time":14.900719511,"data":"/kaggle/working/repo\n"}
+,{"stream_name":"stdout","time":933.418339221,"data":"google-ai-generativelanguage 0.6.15 requires protobuf!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5,\u003c6.0.0dev,\u003e=3.20.2, but you have protobuf 6.33.6 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":933.418403171,"data":"cuda-python 12.9.7 requires cuda-bindings~=12.9.7, but you have cuda-bindings 12.9.4 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":933.418410123,"data":"grpcio-status 1.71.2 requires protobuf\u003c6.0dev,\u003e=5.26.1, but you have protobuf 6.33.6 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":975.200611362,"data":"repo and serving deps import OK\n"}
+,{"stream_name":"stdout","time":975.260664482,"data":"name, driver_version, memory.total [MiB], compute_cap\r\n"}
+,{"stream_name":"stdout","time":975.260707817,"data":"Tesla T4, 580.178.04, 15360 MiB, 7.5\r\n"}
+,{"stream_name":"stdout","time":975.260713898,"data":"Tesla T4, 580.178.04, 15360 MiB, 7.5\r\n"}
+,{"stream_name":"stdout","time":976.439190699,"data":"peft==0.20.0\r\n"}
+,{"stream_name":"stdout","time":976.439218846,"data":"torch==2.10.0\r\n"}
+,{"stream_name":"stdout","time":976.439224434,"data":"transformers==4.57.6\r\n"}
+,{"stream_name":"stdout","time":976.439228711,"data":"vllm==0.19.0\r\n"}
+,{"stream_name":"stdout","time":976.551285714,"data":"4\r\n"}
+,{"stream_name":"stdout","time":978.495993989,"data":"\rspider_data.zip:   0%|                               | 0.00/206M [00:00\u003c?, ?B/s]\rspider_data.zip:   0%|                               | 0.00/206M [00:00\u003c?, ?B/s]\rspider_data.zip: 100%|████████████████████████| 206M/206M [00:01\u003c00:00, 187MB/s]\rspider_data.zip: 100%|████████████████████████| 206M/206M [00:01\u003c00:00, 160MB/s]\r\n"}
+,{"stream_name":"stdout","time":984.308420564,"data":"extracted 1312 entries -\u003e /kaggle/working/data/spider_data\r\n"}
+,{"stream_name":"stdout","time":984.457720161,"data":"--- workloads: python -m bench.workloads --tokenizer Qwen/Qwen3-1.7B --out /kaggle/working/week2/workloads --spider-dir /kaggle/working/data/spider_data\n"}
+,{"stream_name":"stdout","time":994.55400773,"data":"wrote 200 prompts -\u003e /kaggle/working/week2/workloads/short_v1.jsonl\n"}
+,{"stream_name":"stdout","time":994.554057355,"data":"wrote 100 prompts -\u003e /kaggle/working/week2/workloads/long_v1.jsonl\n"}
+,{"stream_name":"stdout","time":994.55406256,"data":"wrote 200 prompts -\u003e /kaggle/working/week2/workloads/shared_prefix_v1.jsonl\n"}
+,{"stream_name":"stdout","time":994.554066403,"data":"wrote 300 prompts -\u003e /kaggle/working/week2/workloads/spider_v1.jsonl\n"}
+,{"stream_name":"stdout","time":995.144508048,"data":"--- workloads: ok\n"}
+,{"stream_name":"stdout","time":996.191408798,"data":"--- merge: python -m finetune.merge --base Qwen/Qwen3-1.7B --adapter /kaggle/input/datasets/rahulverma52/qwen-inference-optimization-src/src/reports/week1/run3 --out /kaggle/working/sft-merged\n"}
+,{"stream_name":"stdout","time":1006.949257259,"data":"`torch_dtype` is deprecated! Use `dtype` instead!\n"}
+,{"stream_name":"stdout","time":1006.949281147,"data":"\n"}
+,{"stream_name":"stdout","time":1014.948504657,"data":"\n"}
+,{"stream_name":"stdout","time":1028.954768591,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stdout","time":1028.95480166,"data":"  File \"\u003cfrozen runpy\u003e\", line 203, in _run_module_as_main\n"}
+,{"stream_name":"stdout","time":1028.954806155,"data":"  File \"\u003cfrozen runpy\u003e\", line 88, in _run_code\n"}
+,{"stream_name":"stdout","time":1028.954809416,"data":"  File \"/kaggle/working/repo/finetune/merge.py\", line 38, in \u003cmodule\u003e\n"}
+,{"stream_name":"stdout","time":1028.954812807,"data":"    main()\n"}
+,{"stream_name":"stdout","time":1028.95481558,"data":"    ~~~~^^\n"}
+,{"stream_name":"stdout","time":1028.954818572,"data":"  File \"/kaggle/working/repo/finetune/merge.py\", line 28, in main\n"}
+,{"stream_name":"stdout","time":1028.954836135,"data":"    merged = PeftModel.from_pretrained(base, a.adapter).merge_and_unload()\n"}
+,{"stream_name":"stdout","time":1028.95484179,"data":"             ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stdout","time":1028.954846947,"data":"  File \"/usr/local/lib/python3.13/dist-packages/peft/peft_model.py\", line 619, in from_pretrained\n"}
+,{"stream_name":"stdout","time":1028.95485254,"data":"    load_result = model.load_adapter(\n"}
+,{"stream_name":"stdout","time":1028.95485736,"data":"        model_id,\n"}
+,{"stream_name":"stdout","time":1028.954861565,"data":"    ...\u003c5 lines\u003e...\n"}
+,{"stream_name":"stdout","time":1028.95486578,"data":"        **kwargs,\n"}
+,{"stream_name":"stdout","time":1028.954869859,"data":"    )\n"}
+,{"stream_name":"stdout","time":1028.954873894,"data":"  File \"/usr/local/lib/python3.13/dist-packages/peft/peft_model.py\", line 1484, in load_adapter\n"}
+,{"stream_name":"stdout","time":1028.954878381,"data":"    adapters_weights = load_peft_weights(\n"}
+,{"stream_name":"stdout","time":1028.954882535,"data":"        model_id, device=torch_device, key_mapping=key_mapping, **hf_hub_download_kwargs\n"}
+,{"stream_name":"stdout","time":1028.954886915,"data":"    )\n"}
+,{"stream_name":"stdout","time":1028.954890908,"data":"  File \"/usr/local/lib/python3.13/dist-packages/peft/utils/save_and_load.py\", line 1043, in load_peft_weights\n"}
+,{"stream_name":"stdout","time":1028.954909303,"data":"    has_remote_safetensors_file = file_exists(\n"}
+,{"stream_name":"stdout","time":1028.954912253,"data":"        repo_id=model_id,\n"}
+,{"stream_name":"stdout","time":1028.954914491,"data":"    ...\u003c3 lines\u003e...\n"}
+,{"stream_name":"stdout","time":1028.954916884,"data":"        token=token,\n"}
+,{"stream_name":"stdout","time":1028.954919558,"data":"    )\n"}
+,{"stream_name":"stdout","time":1028.954934255,"data":"  File \"/usr/local/lib/python3.13/dist-packages/huggingface_hub/utils/_validators.py\", line 106, in _inner_fn\n"}
+,{"stream_name":"stdout","time":1028.954939471,"data":"    validate_repo_id(arg_value)\n"}
+,{"stream_name":"stdout","time":1028.954943591,"data":"    ~~~~~~~~~~~~~~~~^^^^^^^^^^^\n"}
+,{"stream_name":"stdout","time":1028.954947522,"data":"  File \"/usr/local/lib/python3.13/dist-packages/huggingface_hub/utils/_validators.py\", line 154, in validate_repo_id\n"}
+,{"stream_name":"stdout","time":1028.954951741,"data":"    raise HFValidationError(\n"}
+,{"stream_name":"stdout","time":1028.95495501,"data":"    ...\u003c2 lines\u003e...\n"}
+,{"stream_name":"stdout","time":1028.95495836,"data":"    )\n"}
+,{"stream_name":"stdout","time":1028.954961697,"data":"huggingface_hub.errors.HFValidationError: Repo id must be in the form 'repo_name' or 'namespace/repo_name': '/kaggle/input/datasets/rahulverma52/qwen-inference-optimization-src/src/reports/week1/run3'. Use `repo_type` argument if needed.\n"}
+,{"stream_name":"stdout","time":1030.941115198,"data":"--- merge: failed\n"}
+,{"stream_name":"stdout","time":1030.968804592,"data":"--- skip server: needs ['merge']\n"}
+,{"stream_name":"stdout","time":1030.968823673,"data":"grep: /kaggle/working/week2/server.log: No such file or directory\r\n"}
+,{"stream_name":"stdout","time":1031.08597232,"data":"--- skip sweep_short_v1: needs ['server']\n"}
+,{"stream_name":"stdout","time":1031.086002174,"data":"--- skip sweep_long_v1: needs ['server']\n"}
+,{"stream_name":"stdout","time":1031.086007009,"data":"--- skip sweep_shared_prefix_v1: needs ['server']\n"}
+,{"stream_name":"stdout","time":1031.086010962,"data":"--- skip sweep_spider_v1: needs ['server']\n"}
+,{"stream_name":"stdout","time":1031.119243928,"data":"--- skip vllm_bench_c1: needs ['server']\n"}
+,{"stream_name":"stdout","time":1031.119261164,"data":"--- skip vllm_bench_c8: needs ['server']\n"}
+,{"stream_name":"stdout","time":1031.119265473,"data":"--- skip vllm_bench_c32: needs ['server']\n"}
+,{"stream_name":"stdout","time":1031.141057736,"data":"step status: {'workloads': 'ok', 'merge': 'failed', 'server': 'skipped', 'sweep_short_v1': 'skipped', 'sweep_long_v1': 'skipped', 'sweep_shared_prefix_v1': 'skipped', 'sweep_spider_v1': 'skipped', 'vllm_bench_c1': 'skipped', 'vllm_bench_c8': 'skipped', 'vllm_bench_c32': 'skipped'}\n"}
+,{"stream_name":"stdout","time":1031.298078749,"data":"download /kaggle/working/week2_results.zip\n"}
+,{"stream_name":"stderr","time":1033.888273126,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":1033.888295459,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":1034.044803457,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":1034.04482445,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":1034.963379263,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":1035.044786038,"data":"[NbConvertApp] Writing 26286 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":1037.768010909,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":1038.338535214,"data":"[NbConvertApp] Writing 324682 bytes to __results__.html\n"}
+]

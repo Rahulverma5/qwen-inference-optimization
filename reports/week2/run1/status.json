@@ -1,0 +1,12 @@
+{
+  "workloads": "ok",
+  "merge": "failed",
+  "server": "skipped",
+  "sweep_short_v1": "skipped",
+  "sweep_long_v1": "skipped",
+  "sweep_shared_prefix_v1": "skipped",
+  "sweep_spider_v1": "skipped",
+  "vllm_bench_c1": "skipped",
+  "vllm_bench_c8": "skipped",
+  "vllm_bench_c32": "skipped"
+}
