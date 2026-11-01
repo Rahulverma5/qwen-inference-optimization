@@ -1,0 +1,30 @@
+[project]
+name = "qwen-inference-optimization"
+version = "0.1.0"
+description = "Qwen post-training -> compression -> vLLM serving -> cloud deployment, on free-tier hardware"
+requires-python = ">=3.10"
+dependencies = [
+    "httpx>=0.27",
+    "huggingface_hub>=0.24",
+    "numpy>=1.26",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+tracking = ["mlflow>=2.16"]
+# GPU stacks are installed on Kaggle from requirements-gpu.txt (pinned after the T4 smoke test)
+
+[tool.setuptools.packages.find]
+include = ["bench*", "evaluation*", "finetune*", "quantize*", "serving*", "tracking*"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+extend-exclude = ["notebooks"]  # Kaggle launchers use IPython magics
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,11 @@
+# Single source of truth for model ids. Architecture numbers are read from config.json at
+# runtime (bench/kv_cache.py); they are not duplicated here.
+base_model: Qwen/Qwen3-1.7B        # checkpoint dtype is bf16; T4 (sm75) has no bf16 -> serve/train in fp16
+draft_model: Qwen/Qwen3-0.6B       # same tokenizer, used for speculative decoding (Week 3)
+finetuned_repo: null               # set to <hf-user>/qwen3-1.7b-spider-sft after Week 1
+dtype: float16
+max_model_len: 4096
+hardware:
+  name: kaggle-t4
+  gpu_mem_gib: 15.0                # usable memory on a 16 GB T4 as reported by torch, verify on Kaggle
+  num_gpus: 2

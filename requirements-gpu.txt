@@ -1,0 +1,15 @@
+# Kaggle GPU stack. Pin exact versions after the Week-1 T4 smoke test passes
+# (notebooks/kaggle_01_smoke.py prints them); unpinned here only until then.
+# T4 = sm75: verify vLLM still supports it and which attention backend it picks.
+vllm
+transformers
+trl
+peft
+bitsandbytes
+accelerate
+datasets
+llmcompressor
+mlflow
+psutil
+nvidia-ml-py  # MLflow system metrics: GPU memory/util during training
+lm-eval
