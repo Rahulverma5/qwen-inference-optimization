@@ -1,0 +1,98 @@
+{
+  "sizes": {
+    "train_spider": 7000,
+    "train_others": 1659,
+    "dev": 1034
+  },
+  "databases": {
+    "train": 146,
+    "dev": 20,
+    "dev_seen_in_train": 0
+  },
+  "dev_questions_per_db": {
+    "p50": 43,
+    "p90": 84,
+    "p95": 93,
+    "p99": 114,
+    "p100": 120,
+    "mean": 51.7
+  },
+  "dev_gold_execution": {
+    "n": 1034,
+    "errors": 0,
+    "error_examples": [],
+    "empty_result": 49,
+    "empty_result_rate": 0.0474,
+    "slow_over_1s": 0,
+    "has_order_by": 237,
+    "total_s": 4.41
+  },
+  "dev_gold_vs_gold": {
+    "n": 1034,
+    "exec_accuracy": 1.0,
+    "valid_sql_rate": 1.0
+  },
+  "tokens_train": {
+    "prompt_tokens": {
+      "p50": 437,
+      "p90": 978,
+      "p95": 1156,
+      "p99": 1583,
+      "p100": 2192,
+      "mean": 504.4
+    },
+    "completion_tokens": {
+      "p50": 28,
+      "p90": 74,
+      "p95": 91,
+      "p99": 121,
+      "p100": 202,
+      "mean": 37.3
+    },
+    "total_tokens": {
+      "p50": 467,
+      "p90": 1016,
+      "p95": 1232,
+      "p99": 1638,
+      "p100": 2321,
+      "mean": 541.7
+    },
+    "over_1024": 842,
+    "over_2048": 82,
+    "shared_prefix_fraction_mean": 0.927
+  },
+  "tokens_dev": {
+    "prompt_tokens": {
+      "p50": 293,
+      "p90": 717,
+      "p95": 897,
+      "p99": 906,
+      "p100": 919,
+      "mean": 378.3
+    },
+    "completion_tokens": {
+      "p50": 23,
+      "p90": 59,
+      "p95": 76,
+      "p99": 99,
+      "p100": 131,
+      "mean": 31.6
+    },
+    "total_tokens": {
+      "p50": 325,
+      "p90": 757,
+      "p95": 911,
+      "p99": 978,
+      "p100": 1001,
+      "mean": 409.9
+    },
+    "over_1024": 0,
+    "over_2048": 0,
+    "shared_prefix_fraction_mean": 0.916
+  },
+  "template": {
+    "train_equals_template": true,
+    "generation_prompt_tail": "we have?<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+    "assistant_turn_in_full": ">assistant\n<think>\n\n</think>\n\nSELECT count(*) FROM singer<|im_end|>\n"
+  }
+}
