@@ -1,0 +1,158 @@
+"""Run a week's notebook on Kaggle GPUs from this machine.
+
+    python scripts/kaggle_run.py run --week 1           # upload code, push notebook, wait, fetch results
+    python scripts/kaggle_run.py status --week 1
+    python scripts/kaggle_run.py fetch --week 1         # results zip -> reports/week1/kaggle/
+    python scripts/kaggle_run.py stage --week 1         # build upload folders locally only (dry run)
+
+Code reaches Kaggle as a private dataset holding `git archive HEAD` (plus a COMMIT file), so
+every run is tied to an exact commit and no public GitHub repo is needed. Uncommitted changes
+are NOT uploaded: commit first. Needs the Kaggle CLI logged in (~/.kaggle).
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import shutil
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+STAGE = ROOT / ".kaggle_stage"
+CODE_SLUG = "qwen-inference-optimization-src"
+ACCELERATOR = "NvidiaTeslaT4"  # Kaggle's name for "GPU T4 x2"
+
+
+def sh(*args: str, check: bool = True) -> str:
+    out = subprocess.run(args, capture_output=True, text=True)
+    if check and out.returncode != 0:
+        sys.exit(f"$ {' '.join(args)}\n{out.stdout}{out.stderr}")
+    return out.stdout + out.stderr
+
+
+def kaggle(*args: str, check: bool = True) -> str:
+    return sh(str(Path(sys.executable).with_name("kaggle")), *args, check=check)
+
+
+def username() -> str:
+    for line in kaggle("config", "view").splitlines():
+        if line.strip().startswith("- username:"):
+            return line.split(":", 1)[1].strip()
+    sys.exit("could not read Kaggle username; run `kaggle config view`")
+
+
+def kernel_slug(week: int) -> str:
+    return f"qwen-sql-week{week}"
+
+
+def stage(week: int, user: str) -> tuple[Path, Path, str]:
+    if sh("git", "-C", str(ROOT), "status", "--porcelain", "--untracked-files=no").strip():
+        print("warning: uncommitted changes to tracked files are not uploaded")
+    commit = sh("git", "-C", str(ROOT), "rev-parse", "--short", "HEAD").strip()
+    shutil.rmtree(STAGE, ignore_errors=True)
+
+    code = STAGE / "code"
+    code.mkdir(parents=True)
+    tar = code / "src.tar"
+    sh("git", "-C", str(ROOT), "archive", "--format=tar", "-o", str(tar), "HEAD")
+    (code / "COMMIT").write_text(commit + "\n")
+    (code / "dataset-metadata.json").write_text(json.dumps({
+        "title": CODE_SLUG, "id": f"{user}/{CODE_SLUG}", "licenses": [{"name": "CC0-1.0"}],
+    }, indent=2))
+
+    nb_src = ROOT / "notebooks" / f"week{week}_kaggle.ipynb"
+    if not nb_src.exists():
+        sys.exit(f"missing {nb_src}")
+    kern = STAGE / "kernel"
+    kern.mkdir()
+    shutil.copy(nb_src, kern / nb_src.name)
+    (kern / "kernel-metadata.json").write_text(json.dumps({
+        "id": f"{user}/{kernel_slug(week)}",
+        "title": kernel_slug(week),
+        "code_file": nb_src.name,
+        "language": "python",
+        "kernel_type": "notebook",
+        "is_private": "true",
+        "enable_gpu": "true",
+        "enable_internet": "true",
+        "machine_shape": ACCELERATOR,
+        "dataset_sources": [f"{user}/{CODE_SLUG}"],
+        "competition_sources": [],
+        "kernel_sources": [],
+        "model_sources": [],
+    }, indent=2))
+    return code, kern, commit
+
+
+def upload_code(code: Path, user: str, commit: str) -> None:
+    exists = f"{user}/{CODE_SLUG}" in kaggle("datasets", "list", "--mine", "-s", CODE_SLUG, check=False)
+    if exists:
+        kaggle("datasets", "version", "-p", str(code), "-m", f"commit {commit}")
+    else:
+        kaggle("datasets", "create", "-p", str(code))  # private by default
+    # The kernel must not start before the new dataset version is processed.
+    for _ in range(60):
+        st = kaggle("datasets", "status", f"{user}/{CODE_SLUG}", check=False).strip().lower()
+        if "ready" in st:
+            print(f"code dataset ready (commit {commit})")
+            return
+        time.sleep(10)
+    sys.exit(f"dataset not ready after 10 min: {st}")
+
+
+def status(week: int, user: str) -> str:
+    return kaggle("kernels", "status", f"{user}/{kernel_slug(week)}", check=False).strip()
+
+
+def fetch(week: int, user: str) -> Path:
+    dest = ROOT / "reports" / f"week{week}" / "kaggle"
+    dest.mkdir(parents=True, exist_ok=True)
+    # Only the small results bundle and the log; model weights stay on Kaggle as kernel output.
+    kaggle("kernels", "output", f"{user}/{kernel_slug(week)}", "-p", str(dest), "-o",
+           "--file-pattern", rf"(week{week}_results\.zip|.*\.log)$")
+    zips = list(dest.glob(f"week{week}_results.zip"))
+    if zips:
+        shutil.unpack_archive(zips[0], dest / "results")
+    print(f"fetched -> {dest}")
+    return dest
+
+
+def main() -> None:
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
+    p.add_argument("action", choices=["stage", "run", "status", "fetch"])
+    p.add_argument("--week", type=int, required=True)
+    p.add_argument("--no-wait", action="store_true", help="push and return without polling")
+    a = p.parse_args()
+    user = username()
+
+    if a.action == "status":
+        print(status(a.week, user))
+        return
+    if a.action == "fetch":
+        fetch(a.week, user)
+        return
+
+    code, kern, commit = stage(a.week, user)
+    print(f"staged commit {commit} -> {STAGE}")
+    if a.action == "stage":
+        return
+
+    upload_code(code, user, commit)
+    print(kaggle("kernels", "push", "-p", str(kern), "--accelerator", ACCELERATOR))
+    print(f"https://www.kaggle.com/code/{user}/{kernel_slug(a.week)}")
+    if a.no_wait:
+        return
+    while True:
+        st = status(a.week, user)
+        print(time.strftime("%H:%M:%S"), st, flush=True)
+        if any(w in st.lower() for w in ("complete", "error", "cancel")):
+            break
+        time.sleep(120)
+    fetch(a.week, user)
+
+
+if __name__ == "__main__":
+    main()

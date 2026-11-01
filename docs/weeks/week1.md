@@ -17,6 +17,7 @@
 | QLoRA SFT | [finetune/train_sft.py](../../finetune/train_sft.py) | 4-bit NF4 frozen base + LoRA r=32 on all linear layers, completion-only loss, fp16, DDP on 2×T4. |
 | LoRA merge | [finetune/merge.py](../../finetune/merge.py) | One deployable checkpoint for Week 3 quantization. Merges into the **fp16** base, not the 4-bit one. |
 | Kaggle notebook | [notebooks/week1_kaggle.ipynb](../../notebooks/week1_kaggle.ipynb) | Thin launcher: every step is a repo command, so results are reproducible outside the notebook. Ends by zipping results for download. |
+| CLI launcher | [scripts/kaggle_run.py](../../scripts/kaggle_run.py) | Runs the notebook on Kaggle GPUs from the laptop. Code ships as a private dataset built from `git archive HEAD`, and the run records the commit, so every result traces to exact code. |
 | MLflow hooks | [tracking/](../../tracking/__init__.py) | Training curves through the HF Trainer callback and one run per eval. No-op without `MLFLOW_TRACKING_URI`. |
 
 ### Key decisions
@@ -127,5 +128,7 @@ python scripts/get_spider.py --out data
 python -m evaluation.spider_audit --spider-dir data/spider_data --out reports/week1/spider_audit.json
 pytest -q
 
-# Kaggle (GPU T4 x2, internet on): import notebooks/week1_kaggle.ipynb and run all cells
+# Kaggle, from this machine: uploads HEAD as a private dataset, runs on T4 x2, fetches results
+python scripts/kaggle_run.py run --week 1        # -> reports/week1/kaggle/results/
+# or by hand: import notebooks/week1_kaggle.ipynb on kaggle.com (GPU T4 x2, internet on), run all
 ```

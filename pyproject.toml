@@ -13,6 +13,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.6"]
 tracking = ["mlflow>=2.16"]
+kaggle = ["kaggle==2.2.5", "six"]  # six: undeclared dependency of the Kaggle CLI
 # GPU stacks are installed on Kaggle from requirements-gpu.txt (pinned after the T4 smoke test)
 
 [tool.setuptools.packages.find]
