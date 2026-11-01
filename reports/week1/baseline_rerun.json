@@ -1,0 +1,62 @@
+{
+  "a": "reports/week1/run3/preds/base_fp16.jsonl",
+  "b": "reports/week1/run4/preds/base_fp16.jsonl",
+  "n": 1034,
+  "acc_a": 0.5609284332688588,
+  "acc_b": 0.5589941972920697,
+  "both_right": 577,
+  "fixed_by_b": 1,
+  "broken_by_b": 3,
+  "both_wrong": 453,
+  "by_complexity_proxy": {
+    "simple": {
+      "n": 333,
+      "acc_a": 0.802,
+      "acc_b": 0.799
+    },
+    "agg/order": {
+      "n": 211,
+      "acc_a": 0.55,
+      "acc_b": 0.545
+    },
+    "join+agg/order": {
+      "n": 180,
+      "acc_a": 0.389,
+      "acc_b": 0.389
+    },
+    "nested/set-op": {
+      "n": 159,
+      "acc_a": 0.314,
+      "acc_b": 0.314
+    },
+    "join": {
+      "n": 151,
+      "acc_a": 0.51,
+      "acc_b": 0.51
+    }
+  },
+  "exec_errors_a": {
+    "no such column": 108,
+    "ambiguous column name": 7,
+    "misuse of aggregate function COUNT()": 4,
+    "misuse of aggregate": 4,
+    "near \"IN\"": 1,
+    "incomplete input": 1
+  },
+  "exec_errors_b": {
+    "no such column": 108,
+    "ambiguous column name": 7,
+    "misuse of aggregate function COUNT()": 4,
+    "misuse of aggregate": 4,
+    "near \"IN\"": 1,
+    "incomplete input": 1
+  },
+  "examples_fixed": [
+    292
+  ],
+  "examples_broken": [
+    3,
+    9,
+    302
+  ]
+}

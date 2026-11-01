@@ -1,0 +1,8 @@
+{
+  "n": 1034,
+  "exec_accuracy": 0.6460348162475822,
+  "valid_sql_rate": 0.8684719535783365,
+  "model": "/kaggle/working/sft-merged",
+  "gen_time_s": 50.52919727900007,
+  "attention_backend": "TRITON_ATTN"
+}

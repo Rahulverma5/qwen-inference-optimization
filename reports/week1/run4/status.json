@@ -1,0 +1,9 @@
+{
+  "vllm_smoke": "ok",
+  "baseline_eval": "ok",
+  "sft_smoke": "reused",
+  "merge_smoke": "reused",
+  "sft": "reused",
+  "merge": "ok",
+  "sft_eval": "ok"
+}

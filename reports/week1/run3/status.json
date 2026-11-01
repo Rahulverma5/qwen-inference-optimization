@@ -1,0 +1,8 @@
+{
+  "vllm_smoke": "ok",
+  "baseline_eval": "ok",
+  "sft_smoke": "ok",
+  "sft": "ok",
+  "merge": "failed",
+  "sft_eval": "skipped"
+}

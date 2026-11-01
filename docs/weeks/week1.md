@@ -2,7 +2,7 @@
 
 **Goal:** Prove the stack runs on a free Kaggle T4. Measure how well stock Qwen3-1.7B writes SQL, then fine-tune it with QLoRA and measure again. Every later week (quantization, serving, deployment) starts from the model produced here.
 
-**Status:** Local work is done and measured (data audit, pipeline, tests). The GPU runs (vLLM smoke test, baseline, SFT) are ready in [notebooks/week1_kaggle.ipynb](../../notebooks/week1_kaggle.ipynb) but **not yet run**. Fill in [Results: GPU runs](#results-gpu-runs-kaggle-t4) after the run.
+**Status: done.** Stock Qwen3-1.7B scores **55.9%** execution accuracy on Spider dev. After QLoRA SFT (77 min on 2× T4) it scores **64.6% (+8.7 points)**. It took four Kaggle runs to get there; the failures and their fixes are in the [run history](#run-history).
 
 ---
 
@@ -56,27 +56,70 @@ From [reports/week1/spider_audit.json](../../reports/week1/spider_audit.json), u
 | Train prompt == inference prompt | true | SFT rows rendered with the same template the server uses (byte-identical). |
 | EOS token / pad token | `<|im_end|>` / `<|endoftext|>` | EOS matches the chat template's turn end, and pad ≠ EOS, so the stop token isn't masked out of the loss. |
 
-Unit tests: 20 passing (`pytest -q`). They cover scorer edge cases, runaway-query timeout, read-only DBs, SQL extraction, and dropping over-length examples.
+Unit tests: 22 passing (`pytest -q`). They cover scorer edge cases, runaway-query timeout, read-only DBs, SQL extraction, and dropping over-length examples.
 
 ## Results: GPU runs (Kaggle T4)
 
-*Fill in from `week1_results.zip`. Don't round in favour of the story.*
+Baseline and fine-tuned numbers are from **run 4** (commit `31999b9`); training is from **run 3** (commit `71dc390`). Raw files: [reports/week1/run3/](../../reports/week1/run3/), [reports/week1/run4/](../../reports/week1/run4/).
+
+### Headline
+
+| Model | Exec accuracy (dev, 1,034) | Valid SQL | Generation time, 1,034 questions |
+|---|---|---|---|
+| Qwen3-1.7B (stock, fp16) | **55.9%** | 87.6% | 56 s |
+| Qwen3-1.7B + QLoRA SFT (merged, fp16) | **64.6%** | 86.8% | 51 s |
+| **Change** | **+8.7 points** (+15.6% relative) | −0.8 points | — |
+
+The plan's target was +10 points; this is **+8.7**. The gap is explained below (schema linking), and the next lever is clear.
+
+### Setup and training facts
 
 | Item | Value |
 |---|---|
-| GPU / driver / compute capability | |
-| vLLM / torch / transformers / trl / peft versions | |
-| vLLM attention backend chosen on T4 | |
-| Baseline Qwen3-1.7B: exec accuracy / valid-SQL rate (dev, 1,034) | |
-| Baseline generation time (1,034 questions) | |
-| SFT: examples kept / dropped | expected 8,577 / 82 |
-| SFT: effective batch, steps, epochs | 2 GPUs × 4 × 4 accum = 32; ~536 steps; 2 epochs |
-| SFT: wall-clock time, peak GPU memory | |
-| SFT: final train loss | |
-| **Fine-tuned: exec accuracy / valid-SQL rate** | |
-| **Gain over baseline (points)** | |
+| Hardware | 2× Tesla T4 (15,360 MiB, compute capability 7.5), driver 580, CUDA 12.8 |
+| Stack | vllm 0.19.0, torch 2.10.0, transformers 4.57.6, trl 1.17.1, peft 0.20.0, bitsandbytes 0.50.2 |
+| vLLM attention backend | TRITON_ATTN (FlashInfer fails to JIT-link on Kaggle; FlashAttention-2 needs compute capability 8.0+) |
+| SFT data | 8,577 kept, 82 dropped (> 2,048 tokens), matching the local audit exactly |
+| Trainable params | 34,865,152 (rank 32 × 7 projections × 28 layers; ≈2% of 1.7B). They loaded as **bf16** and were upcast to fp32 (see run 2) |
+| Batch / steps / epochs | 2 GPUs × 4 × 4 grad-accum = 32 effective; 538 steps; 2 epochs |
+| Wall-clock | **77 min** (4,633 s), 3.7 samples/s, 9.03 M tokens processed |
+| Loss | 1.61 → 0.066 (average 0.166); final mean token accuracy 98.2%; grad norm stable at 0.3–0.8 after warm-up, no NaN/overflow in fp16 |
+| Peak GPU memory | Not recorded: MLflow was off, so no system metrics. Fix for Week 2: log `torch.cuda.max_memory_allocated()` |
 
-Target from the plan: ≥ +10 points execution accuracy.
+![Training curves](../../reports/week1/training_curves.png)
+
+The loss **drops in a step at the epoch-2 boundary** (≈0.13 → 0.09). That's the second pass over the same examples: part of the late loss decrease is memorization, which is why train loss (98% token accuracy) says little about dev accuracy (64.6%) on unseen schemas.
+
+### Where the gain came from
+
+From [reports/week1/base_vs_sft.json](../../reports/week1/base_vs_sft.json) ([evaluation/compare.py](../../evaluation/compare.py)). The complexity buckets are a keyword proxy for Spider's official hardness levels, so treat them as indicative.
+
+| Query type (proxy) | n | Base | SFT | Change |
+|---|---|---|---|---|
+| simple | 333 | 79.9% | 85.3% | +5.4 |
+| GROUP BY / ORDER BY | 211 | 54.5% | 70.1% | **+15.6** |
+| nested / set-op | 159 | 31.4% | 47.8% | **+16.4** |
+| JOIN | 151 | 51.0% | 54.3% | +3.3 |
+| JOIN + GROUP/ORDER | 180 | 38.9% | 43.3% | +4.4 |
+
+**Flip matrix:** 508 both right, **160 fixed** by SFT, **70 broken** by SFT, 296 both wrong. The net +90 hides a lot of churn: SFT changed the model's behaviour, not just patched its errors.
+
+**Why it falls short: schema linking.** "no such column" errors *rose* from 108 to 125. The fine-tuned model adopted the gold-SQL **style** of Spider (`T1`/`T2` aliases, terse lowercase), and with it a **naming prior from the 146 training schemas** that sometimes overrides the schema in the prompt:
+
+- `pets_1`: writes `pet_type` (training-style snake_case) where the real column is `PetType`, and `age` instead of `pet_age`.
+- `world_1`: writes `T1.ContinentId` where the column is `ContId`.
+- `concert_singer`: aliases `T2` to `singer_in_concert`, then selects `T2.Name`, which belongs to `singer`.
+
+The base model writes verbose, fully qualified SQL that copies identifiers verbatim. So it links schemas better, but it reasons worse about aggregation and nesting. **SFT improved the logic and hurt the grounding.** Next steps, in order of cost:
+1. **Execution-guided retry** (inference-only, no retraining): run the SQL; on an error, feed the SQLite error back to the model for one retry. Directly targets the 125 "no such column" failures.
+2. **Schema-grounding augmentation:** randomly rename columns and tables in the training schemas, so the model must read identifiers from the prompt instead of recalling them.
+3. **Constrained decoding:** restrict identifier tokens to names in the schema (vLLM structured outputs).
+
+### Measurement noise and significance
+
+The stock model was evaluated twice (runs 3 and 4) with identical code, greedy decoding and seed: **56.1% vs 55.9%**. Four questions flipped (1 fixed, 3 broken). Greedy decoding in batched fp16 isn't bit-deterministic: batch composition changes reduction order in the kernels, and near-ties in the logits can flip. **Noise floor ≈ ±0.3 points**, so in Week 3 a quantized model within ~0.5 points of fp16 counts as "no measurable loss".
+
+**Is +8.7 real?** Yes. Both models answered the same 1,034 questions, so the test is a paired one. **McNemar's test** on the discordant pairs (160 fixed vs 70 broken) gives χ² = 34.4, p ≈ 4×10⁻⁹. A paired bootstrap gives a **95% CI of +5.8 to +11.5 points**. The +10 target sits inside that interval, so the miss is within sampling uncertainty.
 
 ### Run history
 
@@ -85,6 +128,7 @@ Target from the plan: ≥ +10 points execution accuracy.
 | 1 | b849d6a | Failed after ~2 min (no GPU work done) | Kaggle auto-unpacks an uploaded `.tar` into `src/`, so the notebook found the commit marker but copied an empty folder. Every module import then failed. Fix: locate the code via `pyproject.toml`. Setup now fails fast unless the repo and training deps import, and the results cell always writes a zip. |
 | 2 | 65d2d7f | All steps failed, ~20 min of GPU | Three separate problems. (a) vLLM 0.19 picked the **FlashInfer** attention backend, which JIT-compiles kernels on first use and failed to link on Kaggle (`ld: cannot find -lcuda`). Fix: `attention_backend="TRITON_ATTN"`, which needs no build step, plus the FlashInfer sampler off. (b) The SFT smoke run was one process seeing two GPUs, so Trainer wrapped the model in `nn.DataParallel`, which SFTTrainer rejects. Fix: `CUDA_VISIBLE_DEVICES=0` for single-process runs. (c) DDP training crashed in the fp16 GradScaler (`_amp_foreach_non_finite_check_and_unscale_cuda not implemented for 'BFloat16'`): trainable LoRA weights were bf16, Qwen3's checkpoint dtype. Fix: upcast trainable params to fp32 (fp32 master weights are standard for fp16 AMP) and set `bf16=False`. Also: steps are now gated, so a failure skips its dependants and `status.json` records what ran. |
 | 3 | 71dc390 | vLLM smoke, **baseline eval, SFT smoke and full SFT passed**; merge failed, so the fine-tuned eval was skipped (~1 h 35 min) | The Kaggle image ships `torchao` 0.10. PEFT 0.20, when loading a LoRA adapter onto a *plain* fp16 model, checks torchao and **raises** on versions below 0.16. Training never hit this: its 4-bit base takes PEFT's bitsandbytes path. Fix: uninstall torchao, and add a **merge smoke test** on the 64-example adapter so merge breakage surfaces before training. The trained adapter (140 MB = 34.87 M fp32 params) was recovered from the kernel output and reattached for run 4, so no retraining. |
+| 4 | 31999b9 | **All steps passed** (~25 min; training reused from run 3) | Uploaded run 3's adapter with `kaggle_run.py --attach`; the notebook skipped training, merged, and evaluated. The baseline re-ran as a free reproducibility check: 55.9% vs 56.1% in run 3. |
 
 Kaggle image facts observed in runs 1–2: Python 3.13, torch 2.11.0+cu128, transformers 5.16.1, peft 0.20.0, accelerate 1.14.0, driver 580, 2× Tesla T4 (15,360 MiB, compute capability 7.5). vLLM, TRL and bitsandbytes are not preinstalled. `pip install vllm` resolved to **0.19.0** (not the latest 0.32), downgrading torch to 2.10.0 and transformers to 4.57.6. These versions are now pinned in `requirements-gpu.txt`. vLLM on T4 offered FLASHINFER, TRITON_ATTN and FLEX_ATTENTION; FlashAttention-2 was rejected (needs compute capability 8.0+). **`torch.cuda.is_bf16_supported()` returns True on the T4**, but the T4 has no bf16 hardware and runs it through slow emulation. So the code sets fp16 explicitly and never trusts that check.
 
@@ -132,6 +176,22 @@ Full fine-tuning or a larger rank; a 4B base; DPO on execution-verified preferen
 fp16 overflow, since Qwen3 is trained in bf16 and the T4 can't do bf16. Watch for loss spikes or NaN. Mitigations: lower LR, keep the fp16 loss scaler, or move the LoRA computation to fp32.
 
 ---
+
+### Results Q&A
+
+**SFT gained 8.7 points. How do you know it's real and not noise?**
+I measured the noise floor by running the same baseline twice: 0.2 points apart. Then I tested the gain properly. It's a paired comparison on the same questions, so McNemar's test applies: 160 questions fixed vs 70 broken gives p ≈ 4×10⁻⁹. The bootstrap 95% CI is 5.8 to 11.5 points.
+*Spoken:* "Same questions, so a paired test: McNemar's on 160 fixed versus 70 broken gives p around 10⁻⁹, and the bootstrap CI is about 6 to 11.5 points. I also re-ran the baseline to measure run-to-run noise, which was 0.2 points."
+
+**Why only +8.7 when train token accuracy is 98%?**
+Train accuracy is on schemas the model has seen; dev uses 20 schemas it has never seen. Error analysis showed the gain came from query *logic*: aggregation +15.6 and nesting +16.4 points. Meanwhile *schema linking* got worse ("no such column" errors went from 108 to 125), because the model learned a naming prior from the training schemas and sometimes ignored the prompt's actual column names.
+*Spoken:* "It learned SQL structure well, but it also learned what column names usually look like in Spider's training databases. On unseen schemas it sometimes writes `pet_type` when the column is `PetType`. That's a grounding problem, and I'd attack it with execution-guided retry and column-renaming augmentation."
+
+**Why is greedy decoding not reproducible?**
+Batched fp16 inference isn't bit-deterministic. Which requests share a batch changes the reduction order inside matmul and attention kernels, so logits differ in the last bits, and near-ties flip the argmax. That's 4 of 1,034 questions here. In practice: measure the noise floor and don't report differences below it.
+
+**Why did the fine-tuned model generate faster (51 s vs 56 s)?**
+It learned Spider's terse SQL style (`T1`/`T2` aliases, no line breaks), so its outputs are shorter. Decode time scales with output tokens.
 
 ## Reproduce
 

@@ -1,0 +1,8 @@
+{
+  "n": 1034,
+  "exec_accuracy": 0.5589941972920697,
+  "valid_sql_rate": 0.8762088974854932,
+  "model": "Qwen/Qwen3-1.7B",
+  "gen_time_s": 56.304381818000024,
+  "attention_backend": "TRITON_ATTN"
+}

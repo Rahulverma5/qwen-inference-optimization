@@ -15,7 +15,7 @@ free-tier resources.
 
 | Week | Milestone | Status |
 |---|---|---|
-| 1 | T4 smoke test, baseline Spider eval, QLoRA SFT, merge | data audit done; GPU runs pending ([write-up](docs/weeks/week1.md)) |
+| 1 | T4 smoke test, baseline Spider eval, QLoRA SFT, merge | **done**: Spider dev exec accuracy 55.9% → **64.6%** (+8.7, p≈4e-9) after 77 min QLoRA on 2× T4 ([write-up](docs/weeks/week1.md)) |
 | 2 | Streaming benchmark harness, KV-cache capacity model, T4 SLOs | harness + calculator ready |
 | 3 | AWQ / GPTQ / W8A8 / GGUF + serving experiments (batching, prefix cache, chunked prefill, TP=2 vs replicas, spec decoding) | — |
 | 4 | FastAPI gateway (auth, rate limit, 429 back-pressure, health/ready, metrics), Docker, compose + Prometheus/Grafana | — |
@@ -62,7 +62,7 @@ python -m venv .venv && .venv/bin/pip install -e '.[dev]'
 
 Spider data (pinned, checksum-verified): `python scripts/get_spider.py --out data`.
 
-On Kaggle (GPU T4 ×2, internet on), import [notebooks/week1_kaggle.ipynb](notebooks/week1_kaggle.ipynb) and run all cells.
+On Kaggle from this machine: `python scripts/kaggle_run.py run --week 1` (uploads HEAD as a private dataset, runs on T4 ×2, fetches results). Or import [notebooks/week1_kaggle.ipynb](notebooks/week1_kaggle.ipynb) on kaggle.com.
 
 Weekly write-ups (what, why, results, interview notes): [docs/weeks/](docs/weeks/).
 

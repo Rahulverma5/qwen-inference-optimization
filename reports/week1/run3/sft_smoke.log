@@ -1,0 +1,36 @@
+`torch_dtype` is deprecated! Use `dtype` instead!
+train examples: 64 kept, 0 dropped (> 2048 tokens)
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:02<00:02,  2.49s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.12s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.33s/it]
+
+Adding EOS to train dataset:   0%|          | 0/64 [00:00<?, ? examples/s]
+Adding EOS to train dataset: 100%|██████████| 64/64 [00:00<00:00, 2148.89 examples/s]
+
+Tokenizing train dataset:   0%|          | 0/64 [00:00<?, ? examples/s]
+Tokenizing train dataset:  95%|█████████▌| 61/64 [00:00<00:00, 588.10 examples/s]
+Tokenizing train dataset: 100%|██████████| 64/64 [00:00<00:00, 465.56 examples/s]
+
+Building labels for train dataset:   0%|          | 0/64 [00:00<?, ? examples/s]
+Building labels for train dataset: 100%|██████████| 64/64 [00:00<00:00, 1804.71 examples/s]
+
+Truncating train dataset:   0%|          | 0/64 [00:00<?, ? examples/s]
+Truncating train dataset: 100%|██████████| 64/64 [00:00<00:00, 2379.43 examples/s]
+
+Dropping fully masked examples from train dataset:   0%|          | 0/64 [00:00<?, ? examples/s]
+Dropping fully masked examples from train dataset: 100%|██████████| 64/64 [00:00<00:00, 3199.77 examples/s]
+The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None}.
+trainable params by original dtype: {'torch.bfloat16': 34865152}
+
+  0%|          | 0/4 [00:00<?, ?it/s]
+ 25%|██▌       | 1/4 [00:08<00:25,  8.46s/it]
+ 50%|█████     | 2/4 [00:13<00:13,  6.63s/it]
+ 75%|███████▌  | 3/4 [00:19<00:06,  6.05s/it]
+100%|██████████| 4/4 [00:24<00:00,  5.71s/it]
+                                             
+
+100%|██████████| 4/4 [00:25<00:00,  5.71s/it]
+100%|██████████| 4/4 [00:25<00:00,  6.32s/it]
+{'train_runtime': 25.2822, 'train_samples_per_second': 2.531, 'train_steps_per_second': 0.158, 'train_loss': 1.8750203847885132, 'entropy': 0.14588643796741962, 'mean_token_accuracy': 0.7835058458149433, 'num_tokens': 22360.0, 'epoch': 1.0}
