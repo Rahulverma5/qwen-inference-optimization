@@ -78,6 +78,14 @@ Unit tests: 20 passing (`pytest -q`). They cover scorer edge cases, runaway-quer
 
 Target from the plan: ≥ +10 points execution accuracy.
 
+### Run history
+
+| Run | Commit | Outcome | Cause / fix |
+|---|---|---|---|
+| 1 | b849d6a | Failed after ~2 min (no GPU work done) | Kaggle auto-unpacks an uploaded `.tar` into `src/`, so the notebook found the commit marker but copied an empty folder. Every module import then failed. Fix: locate the code via `pyproject.toml`. Setup now fails fast unless the repo and training deps import, and the results cell always writes a zip. |
+
+Kaggle image facts observed in run 1: Python 3.13, torch 2.11.0+cu128, transformers 5.16.1, peft 0.20.0, accelerate 1.14.0, driver 580, 2× Tesla T4 (15,360 MiB, compute capability 7.5). vLLM, TRL and bitsandbytes are not preinstalled. **`torch.cuda.is_bf16_supported()` returns True on the T4**, but the T4 has no bf16 hardware and runs it through slow emulation. So the code sets fp16 explicitly and never trusts that check.
+
 ---
 
 ## Bugs and gotchas caught this week
@@ -87,6 +95,7 @@ Target from the plan: ≥ +10 points execution accuracy.
 3. **Qwen3 thinking mode is on by default.** I pass `enable_thinking=False` to the chat template. The template then inserts an empty `<think>\n\n</think>` block, and the audit verified that train and serve prompts both contain it.
 4. **Token-boundary bug in the benchmark prompt generator** (written for Week 2, caught by a unit test). Decoding prefix and suffix separately, then joining strings, merges tokens at the seam and changes the prompt length. Fix: concatenate token IDs, decode once.
 5. **Spider on the Hub has no databases.** Execution accuracy needs the SQLite files, hence the pinned zip.
+6. **Kaggle unpacks uploaded archives.** The first remote run lost its code to this (see run history). Lesson: launch scripts must fail fast on setup, and results collection must never be the step that crashes.
 
 ---
 
