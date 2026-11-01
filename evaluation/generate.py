@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import time
 from pathlib import Path
 
@@ -28,13 +29,18 @@ def main() -> None:
     p.add_argument("--max-model-len", type=int, default=4096)
     p.add_argument("--tp", type=int, default=1)
     p.add_argument("--quantization", default=None)
+    # vLLM's default on T4 is FlashInfer, which JIT-compiles kernels and fails to link on Kaggle
+    # (no libcuda.so on the linker path). The Triton backend needs no build step.
+    p.add_argument("--attention-backend", default="TRITON_ATTN", help="vLLM backend, or 'auto'")
     a = p.parse_args()
 
+    os.environ.setdefault("VLLM_USE_FLASHINFER_SAMPLER", "0")  # same JIT problem in the sampler
     from vllm import LLM, SamplingParams
 
     examples = json.loads((a.spider_dir / a.split).read_text())[: a.limit]
     llm = LLM(model=a.model, dtype="float16", max_model_len=a.max_model_len,
-              tensor_parallel_size=a.tp, quantization=a.quantization, seed=0)
+              tensor_parallel_size=a.tp, quantization=a.quantization, seed=0,
+              attention_backend=a.attention_backend)
     tok = llm.get_tokenizer()
     prompts = [
         render(tok, build_messages(schema_ddl(db_path(a.spider_dir, ex["db_id"])), ex["question"]),
@@ -51,7 +57,8 @@ def main() -> None:
         for i, o in enumerate(outs):
             preds[i] = extract_sql(o.outputs[0].text)
             f.write(json.dumps({"id": i, "sql": preds[i], "raw": o.outputs[0].text}) + "\n")
-    result = score(a.spider_dir, examples, preds) | {"model": a.model, "gen_time_s": elapsed}
+    result = score(a.spider_dir, examples, preds) | {
+        "model": a.model, "gen_time_s": elapsed, "attention_backend": a.attention_backend}
     a.out.with_suffix(".score.json").write_text(json.dumps(result, indent=2))
     log_run("spider-eval", a.out.stem,
             params={"model": a.model, "quantization": a.quantization, "tp": a.tp,

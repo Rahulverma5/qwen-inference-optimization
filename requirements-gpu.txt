@@ -1,15 +1,16 @@
-# Kaggle GPU stack. Pin exact versions after the Week-1 T4 smoke test passes
-# (notebooks/kaggle_01_smoke.py prints them); unpinned here only until then.
-# T4 = sm75: verify vLLM still supports it and which attention backend it picks.
-vllm
-transformers
-trl
-peft
-bitsandbytes
-accelerate
-datasets
-llmcompressor
-mlflow
+# Kaggle GPU stack, pinned to what resolved on the Kaggle image of 2026-11-01
+# (Python 3.13, CUDA 12.8, driver 580, 2x T4 sm75). vLLM's latest (0.32) did not resolve there;
+# 0.19.0 did and runs on T4 with the TRITON_ATTN backend (FlashInfer JIT fails to link).
+vllm==0.19.0
+torch==2.10.0
+transformers==4.57.6
+trl==1.17.1
+peft==0.20.0
+bitsandbytes==0.50.2
+accelerate==1.14.0
+datasets==4.8.5
+llmcompressor==0.10.0.4
+mlflow==3.17.2
 psutil
 nvidia-ml-py  # MLflow system metrics: GPU memory/util during training
 lm-eval

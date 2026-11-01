@@ -17,6 +17,23 @@ from pathlib import Path
 from evaluation.spider import db_path, schema_ddl
 from finetune.prompt import build_messages, render
 
+
+def upcast_trainable_to_fp32(model) -> dict[str, int]:
+    """fp16 mixed precision needs fp32 master copies of the trainable weights: the GradScaler
+    unscales gradients in place and has no bf16/fp16 kernel for that. Run 2 on Kaggle crashed
+    with LoRA weights left in bf16 (Qwen3's checkpoint dtype). Frozen 4-bit weights are untouched."""
+    import torch
+
+    counts: dict[str, int] = {}
+    for p in model.parameters():
+        if p.requires_grad:
+            counts[str(p.dtype)] = counts.get(str(p.dtype), 0) + p.numel()
+            if p.dtype != torch.float32:
+                p.data = p.data.float()
+    print(f"trainable params by original dtype: {counts}")
+    return counts
+
+
 TRAIN_SPLITS = ("train_spider.json", "train_others.json")  # standard 8,659-example Spider train
 
 
@@ -105,6 +122,7 @@ def main() -> None:
         ddp_find_unused_parameters=False,
         group_by_length=True,  # prompts range 100-2,000 tokens; batching similar lengths cuts padding
         fp16=True,
+        bf16=False,
         max_length=a.max_len,
         completion_only_loss=True,
         logging_steps=10,
@@ -117,6 +135,7 @@ def main() -> None:
     )
     trainer = SFTTrainer(model=model, args=cfg, train_dataset=train, processing_class=tok,
                          peft_config=peft_cfg)
+    upcast_trainable_to_fp32(trainer.model)
     trainer.train(resume_from_checkpoint=any(a.out.glob("checkpoint-*")))
     trainer.save_model(str(a.out / "adapter"))
     if trainer.is_world_process_zero():

@@ -83,8 +83,9 @@ Target from the plan: ≥ +10 points execution accuracy.
 | Run | Commit | Outcome | Cause / fix |
 |---|---|---|---|
 | 1 | b849d6a | Failed after ~2 min (no GPU work done) | Kaggle auto-unpacks an uploaded `.tar` into `src/`, so the notebook found the commit marker but copied an empty folder. Every module import then failed. Fix: locate the code via `pyproject.toml`. Setup now fails fast unless the repo and training deps import, and the results cell always writes a zip. |
+| 2 | 65d2d7f | All steps failed, ~20 min of GPU | Three separate problems. (a) vLLM 0.19 picked the **FlashInfer** attention backend, which JIT-compiles kernels on first use and failed to link on Kaggle (`ld: cannot find -lcuda`). Fix: `attention_backend="TRITON_ATTN"`, which needs no build step, plus the FlashInfer sampler off. (b) The SFT smoke run was one process seeing two GPUs, so Trainer wrapped the model in `nn.DataParallel`, which SFTTrainer rejects. Fix: `CUDA_VISIBLE_DEVICES=0` for single-process runs. (c) DDP training crashed in the fp16 GradScaler (`_amp_foreach_non_finite_check_and_unscale_cuda not implemented for 'BFloat16'`): trainable LoRA weights were bf16, Qwen3's checkpoint dtype. Fix: upcast trainable params to fp32 (fp32 master weights are standard for fp16 AMP) and set `bf16=False`. Also: steps are now gated, so a failure skips its dependants and `status.json` records what ran. |
 
-Kaggle image facts observed in run 1: Python 3.13, torch 2.11.0+cu128, transformers 5.16.1, peft 0.20.0, accelerate 1.14.0, driver 580, 2× Tesla T4 (15,360 MiB, compute capability 7.5). vLLM, TRL and bitsandbytes are not preinstalled. **`torch.cuda.is_bf16_supported()` returns True on the T4**, but the T4 has no bf16 hardware and runs it through slow emulation. So the code sets fp16 explicitly and never trusts that check.
+Kaggle image facts observed in runs 1–2: Python 3.13, torch 2.11.0+cu128, transformers 5.16.1, peft 0.20.0, accelerate 1.14.0, driver 580, 2× Tesla T4 (15,360 MiB, compute capability 7.5). vLLM, TRL and bitsandbytes are not preinstalled. `pip install vllm` resolved to **0.19.0** (not the latest 0.32), downgrading torch to 2.10.0 and transformers to 4.57.6. These versions are now pinned in `requirements-gpu.txt`. vLLM on T4 offered FLASHINFER, TRITON_ATTN and FLEX_ATTENTION; FlashAttention-2 was rejected (needs compute capability 8.0+). **`torch.cuda.is_bf16_supported()` returns True on the T4**, but the T4 has no bf16 hardware and runs it through slow emulation. So the code sets fp16 explicitly and never trusts that check.
 
 ---
 
@@ -95,7 +96,8 @@ Kaggle image facts observed in run 1: Python 3.13, torch 2.11.0+cu128, transform
 3. **Qwen3 thinking mode is on by default.** I pass `enable_thinking=False` to the chat template. The template then inserts an empty `<think>\n\n</think>` block, and the audit verified that train and serve prompts both contain it.
 4. **Token-boundary bug in the benchmark prompt generator** (written for Week 2, caught by a unit test). Decoding prefix and suffix separately, then joining strings, merges tokens at the seam and changes the prompt length. Fix: concatenate token IDs, decode once.
 5. **Spider on the Hub has no databases.** Execution accuracy needs the SQLite files, hence the pinned zip.
-6. **Kaggle unpacks uploaded archives.** The first remote run lost its code to this (see run history). Lesson: launch scripts must fail fast on setup, and results collection must never be the step that crashes.
+6. **Three ways a working T4 recipe broke on a new software stack (run 2):** an attention backend that JIT-compiles kernels, `nn.DataParallel` silently kicking in when two GPUs are visible, and bf16 trainable weights under fp16 AMP. Each is a classic production failure: *the default changed under you*. Pin versions and backends explicitly.
+7. **Kaggle unpacks uploaded archives.** The first remote run lost its code to this (see run history). Lesson: launch scripts must fail fast on setup, and results collection must never be the step that crashes.
 
 ---
 
