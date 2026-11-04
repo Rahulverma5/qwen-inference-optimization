@@ -1,0 +1,6 @@
+    c1: 0.15 req/s, 39 out tok/s, TTFT p95 896 ms, TPOT p95 22.9 ms, errors 0.0%, KV max 3%, waiting max 0
+    c2: 0.22 req/s, 56 out tok/s, TTFT p95 973 ms, TPOT p95 32.4 ms, errors 0.0%, KV max 5%, waiting max 0
+    c4: 0.29 req/s, 74 out tok/s, TTFT p95 2709 ms, TPOT p95 50.5 ms, errors 0.0%, KV max 11%, waiting max 2
+    c8: 0.34 req/s, 87 out tok/s, TTFT p95 3681 ms, TPOT p95 87.3 ms, errors 0.0%, KV max 21%, waiting max 6
+   c16: 0.38 req/s, 96 out tok/s, TTFT p95 10950 ms, TPOT p95 158.2 ms, errors 0.0%, KV max 43%, waiting max 13
+   c32: 0.40 req/s, 101 out tok/s, TTFT p95 26522 ms, TPOT p95 298.9 ms, errors 0.0%, KV max 85%, waiting max 29

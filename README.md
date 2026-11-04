@@ -16,7 +16,7 @@ free-tier resources.
 | Week | Milestone | Status |
 |---|---|---|
 | 1 | T4 smoke test, baseline Spider eval, QLoRA SFT, merge | **done**: Spider dev exec accuracy 55.9% → **64.6%** (+8.7, p≈4e-9) after 77 min QLoRA on 2× T4 ([write-up](docs/weeks/week1.md)) |
-| 2 | Streaming benchmark harness, KV-cache capacity model, T4 SLOs | harness + calculator ready |
+| 2 | Streaming benchmark harness, KV-cache capacity model, T4 SLOs | **done**: one T4 serves Spider at **8.3 req/s** (8 concurrent) within p95 SLOs; KV model within 0.8% of vLLM; decode cost dominated by attention at ~11% of T4 bandwidth ([write-up](docs/weeks/week2.md)) |
 | 3 | AWQ / GPTQ / W8A8 / GGUF + serving experiments (batching, prefix cache, chunked prefill, TP=2 vs replicas, spec decoding) | — |
 | 4 | FastAPI gateway (auth, rate limit, 429 back-pressure, health/ready, metrics), Docker, compose + Prometheus/Grafana | — |
 | 5 | Terraform: Cloud Run + EC2, CloudWatch / Cloud Monitoring, CI deploy, write-up | — |
@@ -73,6 +73,11 @@ On a T4 (15 GiB usable, 0.9 utilization, 3.4 GiB fp16 weights, ~1 GiB activation
 ~9.1 GiB of KV cache: **20 concurrent 4k-token sequences, or 5 at 16k**. The target of 32×4k
 from the original plan therefore needs smaller weights (W4A16 ≈ 1.2 GiB) **and** a smaller KV
 cache (fp8 KV, if the pinned vLLM supports it on sm75). Week 3 tests whether that holds.
+
+Measured (Week 2): vLLM 0.19 allocates **86,400 KV tokens (21.1× at 4k)**; the calculator, fed the
+measured 3.2 GiB of weights, predicts 87,069. But KV capacity turned out not to be the binding
+limit: per-token latency is ≈ 17.7 ms + 3.2 ms per 1k tokens of batch context, i.e. the attention
+kernel, not memory, caps long-context concurrency on T4.
 
 ## T4 (sm75) constraints that shape the experiments
 

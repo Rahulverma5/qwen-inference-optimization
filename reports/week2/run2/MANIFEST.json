@@ -1,0 +1,18 @@
+{
+  "short_v1": {
+    "num_prompts": 200,
+    "sha256": "47c0bdd27ea1d30cc760e8e9d038e257ef8941eb38e9757db3e978c3ddcbadd0"
+  },
+  "long_v1": {
+    "num_prompts": 100,
+    "sha256": "c118672e52a3ecf168f85d812cbfcde6730ca142dc51a5329eef7f11c7710274"
+  },
+  "shared_prefix_v1": {
+    "num_prompts": 200,
+    "sha256": "92909a7d2cfba0f00a317272aab56e4a3bd22b3d706828e1e7773e0e9bf4a6b4"
+  },
+  "spider_v1": {
+    "num_prompts": 300,
+    "sha256": "28986920153546fa95dc3b95792159cad1069cca965842846bff065695217ec0"
+  }
+}

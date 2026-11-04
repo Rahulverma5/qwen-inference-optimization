@@ -86,7 +86,10 @@ def main() -> None:
     a.log.with_suffix(".cmd").write_text(" ".join(cmd) + "\n")
     print("$", " ".join(cmd), flush=True)
 
-    env = os.environ | {"VLLM_USE_FLASHINFER_SAMPLER": "0"}  # same JIT problem as the backend
+    env = os.environ | {
+        "VLLM_USE_FLASHINFER_SAMPLER": "0",  # same JIT problem as the backend
+        "VLLM_SERVER_DEV_MODE": "1",  # exposes /reset_prefix_cache; the server is never public
+    }
     with a.log.open("w") as log:
         proc = subprocess.Popen(cmd, stdout=log, stderr=subprocess.STDOUT, env=env,
                                 start_new_session=True)  # survives this script exiting

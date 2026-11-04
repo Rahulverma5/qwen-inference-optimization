@@ -98,6 +98,16 @@ async def measure(url, model, items, level, closed, ignore_eos, timeout, scrape)
     return recs, wall, sampler
 
 
+def reset_prefix_cache(url: str) -> bool:
+    """Every level replays the same prompts, so without a reset the prefix cache serves later
+    levels from earlier ones (Week 2 run 2: short_v1 hit rate 0% -> 87.5%) and TTFT reads low.
+    vLLM exposes this endpoint only with VLLM_SERVER_DEV_MODE=1 (bench.server sets it)."""
+    try:
+        return httpx.post(f"{url}/reset_prefix_cache", timeout=30).status_code == 200
+    except httpx.HTTPError:
+        return False
+
+
 def env_metadata(url: str) -> dict:
     meta = {"python": platform.python_version(), "host": platform.node(), "url": url}
     try:
@@ -152,11 +162,15 @@ def main() -> None:
     summaries = []
     for level in a.concurrency or a.rate:
         tag = f"c{level}" if a.concurrency else f"r{level}"
+        was_reset = reset_prefix_cache(a.url)
+        if not was_reset:
+            print(f"{tag}: prefix cache NOT reset; TTFT may be optimistic")
         recs, wall, sampler = asyncio.run(measure(
             a.url, a.model, items, level, bool(a.concurrency), ignore_eos, a.timeout,
             scrape=not a.no_scrape))
         write_records(out / f"requests_{tag}.csv", recs)
         s = {"label": a.label, "mode": tag} | summarize(recs, wall)
+        s["prefix_cache_reset"] = int(was_reset)
         if sampler:
             sampler.write(out / f"server_{tag}.csv")
             s |= summarize_samples(sampler.rows)

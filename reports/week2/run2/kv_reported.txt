@@ -1,0 +1,5 @@
+(EngineCore pid=347) INFO 11-01 18:16:37 [cuda.py:274] Using AttentionBackendEnum.TRITON_ATTN backend.
+(EngineCore pid=347) INFO 11-01 18:17:23 [gpu_worker.py:436] Available KV cache memory: 9.23 GiB
+(EngineCore pid=347) INFO 11-01 18:17:23 [gpu_worker.py:470] In v0.19, CUDA graph memory profiling will be enabled by default (VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=1), which more accurately accounts for CUDA graph memory during KV cache allocation. To try it now, set VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=1 and increase --gpu-memory-utilization from 0.9000 to 0.9331 to maintain the same effective KV cache size.
+(EngineCore pid=347) INFO 11-01 18:17:23 [kv_cache_utils.py:1319] GPU KV cache size: 86,400 tokens
+(EngineCore pid=347) INFO 11-01 18:17:23 [kv_cache_utils.py:1324] Maximum concurrency for 4,096 tokens per request: 21.09x

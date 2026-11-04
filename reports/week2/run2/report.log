@@ -1,0 +1,9 @@
+| Workload | Peak out tok/s | Knee c | tok/s at knee | SLO | Max c under SLO | tok/s / req/s at SLO | Little min | Peak KV use |
+|---|---|---|---|---|---|---|---|---|
+| baseline/spider_v1 | 577 | 16 | 378 | ttft_s_p95 <= 1000 ms, tpot_s_p95 <= 50 ms, e2e_s_p95 <= 3000 ms | 8 | 260 / 8.33 | 0.83 | 11% |
+| baseline/long_v1 | 101 | 2 | 56 | ttft_s_p95 <= 2000 ms, tpot_s_p95 <= 50 ms | 2 | 56 / 0.22 | 0.96 | 85% |
+| baseline/short_v1 | 995 | 16 | 549 | ttft_s_p95 <= 500 ms, tpot_s_p95 <= 50 ms | 32 | 749 / 5.85 | 0.91 | 19% |
+| baseline/shared_prefix_v1 | 187 | 4 | 103 | ttft_s_p95 <= 1000 ms, tpot_s_p95 <= 50 ms | 2 | 71 / 0.28 | 0.96 | 58% |
+
+wrote /kaggle/working/week2/report/throughput_vs_tpot.png
+wrote /kaggle/working/week2/report/latency_vs_concurrency.png

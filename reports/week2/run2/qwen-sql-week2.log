@@ -1,0 +1,277 @@
+[{"stream_name":"stderr","time":7.278250056,"data":"/usr/local/lib/python3.13/dist-packages/nbformat/validator.py:434: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.\n"}
+,{"stream_name":"stderr","time":7.278297266,"data":"  _validate(nbdict, ref, version, version_minor, relax_add_props)\n"}
+,{"stream_name":"stderr","time":8.237415922,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":8.237439355,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":8.237444251,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":8.237448198,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":8.854952898,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":8.85498296,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":8.854986434,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":8.854989029,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":10.311708677,"data":"secret MLFLOW_TRACKING_URI not set; that integration stays off\n"}
+,{"stream_name":"stdout","time":10.311742021,"data":"secret MLFLOW_TRACKING_USERNAME not set; that integration stays off\n"}
+,{"stream_name":"stdout","time":10.31174777,"data":"secret MLFLOW_TRACKING_PASSWORD not set; that integration stays off\n"}
+,{"stream_name":"stdout","time":41.027639856,"data":"code commit: 56e79b7\n"}
+,{"stream_name":"stdout","time":41.027677415,"data":"/kaggle/working/repo\n"}
+,{"stream_name":"stdout","time":303.02660577,"data":"google-ai-generativelanguage 0.6.15 requires protobuf!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5,\u003c6.0.0dev,\u003e=3.20.2, but you have protobuf 6.33.6 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":303.026668476,"data":"cuda-python 12.9.7 requires cuda-bindings~=12.9.7, but you have cuda-bindings 12.9.4 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":303.026680157,"data":"grpcio-status 1.71.2 requires protobuf\u003c6.0dev,\u003e=5.26.1, but you have protobuf 6.33.6 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":344.989235543,"data":"repo and serving deps import OK\n"}
+,{"stream_name":"stdout","time":345.045538341,"data":"name, driver_version, memory.total [MiB], compute_cap\r\n"}
+,{"stream_name":"stdout","time":345.04556663,"data":"Tesla T4, 580.178.04, 15360 MiB, 7.5\r\n"}
+,{"stream_name":"stdout","time":345.045570619,"data":"Tesla T4, 580.178.04, 15360 MiB, 7.5\r\n"}
+,{"stream_name":"stdout","time":346.240316111,"data":"peft==0.20.0\r\n"}
+,{"stream_name":"stdout","time":346.24035597,"data":"torch==2.10.0\r\n"}
+,{"stream_name":"stdout","time":346.24036191,"data":"transformers==4.57.6\r\n"}
+,{"stream_name":"stdout","time":346.240367009,"data":"vllm==0.19.0\r\n"}
+,{"stream_name":"stdout","time":346.3530324,"data":"4\r\n"}
+,{"stream_name":"stdout","time":355.827073669,"data":"\rspider_data.zip:   0%|                               | 0.00/206M [00:00\u003c?, ?B/s]\rspider_data.zip:   0%|                               | 0.00/206M [00:00\u003c?, ?B/s]\rspider_data.zip:  84%|███████████████████▎   | 173M/206M [00:08\u003c00:01, 20.4MB/s]\rspider_data.zip: 100%|███████████████████████| 206M/206M [00:08\u003c00:00, 23.5MB/s]\r\n"}
+,{"stream_name":"stdout","time":361.843784158,"data":"extracted 1312 entries -\u003e /kaggle/working/data/spider_data\r\n"}
+,{"stream_name":"stdout","time":361.994484638,"data":"--- workloads: python -m bench.workloads --tokenizer Qwen/Qwen3-1.7B --out /kaggle/working/week2/workloads --spider-dir /kaggle/working/data/spider_data\n"}
+,{"stream_name":"stdout","time":371.951977452,"data":"wrote 200 prompts -\u003e /kaggle/working/week2/workloads/short_v1.jsonl\n"}
+,{"stream_name":"stdout","time":371.952015129,"data":"wrote 100 prompts -\u003e /kaggle/working/week2/workloads/long_v1.jsonl\n"}
+,{"stream_name":"stdout","time":371.952019337,"data":"wrote 200 prompts -\u003e /kaggle/working/week2/workloads/shared_prefix_v1.jsonl\n"}
+,{"stream_name":"stdout","time":371.952023308,"data":"wrote 300 prompts -\u003e /kaggle/working/week2/workloads/spider_v1.jsonl\n"}
+,{"stream_name":"stdout","time":372.597815902,"data":"--- workloads: ok\n"}
+,{"stream_name":"stdout","time":377.662673274,"data":"--- merge: python -m finetune.merge --base Qwen/Qwen3-1.7B --adapter /kaggle/input/datasets/rahulverma52/qwen-sql-week1-adapter --out /kaggle/working/sft-merged\n"}
+,{"stream_name":"stdout","time":388.876184394,"data":"`torch_dtype` is deprecated! Use `dtype` instead!\n"}
+,{"stream_name":"stdout","time":389.574614012,"data":"\n"}
+,{"stream_name":"stdout","time":405.663503332,"data":"\n"}
+,{"stream_name":"stdout","time":437.516686235,"data":"--- merge: ok\n"}
+,{"stream_name":"stdout","time":437.713944201,"data":"weights on disk: 3.20 GiB\n"}
+,{"stream_name":"stdout","time":437.713973303,"data":"--- kv_predict: python -m bench.kv_cache --model /kaggle/working/sft-merged --weight-gib 3.20 --seq-len 2048 4096 16384\n"}
+,{"stream_name":"stdout","time":437.71398026,"data":"/kaggle/working/sft-merged: AttnShape(num_layers=28, num_kv_heads=8, head_dim=128)\n"}
+,{"stream_name":"stdout","time":437.71398517,"data":"KV bytes/token (float16): 114,688 (112 KiB)\n"}
+,{"stream_name":"stdout","time":437.713989738,"data":"KV budget: 9.30 GiB -\u003e 87,069 tokens total\n"}
+,{"stream_name":"stdout","time":437.713994925,"data":"  seq_len=  2048: 0.219 GiB/seq, max concurrent = 42\n"}
+,{"stream_name":"stdout","time":437.714001388,"data":"  seq_len=  4096: 0.438 GiB/seq, max concurrent = 21\n"}
+,{"stream_name":"stdout","time":437.714011087,"data":"  seq_len= 16384: 1.750 GiB/seq, max concurrent = 5\n"}
+,{"stream_name":"stdout","time":437.714015056,"data":"--- kv_predict: ok\n"}
+,{"stream_name":"stdout","time":437.714018146,"data":"--- server: CUDA_VISIBLE_DEVICES=0 python -m bench.server --model /kaggle/working/sft-merged --profile baseline --log /kaggle/working/week2/server.log\n"}
+,{"stream_name":"stdout","time":438.068105194,"data":"$ vllm serve /kaggle/working/sft-merged --served-model-name qwen-sql --port 8000 --dtype float16 --max-model-len 4096 --gpu-memory-utilization 0.9 --max-num-seqs 256 --attention-backend TRITON_ATTN --enable-prefix-caching --enable-chunked-prefill --seed 0\n"}
+,{"stream_name":"stdout","time":556.623439096,"data":"ready in 119 s at http://localhost:8000; KV capacity: {'kv_cache_tokens': 86400, 'max_concurrency_seq_len': 4096, 'max_concurrency': 21.09}\n"}
+,{"stream_name":"stdout","time":556.623486868,"data":"--- server: ok\n"}
+,{"stream_name":"stdout","time":556.623493756,"data":"(EngineCore pid=347) INFO 11-01 18:16:37 [cuda.py:274] Using AttentionBackendEnum.TRITON_ATTN backend.\r\n"}
+,{"stream_name":"stdout","time":556.623500155,"data":"(EngineCore pid=347) INFO 11-01 18:17:23 [gpu_worker.py:436] Available KV cache memory: 9.23 GiB\r\n"}
+,{"stream_name":"stdout","time":556.623513553,"data":"(EngineCore pid=347) INFO 11-01 18:17:23 [gpu_worker.py:470] In v0.19, CUDA graph memory profiling will be enabled by default (VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=1), which more accurately accounts for CUDA graph memory during KV cache allocation. To try it now, set VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=1 and increase --gpu-memory-utilization from 0.9000 to 0.9331 to maintain the same effective KV cache size.\r\n"}
+,{"stream_name":"stdout","time":556.623519741,"data":"(EngineCore pid=347) INFO 11-01 18:17:23 [kv_cache_utils.py:1319] GPU KV cache size: 86,400 tokens\r\n"}
+,{"stream_name":"stdout","time":556.623523211,"data":"(EngineCore pid=347) INFO 11-01 18:17:23 [kv_cache_utils.py:1324] Maximum concurrency for 4,096 tokens per request: 21.09x\r\n"}
+,{"stream_name":"stdout","time":556.759161492,"data":"--- sweep_short_v1: python -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week2/workloads/short_v1.jsonl --concurrency 1 2 4 8 16 32 64  --label baseline/short_v1 --out /kaggle/working/week2/runs/short_v1\n"}
+,{"stream_name":"stdout","time":1538.405296896,"data":"    c1: 0.47 req/s, 61 out tok/s, TTFT p95 39 ms, TPOT p95 16.4 ms, errors 0.0%, KV max 0%, waiting max 0\n"}
+,{"stream_name":"stdout","time":1538.405346087,"data":"    c2: 0.87 req/s, 111 out tok/s, TTFT p95 46 ms, TPOT p95 17.8 ms, errors 0.0%, KV max 1%, waiting max 0\n"}
+,{"stream_name":"stdout","time":1538.405352903,"data":"    c4: 1.59 req/s, 204 out tok/s, TTFT p95 64 ms, TPOT p95 19.4 ms, errors 0.0%, KV max 1%, waiting max 0\n"}
+,{"stream_name":"stdout","time":1538.405358547,"data":"    c8: 2.76 req/s, 353 out tok/s, TTFT p95 79 ms, TPOT p95 22.3 ms, errors 0.0%, KV max 2%, waiting max 0\n"}
+,{"stream_name":"stdout","time":1538.405363648,"data":"   c16: 4.29 req/s, 549 out tok/s, TTFT p95 114 ms, TPOT p95 28.1 ms, errors 0.0%, KV max 5%, waiting max 0\n"}
+,{"stream_name":"stdout","time":1538.405368797,"data":"   c32: 5.85 req/s, 749 out tok/s, TTFT p95 219 ms, TPOT p95 40.2 ms, errors 0.0%, KV max 9%, waiting max 0\n"}
+,{"stream_name":"stdout","time":1538.405373263,"data":"   c64: 7.78 req/s, 995 out tok/s, TTFT p95 790 ms, TPOT p95 58.2 ms, errors 0.0%, KV max 19%, waiting max 0\n"}
+,{"stream_name":"stdout","time":1538.405377631,"data":"--- sweep_short_v1: ok\n"}
+,{"stream_name":"stdout","time":1538.405381814,"data":"--- sweep_long_v1: python -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week2/workloads/long_v1.jsonl --concurrency 1 2 4 8 16 32  --label baseline/long_v1 --out /kaggle/working/week2/runs/long_v1\n"}
+,{"stream_name":"stdout","time":3889.482124433,"data":"    c1: 0.15 req/s, 39 out tok/s, TTFT p95 896 ms, TPOT p95 22.9 ms, errors 0.0%, KV max 3%, waiting max 0\n"}
+,{"stream_name":"stdout","time":3889.482191565,"data":"    c2: 0.22 req/s, 56 out tok/s, TTFT p95 973 ms, TPOT p95 32.4 ms, errors 0.0%, KV max 5%, waiting max 0\n"}
+,{"stream_name":"stdout","time":3889.482196457,"data":"    c4: 0.29 req/s, 74 out tok/s, TTFT p95 2709 ms, TPOT p95 50.5 ms, errors 0.0%, KV max 11%, waiting max 2\n"}
+,{"stream_name":"stdout","time":3889.482199658,"data":"    c8: 0.34 req/s, 87 out tok/s, TTFT p95 3681 ms, TPOT p95 87.3 ms, errors 0.0%, KV max 21%, waiting max 6\n"}
+,{"stream_name":"stdout","time":3889.482202873,"data":"   c16: 0.38 req/s, 96 out tok/s, TTFT p95 10950 ms, TPOT p95 158.2 ms, errors 0.0%, KV max 43%, waiting max 13\n"}
+,{"stream_name":"stdout","time":3889.482205851,"data":"   c32: 0.40 req/s, 101 out tok/s, TTFT p95 26522 ms, TPOT p95 298.9 ms, errors 0.0%, KV max 85%, waiting max 29\n"}
+,{"stream_name":"stdout","time":3889.482208853,"data":"--- sweep_long_v1: ok\n"}
+,{"stream_name":"stdout","time":3889.482212043,"data":"--- sweep_shared_prefix_v1: python -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week2/workloads/shared_prefix_v1.jsonl --concurrency 1 2 4 8 16 32 64  --label baseline/shared_prefix_v1 --out /kaggle/working/week2/runs/shared_prefix_v1\n"}
+,{"stream_name":"stdout","time":7603.236137852,"data":"    c1: 0.18 req/s, 45 out tok/s, TTFT p95 286 ms, TPOT p95 21.3 ms, errors 0.0%, KV max 2%, waiting max 0\n"}
+,{"stream_name":"stdout","time":7603.236179084,"data":"    c2: 0.28 req/s, 71 out tok/s, TTFT p95 575 ms, TPOT p95 27.2 ms, errors 0.0%, KV max 3%, waiting max 0\n"}
+,{"stream_name":"stdout","time":7603.2361854,"data":"    c4: 0.40 req/s, 103 out tok/s, TTFT p95 1091 ms, TPOT p95 37.9 ms, errors 0.0%, KV max 5%, waiting max 0\n"}
+,{"stream_name":"stdout","time":7603.236190461,"data":"    c8: 0.52 req/s, 133 out tok/s, TTFT p95 1892 ms, TPOT p95 59.0 ms, errors 0.0%, KV max 8%, waiting max 3\n"}
+,{"stream_name":"stdout","time":7603.236194941,"data":"   c16: 0.61 req/s, 155 out tok/s, TTFT p95 3057 ms, TPOT p95 100.8 ms, errors 0.0%, KV max 15%, waiting max 9\n"}
+,{"stream_name":"stdout","time":7603.236199417,"data":"   c32: 0.66 req/s, 168 out tok/s, TTFT p95 6724 ms, TPOT p95 183.1 ms, errors 0.0%, KV max 30%, waiting max 24\n"}
+,{"stream_name":"stdout","time":7603.236204053,"data":"   c64: 0.73 req/s, 187 out tok/s, TTFT p95 16436 ms, TPOT p95 327.4 ms, errors 0.0%, KV max 58%, waiting max 54\n"}
+,{"stream_name":"stdout","time":7603.236209148,"data":"--- sweep_shared_prefix_v1: ok\n"}
+,{"stream_name":"stdout","time":7603.236216828,"data":"--- sweep_spider_v1: python -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week2/workloads/spider_v1.jsonl --concurrency 1 2 4 8 16 32 64 --no-ignore-eos --label baseline/spider_v1 --out /kaggle/working/week2/runs/spider_v1\n"}
+,{"stream_name":"stdout","time":8030.481305789,"data":"    c1: 1.76 req/s, 55 out tok/s, TTFT p95 59 ms, TPOT p95 18.2 ms, errors 0.0%, KV max 1%, waiting max 0\n"}
+,{"stream_name":"stdout","time":8030.481342256,"data":"    c2: 3.09 req/s, 96 out tok/s, TTFT p95 69 ms, TPOT p95 20.5 ms, errors 0.0%, KV max 2%, waiting max 0\n"}
+,{"stream_name":"stdout","time":8030.481351196,"data":"    c4: 5.33 req/s, 166 out tok/s, TTFT p95 80 ms, TPOT p95 23.7 ms, errors 0.0%, KV max 3%, waiting max 0\n"}
+,{"stream_name":"stdout","time":8030.481354438,"data":"    c8: 8.33 req/s, 260 out tok/s, TTFT p95 106 ms, TPOT p95 30.2 ms, errors 0.0%, KV max 4%, waiting max 0\n"}
+,{"stream_name":"stdout","time":8030.481357603,"data":"   c16: 12.11 req/s, 378 out tok/s, TTFT p95 139 ms, TPOT p95 41.0 ms, errors 0.0%, KV max 6%, waiting max 0\n"}
+,{"stream_name":"stdout","time":8030.481360723,"data":"   c32: 15.24 req/s, 476 out tok/s, TTFT p95 224 ms, TPOT p95 61.1 ms, errors 0.0%, KV max 8%, waiting max 0\n"}
+,{"stream_name":"stdout","time":8030.481363739,"data":"   c64: 18.49 req/s, 577 out tok/s, TTFT p95 455 ms, TPOT p95 93.3 ms, errors 0.0%, KV max 11%, waiting max 0\n"}
+,{"stream_name":"stdout","time":8030.481366691,"data":"--- sweep_spider_v1: ok\n"}
+,{"stream_name":"stdout","time":8030.61295874,"data":"closed-loop peak 18.49 req/s -\u003e rates [4.62, 9.24, 13.87, 16.64, 18.49, 22.19]\n"}
+,{"stream_name":"stdout","time":8030.612993696,"data":"--- open_spider_v1: python -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week2/workloads/spider_v1.jsonl --rate 4.62 9.24 13.87 16.64 18.49 22.19 --no-ignore-eos --label baseline/spider_v1_open --out /kaggle/working/week2/runs/spider_v1_open\n"}
+,{"stream_name":"stdout","time":8225.855780124,"data":" r4.62: 4.43 req/s, 138 out tok/s, TTFT p95 91 ms, TPOT p95 28.4 ms, errors 0.0%, KV max 4%, waiting max 0\n"}
+,{"stream_name":"stdout","time":8225.85581351,"data":" r9.24: 8.54 req/s, 266 out tok/s, TTFT p95 129 ms, TPOT p95 42.5 ms, errors 0.0%, KV max 6%, waiting max 0\n"}
+,{"stream_name":"stdout","time":8225.855832225,"data":"r13.87: 11.93 req/s, 372 out tok/s, TTFT p95 178 ms, TPOT p95 57.4 ms, errors 0.0%, KV max 8%, waiting max 0\n"}
+,{"stream_name":"stdout","time":8225.855835244,"data":"r16.64: 13.67 req/s, 427 out tok/s, TTFT p95 212 ms, TPOT p95 67.4 ms, errors 0.0%, KV max 9%, waiting max 0\n"}
+,{"stream_name":"stdout","time":8225.85583777,"data":"r18.49: 14.63 req/s, 456 out tok/s, TTFT p95 239 ms, TPOT p95 75.1 ms, errors 0.0%, KV max 9%, waiting max 0\n"}
+,{"stream_name":"stdout","time":8225.855840152,"data":"r22.19: 16.14 req/s, 504 out tok/s, TTFT p95 304 ms, TPOT p95 94.3 ms, errors 0.0%, KV max 11%, waiting max 0\n"}
+,{"stream_name":"stdout","time":8225.855842524,"data":"--- open_spider_v1: ok\n"}
+,{"stream_name":"stdout","time":8225.983908192,"data":"--- vllm_bench_c1: vllm bench serve --backend vllm --base-url http://localhost:8000 --model qwen-sql --tokenizer /kaggle/working/sft-merged --dataset-name random --random-input-len 128 --random-output-len 128 --num-prompts 200 --max-concurrency 1 --ignore-eos --percentile-metrics ttft,tpot,itl,e2el --metric-percentiles 50,95,99 --save-result --result-dir /kaggle/working/week2/vllm_bench --result-filename c1.json\n"}
+,{"stream_name":"stdout","time":8242.354845771,"data":"The tokenizer you are loading from '/kaggle/working/sft-merged' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.\n"}
+,{"stream_name":"stdout","time":8242.354916277,"data":"Namespace(subparser='bench', bench_type='serve', dispatch_function=\u003cfunction BenchmarkServingSubcommand.cmd at 0x7947d2b6a700\u003e, trust_remote_code=False, seed=0, num_prompts=200, dataset_name='random', no_stream=False, dataset_path=None, no_oversample=False, skip_chat_template=False, enable_multimodal_chat=False, disable_shuffle=False, custom_output_len=256, spec_bench_output_len=256, spec_bench_category=None, sonnet_input_len=550, sonnet_output_len=150, sonnet_prefix_len=200, sharegpt_output_len=None, blazedit_min_distance=0.0, blazedit_max_distance=1.0, asr_max_audio_len_sec=inf, asr_min_audio_len_sec=0.0, random_input_len=128, random_output_len=128, random_range_ratio=0.0, random_prefix_len=0, random_batch_size=1, no_reranker=False, random_mm_base_items_per_request=1, random_mm_num_mm_items_range_ratio=0.0, random_mm_limit_mm_per_prompt={'image': 255, 'video': 1}, random_mm_bucket_config={(256, 256, 1): 0.5, (720, 1280, 1): 0.5, (720, 1280, 16): 0.0}, hf_subset=None, hf_split=None, hf_name=None, hf_output_len=None, prefix_repetition_prefix_len=256, prefix_repetition_suffix_len=256, prefix_repetition_num_prefixes=10, prefix_repetition_output_len=128, label=None, backend='vllm', base_url='http://localhost:8000', host='127.0.0.1', port=8000, endpoint='/v1/completions', header=None, max_concurrency=1, model='qwen-sql', input_len=None, output_len=None, tokenizer='/kaggle/working/sft-merged', tokenizer_mode='auto', use_beam_search=False, logprobs=None, request_rate=inf, burstiness=1.0, disable_tqdm=False, num_warmups=0, profile=False, save_result=True, save_detailed=False, append_result=False, metadata=None, result_dir='/kaggle/working/week2/vllm_bench', result_filename='c1.json', ignore_eos=True, percentile_metrics='ttft,tpot,itl,e2el', metric_percentiles='50,95,99', goodput=None, request_id_prefix='bench-6fec26a1-', top_p=None, top_k=None, min_p=None, temperature=None, frequency_penalty=None, presence_penalty=None, repetition_penalty=None, served_model_name=None, lora_modules=None, lora_assignment='random', ramp_up_strategy=None, ramp_up_start_rps=None, ramp_up_end_rps=None, ready_check_timeout_sec=0, extra_body=None, skip_tokenizer_init=False, insecure=False, plot_timeline=False, timeline_itl_thresholds=[25.0, 50.0], plot_dataset_stats=False)\n"}
+,{"stream_name":"stdout","time":8242.354947912,"data":"INFO 11-01 20:25:43 [datasets.py:700] Sampling input_len from [128, 128] and output_len from [128, 128]\n"}
+,{"stream_name":"stdout","time":8243.340736488,"data":"WARNING: vllm bench serve no longer sets temperature==0 (greedy) in requests by default. The default will be determined on the server side and can be model/API specific. For the old behavior, include --temperature=0.\n"}
+,{"stream_name":"stdout","time":8243.340780416,"data":"Starting initial single prompt test run...\n"}
+,{"stream_name":"stdout","time":8243.340784627,"data":"Skipping endpoint ready check.\n"}
+,{"stream_name":"stdout","time":8243.340787117,"data":"Starting main benchmark run...\n"}
+,{"stream_name":"stdout","time":8243.340789533,"data":"Traffic request rate: inf\n"}
+,{"stream_name":"stdout","time":8243.340791866,"data":"Burstiness factor: 1.0 (Poisson process)\n"}
+,{"stream_name":"stdout","time":8243.340794262,"data":"Maximum request concurrency: 1\n"}
+,{"stream_name":"stdout","time":8243.340796792,"data":"\n"}
+,{"stream_name":"stdout","time":8680.823545466,"data":"tip: install termplotlib and gnuplot to plot the metrics\n"}
+,{"stream_name":"stdout","time":8680.823608107,"data":"============ Serving Benchmark Result ============\n"}
+,{"stream_name":"stdout","time":8680.823614316,"data":"Successful requests:                     200       \n"}
+,{"stream_name":"stdout","time":8680.823618744,"data":"Failed requests:                         0         \n"}
+,{"stream_name":"stdout","time":8680.823623033,"data":"Maximum request concurrency:             1         \n"}
+,{"stream_name":"stdout","time":8680.823627632,"data":"Benchmark duration (s):                  437.45    \n"}
+,{"stream_name":"stdout","time":8680.823637117,"data":"Total input tokens:                      25600     \n"}
+,{"stream_name":"stdout","time":8680.823640248,"data":"Total generated tokens:                  25600     \n"}
+,{"stream_name":"stdout","time":8680.823643221,"data":"Request throughput (req/s):              0.46      \n"}
+,{"stream_name":"stdout","time":8680.823646173,"data":"Output token throughput (tok/s):         58.52     \n"}
+,{"stream_name":"stdout","time":8680.823648972,"data":"Peak output token throughput (tok/s):    60.00     \n"}
+,{"stream_name":"stdout","time":8680.823651755,"data":"Peak concurrent requests:                2.00      \n"}
+,{"stream_name":"stdout","time":8680.823654635,"data":"Total token throughput (tok/s):          117.04    \n"}
+,{"stream_name":"stdout","time":8680.82365743,"data":"---------------Time to First Token----------------\n"}
+,{"stream_name":"stdout","time":8680.823660322,"data":"Mean TTFT (ms):                          40.17     \n"}
+,{"stream_name":"stdout","time":8680.823669549,"data":"Median TTFT (ms):                        39.13     \n"}
+,{"stream_name":"stdout","time":8680.823686003,"data":"P50 TTFT (ms):                           39.13     \n"}
+,{"stream_name":"stdout","time":8680.823690964,"data":"P95 TTFT (ms):                           40.43     \n"}
+,{"stream_name":"stdout","time":8680.823696186,"data":"P99 TTFT (ms):                           40.88     \n"}
+,{"stream_name":"stdout","time":8680.823700995,"data":"-----Time per Output Token (excl. 1st token)------\n"}
+,{"stream_name":"stdout","time":8680.823705421,"data":"Mean TPOT (ms):                          16.90     \n"}
+,{"stream_name":"stdout","time":8680.823709704,"data":"Median TPOT (ms):                        16.91     \n"}
+,{"stream_name":"stdout","time":8680.82371393,"data":"P50 TPOT (ms):                           16.91     \n"}
+,{"stream_name":"stdout","time":8680.823718113,"data":"P95 TPOT (ms):                           16.97     \n"}
+,{"stream_name":"stdout","time":8680.823730753,"data":"P99 TPOT (ms):                           17.03     \n"}
+,{"stream_name":"stdout","time":8680.823734272,"data":"---------------Inter-token Latency----------------\n"}
+,{"stream_name":"stdout","time":8680.823737588,"data":"Mean ITL (ms):                           16.90     \n"}
+,{"stream_name":"stdout","time":8680.823740876,"data":"Median ITL (ms):                         16.91     \n"}
+,{"stream_name":"stdout","time":8680.823744195,"data":"P50 ITL (ms):                            16.91     \n"}
+,{"stream_name":"stdout","time":8680.823752327,"data":"P95 ITL (ms):                            17.26     \n"}
+,{"stream_name":"stdout","time":8680.823755282,"data":"P99 ITL (ms):                            17.61     \n"}
+,{"stream_name":"stdout","time":8680.823757506,"data":"----------------End-to-end Latency----------------\n"}
+,{"stream_name":"stdout","time":8680.823759797,"data":"Mean E2EL (ms):                          2186.97   \n"}
+,{"stream_name":"stdout","time":8680.82376204,"data":"Median E2EL (ms):                        2186.41   \n"}
+,{"stream_name":"stdout","time":8680.823764215,"data":"P50 E2EL (ms):                           2186.41   \n"}
+,{"stream_name":"stdout","time":8680.823777852,"data":"P95 E2EL (ms):                           2194.42   \n"}
+,{"stream_name":"stdout","time":8680.823781693,"data":"P99 E2EL (ms):                           2203.07   \n"}
+,{"stream_name":"stdout","time":8680.823785495,"data":"==================================================\n"}
+,{"stream_name":"stdout","time":8681.219663303,"data":"--- vllm_bench_c1: ok\n"}
+,{"stream_name":"stdout","time":8681.219718381,"data":"--- vllm_bench_c8: vllm bench serve --backend vllm --base-url http://localhost:8000 --model qwen-sql --tokenizer /kaggle/working/sft-merged --dataset-name random --random-input-len 128 --random-output-len 128 --num-prompts 200 --max-concurrency 8 --ignore-eos --percentile-metrics ttft,tpot,itl,e2el --metric-percentiles 50,95,99 --save-result --result-dir /kaggle/working/week2/vllm_bench --result-filename c8.json\n"}
+,{"stream_name":"stdout","time":8697.497388651,"data":"The tokenizer you are loading from '/kaggle/working/sft-merged' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.\n"}
+,{"stream_name":"stdout","time":8697.497438821,"data":"Namespace(subparser='bench', bench_type='serve', dispatch_function=\u003cfunction BenchmarkServingSubcommand.cmd at 0x79dc884b2700\u003e, trust_remote_code=False, seed=0, num_prompts=200, dataset_name='random', no_stream=False, dataset_path=None, no_oversample=False, skip_chat_template=False, enable_multimodal_chat=False, disable_shuffle=False, custom_output_len=256, spec_bench_output_len=256, spec_bench_category=None, sonnet_input_len=550, sonnet_output_len=150, sonnet_prefix_len=200, sharegpt_output_len=None, blazedit_min_distance=0.0, blazedit_max_distance=1.0, asr_max_audio_len_sec=inf, asr_min_audio_len_sec=0.0, random_input_len=128, random_output_len=128, random_range_ratio=0.0, random_prefix_len=0, random_batch_size=1, no_reranker=False, random_mm_base_items_per_request=1, random_mm_num_mm_items_range_ratio=0.0, random_mm_limit_mm_per_prompt={'image': 255, 'video': 1}, random_mm_bucket_config={(256, 256, 1): 0.5, (720, 1280, 1): 0.5, (720, 1280, 16): 0.0}, hf_subset=None, hf_split=None, hf_name=None, hf_output_len=None, prefix_repetition_prefix_len=256, prefix_repetition_suffix_len=256, prefix_repetition_num_prefixes=10, prefix_repetition_output_len=128, label=None, backend='vllm', base_url='http://localhost:8000', host='127.0.0.1', port=8000, endpoint='/v1/completions', header=None, max_concurrency=8, model='qwen-sql', input_len=None, output_len=None, tokenizer='/kaggle/working/sft-merged', tokenizer_mode='auto', use_beam_search=False, logprobs=None, request_rate=inf, burstiness=1.0, disable_tqdm=False, num_warmups=0, profile=False, save_result=True, save_detailed=False, append_result=False, metadata=None, result_dir='/kaggle/working/week2/vllm_bench', result_filename='c8.json', ignore_eos=True, percentile_metrics='ttft,tpot,itl,e2el', metric_percentiles='50,95,99', goodput=None, request_id_prefix='bench-2a44b190-', top_p=None, top_k=None, min_p=None, temperature=None, frequency_penalty=None, presence_penalty=None, repetition_penalty=None, served_model_name=None, lora_modules=None, lora_assignment='random', ramp_up_strategy=None, ramp_up_start_rps=None, ramp_up_end_rps=None, ready_check_timeout_sec=0, extra_body=None, skip_tokenizer_init=False, insecure=False, plot_timeline=False, timeline_itl_thresholds=[25.0, 50.0], plot_dataset_stats=False)\n"}
+,{"stream_name":"stdout","time":8697.497469109,"data":"INFO 11-01 20:33:18 [datasets.py:700] Sampling input_len from [128, 128] and output_len from [128, 128]\n"}
+,{"stream_name":"stdout","time":8698.473316945,"data":"WARNING: vllm bench serve no longer sets temperature==0 (greedy) in requests by default. The default will be determined on the server side and can be model/API specific. For the old behavior, include --temperature=0.\n"}
+,{"stream_name":"stdout","time":8698.473368475,"data":"Starting initial single prompt test run...\n"}
+,{"stream_name":"stdout","time":8698.473374281,"data":"Skipping endpoint ready check.\n"}
+,{"stream_name":"stdout","time":8698.473378149,"data":"Starting main benchmark run...\n"}
+,{"stream_name":"stdout","time":8698.473381856,"data":"Traffic request rate: inf\n"}
+,{"stream_name":"stdout","time":8698.473385568,"data":"Burstiness factor: 1.0 (Poisson process)\n"}
+,{"stream_name":"stdout","time":8698.47338962,"data":"Maximum request concurrency: 8\n"}
+,{"stream_name":"stdout","time":8698.473393362,"data":"\n"}
+,{"stream_name":"stdout","time":8782.168323325,"data":"tip: install termplotlib and gnuplot to plot the metrics\n"}
+,{"stream_name":"stdout","time":8782.168356695,"data":"============ Serving Benchmark Result ============\n"}
+,{"stream_name":"stdout","time":8782.168362999,"data":"Successful requests:                     200       \n"}
+,{"stream_name":"stdout","time":8782.168367523,"data":"Failed requests:                         0         \n"}
+,{"stream_name":"stdout","time":8782.168371532,"data":"Maximum request concurrency:             8         \n"}
+,{"stream_name":"stdout","time":8782.168375944,"data":"Benchmark duration (s):                  83.66     \n"}
+,{"stream_name":"stdout","time":8782.168380123,"data":"Total input tokens:                      25600     \n"}
+,{"stream_name":"stdout","time":8782.168384604,"data":"Total generated tokens:                  25600     \n"}
+,{"stream_name":"stdout","time":8782.168388927,"data":"Request throughput (req/s):              2.39      \n"}
+,{"stream_name":"stdout","time":8782.168393193,"data":"Output token throughput (tok/s):         306.00    \n"}
+,{"stream_name":"stdout","time":8782.168398043,"data":"Peak output token throughput (tok/s):    368.00    \n"}
+,{"stream_name":"stdout","time":8782.168402688,"data":"Peak concurrent requests:                16.00     \n"}
+,{"stream_name":"stdout","time":8782.168407008,"data":"Total token throughput (tok/s):          612.01    \n"}
+,{"stream_name":"stdout","time":8782.168411249,"data":"---------------Time to First Token----------------\n"}
+,{"stream_name":"stdout","time":8782.16841553,"data":"Mean TTFT (ms):                          419.77    \n"}
+,{"stream_name":"stdout","time":8782.168419843,"data":"Median TTFT (ms):                        72.62     \n"}
+,{"stream_name":"stdout","time":8782.168435876,"data":"P50 TTFT (ms):                           72.62     \n"}
+,{"stream_name":"stdout","time":8782.168438483,"data":"P95 TTFT (ms):                           91.66     \n"}
+,{"stream_name":"stdout","time":8782.168440708,"data":"P99 TTFT (ms):                           8751.52   \n"}
+,{"stream_name":"stdout","time":8782.168442917,"data":"-----Time per Output Token (excl. 1st token)------\n"}
+,{"stream_name":"stdout","time":8782.168445553,"data":"Mean TPOT (ms):                          23.03     \n"}
+,{"stream_name":"stdout","time":8782.168447764,"data":"Median TPOT (ms):                        23.02     \n"}
+,{"stream_name":"stdout","time":8782.168449955,"data":"P50 TPOT (ms):                           23.02     \n"}
+,{"stream_name":"stdout","time":8782.168452159,"data":"P95 TPOT (ms):                           23.30     \n"}
+,{"stream_name":"stdout","time":8782.168454445,"data":"P99 TPOT (ms):                           23.32     \n"}
+,{"stream_name":"stdout","time":8782.168456653,"data":"---------------Inter-token Latency----------------\n"}
+,{"stream_name":"stdout","time":8782.168458935,"data":"Mean ITL (ms):                           23.03     \n"}
+,{"stream_name":"stdout","time":8782.168461157,"data":"Median ITL (ms):                         22.97     \n"}
+,{"stream_name":"stdout","time":8782.168463358,"data":"P50 ITL (ms):                            22.97     \n"}
+,{"stream_name":"stdout","time":8782.168465647,"data":"P95 ITL (ms):                            24.51     \n"}
+,{"stream_name":"stdout","time":8782.168467864,"data":"P99 ITL (ms):                            26.42     \n"}
+,{"stream_name":"stdout","time":8782.168470067,"data":"----------------End-to-end Latency----------------\n"}
+,{"stream_name":"stdout","time":8782.168472786,"data":"Mean E2EL (ms):                          3345.11   \n"}
+,{"stream_name":"stdout","time":8782.168475044,"data":"Median E2EL (ms):                        2995.51   \n"}
+,{"stream_name":"stdout","time":8782.16847726,"data":"P50 E2EL (ms):                           2995.51   \n"}
+,{"stream_name":"stdout","time":8782.168479488,"data":"P95 E2EL (ms):                           3035.41   \n"}
+,{"stream_name":"stdout","time":8782.168481726,"data":"P99 E2EL (ms):                           11701.12  \n"}
+,{"stream_name":"stdout","time":8782.168483969,"data":"==================================================\n"}
+,{"stream_name":"stdout","time":8782.538984707,"data":"--- vllm_bench_c8: ok\n"}
+,{"stream_name":"stdout","time":8782.539017455,"data":"--- vllm_bench_c32: vllm bench serve --backend vllm --base-url http://localhost:8000 --model qwen-sql --tokenizer /kaggle/working/sft-merged --dataset-name random --random-input-len 128 --random-output-len 128 --num-prompts 200 --max-concurrency 32 --ignore-eos --percentile-metrics ttft,tpot,itl,e2el --metric-percentiles 50,95,99 --save-result --result-dir /kaggle/working/week2/vllm_bench --result-filename c32.json\n"}
+,{"stream_name":"stdout","time":8798.851624978,"data":"The tokenizer you are loading from '/kaggle/working/sft-merged' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.\n"}
+,{"stream_name":"stdout","time":8798.851663811,"data":"Namespace(subparser='bench', bench_type='serve', dispatch_function=\u003cfunction BenchmarkServingSubcommand.cmd at 0x7922edba2700\u003e, trust_remote_code=False, seed=0, num_prompts=200, dataset_name='random', no_stream=False, dataset_path=None, no_oversample=False, skip_chat_template=False, enable_multimodal_chat=False, disable_shuffle=False, custom_output_len=256, spec_bench_output_len=256, spec_bench_category=None, sonnet_input_len=550, sonnet_output_len=150, sonnet_prefix_len=200, sharegpt_output_len=None, blazedit_min_distance=0.0, blazedit_max_distance=1.0, asr_max_audio_len_sec=inf, asr_min_audio_len_sec=0.0, random_input_len=128, random_output_len=128, random_range_ratio=0.0, random_prefix_len=0, random_batch_size=1, no_reranker=False, random_mm_base_items_per_request=1, random_mm_num_mm_items_range_ratio=0.0, random_mm_limit_mm_per_prompt={'image': 255, 'video': 1}, random_mm_bucket_config={(256, 256, 1): 0.5, (720, 1280, 1): 0.5, (720, 1280, 16): 0.0}, hf_subset=None, hf_split=None, hf_name=None, hf_output_len=None, prefix_repetition_prefix_len=256, prefix_repetition_suffix_len=256, prefix_repetition_num_prefixes=10, prefix_repetition_output_len=128, label=None, backend='vllm', base_url='http://localhost:8000', host='127.0.0.1', port=8000, endpoint='/v1/completions', header=None, max_concurrency=32, model='qwen-sql', input_len=None, output_len=None, tokenizer='/kaggle/working/sft-merged', tokenizer_mode='auto', use_beam_search=False, logprobs=None, request_rate=inf, burstiness=1.0, disable_tqdm=False, num_warmups=0, profile=False, save_result=True, save_detailed=False, append_result=False, metadata=None, result_dir='/kaggle/working/week2/vllm_bench', result_filename='c32.json', ignore_eos=True, percentile_metrics='ttft,tpot,itl,e2el', metric_percentiles='50,95,99', goodput=None, request_id_prefix='bench-7feb4693-', top_p=None, top_k=None, min_p=None, temperature=None, frequency_penalty=None, presence_penalty=None, repetition_penalty=None, served_model_name=None, lora_modules=None, lora_assignment='random', ramp_up_strategy=None, ramp_up_start_rps=None, ramp_up_end_rps=None, ready_check_timeout_sec=0, extra_body=None, skip_tokenizer_init=False, insecure=False, plot_timeline=False, timeline_itl_thresholds=[25.0, 50.0], plot_dataset_stats=False)\n"}
+,{"stream_name":"stdout","time":8798.851691224,"data":"INFO 11-01 20:35:00 [datasets.py:700] Sampling input_len from [128, 128] and output_len from [128, 128]\n"}
+,{"stream_name":"stdout","time":8799.825723825,"data":"WARNING: vllm bench serve no longer sets temperature==0 (greedy) in requests by default. The default will be determined on the server side and can be model/API specific. For the old behavior, include --temperature=0.\n"}
+,{"stream_name":"stdout","time":8799.825752403,"data":"Starting initial single prompt test run...\n"}
+,{"stream_name":"stdout","time":8799.825756595,"data":"Skipping endpoint ready check.\n"}
+,{"stream_name":"stdout","time":8799.825760002,"data":"Starting main benchmark run...\n"}
+,{"stream_name":"stdout","time":8799.825763248,"data":"Traffic request rate: inf\n"}
+,{"stream_name":"stdout","time":8799.825766501,"data":"Burstiness factor: 1.0 (Poisson process)\n"}
+,{"stream_name":"stdout","time":8799.825769776,"data":"Maximum request concurrency: 32\n"}
+,{"stream_name":"stdout","time":8799.825773038,"data":"\n"}
+,{"stream_name":"stdout","time":8835.436792122,"data":"tip: install termplotlib and gnuplot to plot the metrics\n"}
+,{"stream_name":"stdout","time":8835.4368282,"data":"============ Serving Benchmark Result ============\n"}
+,{"stream_name":"stdout","time":8835.436832305,"data":"Successful requests:                     200       \n"}
+,{"stream_name":"stdout","time":8835.436835341,"data":"Failed requests:                         0         \n"}
+,{"stream_name":"stdout","time":8835.436838364,"data":"Maximum request concurrency:             32        \n"}
+,{"stream_name":"stdout","time":8835.436841442,"data":"Benchmark duration (s):                  35.57     \n"}
+,{"stream_name":"stdout","time":8835.436845363,"data":"Total input tokens:                      25600     \n"}
+,{"stream_name":"stdout","time":8835.436862587,"data":"Total generated tokens:                  25600     \n"}
+,{"stream_name":"stdout","time":8835.43687736,"data":"Request throughput (req/s):              5.62      \n"}
+,{"stream_name":"stdout","time":8835.436881133,"data":"Output token throughput (tok/s):         719.63    \n"}
+,{"stream_name":"stdout","time":8835.43688434,"data":"Peak output token throughput (tok/s):    864.00    \n"}
+,{"stream_name":"stdout","time":8835.436888413,"data":"Peak concurrent requests:                64.00     \n"}
+,{"stream_name":"stdout","time":8835.436910626,"data":"Total token throughput (tok/s):          1439.27   \n"}
+,{"stream_name":"stdout","time":8835.436914478,"data":"---------------Time to First Token----------------\n"}
+,{"stream_name":"stdout","time":8835.43691776,"data":"Mean TTFT (ms):                          158.36    \n"}
+,{"stream_name":"stdout","time":8835.436921016,"data":"Median TTFT (ms):                        150.56    \n"}
+,{"stream_name":"stdout","time":8835.436924218,"data":"P50 TTFT (ms):                           150.56    \n"}
+,{"stream_name":"stdout","time":8835.436927428,"data":"P95 TTFT (ms):                           260.95    \n"}
+,{"stream_name":"stdout","time":8835.436930727,"data":"P99 TTFT (ms):                           264.81    \n"}
+,{"stream_name":"stdout","time":8835.436939253,"data":"-----Time per Output Token (excl. 1st token)------\n"}
+,{"stream_name":"stdout","time":8835.436942071,"data":"Mean TPOT (ms):                          40.78     \n"}
+,{"stream_name":"stdout","time":8835.436956094,"data":"Median TPOT (ms):                        41.49     \n"}
+,{"stream_name":"stdout","time":8835.436960214,"data":"P50 TPOT (ms):                           41.49     \n"}
+,{"stream_name":"stdout","time":8835.436964026,"data":"P95 TPOT (ms):                           41.98     \n"}
+,{"stream_name":"stdout","time":8835.436968043,"data":"P99 TPOT (ms):                           42.02     \n"}
+,{"stream_name":"stdout","time":8835.436971861,"data":"---------------Inter-token Latency----------------\n"}
+,{"stream_name":"stdout","time":8835.436975981,"data":"Mean ITL (ms):                           40.78     \n"}
+,{"stream_name":"stdout","time":8835.436979703,"data":"Median ITL (ms):                         40.97     \n"}
+,{"stream_name":"stdout","time":8835.436983096,"data":"P50 ITL (ms):                            40.97     \n"}
+,{"stream_name":"stdout","time":8835.436986321,"data":"P95 ITL (ms):                            45.96     \n"}
+,{"stream_name":"stdout","time":8835.436989649,"data":"P99 ITL (ms):                            49.77     \n"}
+,{"stream_name":"stdout","time":8835.436992877,"data":"----------------End-to-end Latency----------------\n"}
+,{"stream_name":"stdout","time":8835.436996163,"data":"Mean E2EL (ms):                          5337.48   \n"}
+,{"stream_name":"stdout","time":8835.436999336,"data":"Median E2EL (ms):                        5427.83   \n"}
+,{"stream_name":"stdout","time":8835.437002553,"data":"P50 E2EL (ms):                           5427.83   \n"}
+,{"stream_name":"stdout","time":8835.437005854,"data":"P95 E2EL (ms):                           5481.15   \n"}
+,{"stream_name":"stdout","time":8835.43700915,"data":"P99 E2EL (ms):                           5483.11   \n"}
+,{"stream_name":"stdout","time":8835.437012349,"data":"==================================================\n"}
+,{"stream_name":"stdout","time":8835.602733841,"data":"--- vllm_bench_c32: ok\n"}
+,{"stream_name":"stdout","time":8835.806194217,"data":"--- report: python -m bench.report /kaggle/working/week2/runs/spider_v1/summary.csv /kaggle/working/week2/runs/long_v1/summary.csv /kaggle/working/week2/runs/short_v1/summary.csv /kaggle/working/week2/runs/shared_prefix_v1/summary.csv /kaggle/working/week2/runs/spider_v1_open/summary.csv --out /kaggle/working/week2/report\n"}
+,{"stream_name":"stdout","time":8837.282703231,"data":"| Workload | Peak out tok/s | Knee c | tok/s at knee | SLO | Max c under SLO | tok/s / req/s at SLO | Little min | Peak KV use |\n"}
+,{"stream_name":"stdout","time":8837.28272751,"data":"|---|---|---|---|---|---|---|---|---|\n"}
+,{"stream_name":"stdout","time":8837.282731948,"data":"| baseline/spider_v1 | 577 | 16 | 378 | ttft_s_p95 \u003c= 1000 ms, tpot_s_p95 \u003c= 50 ms, e2e_s_p95 \u003c= 3000 ms | 8 | 260 / 8.33 | 0.83 | 11% |\n"}
+,{"stream_name":"stdout","time":8837.282736,"data":"| baseline/long_v1 | 101 | 2 | 56 | ttft_s_p95 \u003c= 2000 ms, tpot_s_p95 \u003c= 50 ms | 2 | 56 / 0.22 | 0.96 | 85% |\n"}
+,{"stream_name":"stdout","time":8837.282739771,"data":"| baseline/short_v1 | 995 | 16 | 549 | ttft_s_p95 \u003c= 500 ms, tpot_s_p95 \u003c= 50 ms | 32 | 749 / 5.85 | 0.91 | 19% |\n"}
+,{"stream_name":"stdout","time":8837.282743395,"data":"| baseline/shared_prefix_v1 | 187 | 4 | 103 | ttft_s_p95 \u003c= 1000 ms, tpot_s_p95 \u003c= 50 ms | 2 | 71 / 0.28 | 0.96 | 58% |\n"}
+,{"stream_name":"stdout","time":8837.282747079,"data":"\n"}
+,{"stream_name":"stdout","time":8837.282750243,"data":"wrote /kaggle/working/week2/report/throughput_vs_tpot.png\n"}
+,{"stream_name":"stdout","time":8837.282753793,"data":"wrote /kaggle/working/week2/report/latency_vs_concurrency.png\n"}
+,{"stream_name":"stdout","time":8837.282756998,"data":"--- report: ok\n"}
+,{"stream_name":"stdout","time":8837.282760078,"data":"step status: {'workloads': 'ok', 'merge': 'ok', 'kv_predict': 'ok', 'server': 'ok', 'sweep_short_v1': 'ok', 'sweep_long_v1': 'ok', 'sweep_shared_prefix_v1': 'ok', 'sweep_spider_v1': 'ok', 'open_spider_v1': 'ok', 'vllm_bench_c1': 'ok', 'vllm_bench_c8': 'ok', 'vllm_bench_c32': 'ok', 'report': 'ok'}\n"}
+,{"stream_name":"stdout","time":8837.487494412,"data":"download /kaggle/working/week2_results.zip\n"}
+,{"stream_name":"stderr","time":8840.134755753,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":8840.134786912,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":8840.303879655,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":8840.303922215,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":8841.299009681,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":8841.386266646,"data":"[NbConvertApp] Writing 51321 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":8844.116091835,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":8844.698519879,"data":"[NbConvertApp] Writing 348242 bytes to __results__.html\n"}
+]

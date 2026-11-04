@@ -1,0 +1,6 @@
+/kaggle/working/sft-merged: AttnShape(num_layers=28, num_kv_heads=8, head_dim=128)
+KV bytes/token (float16): 114,688 (112 KiB)
+KV budget: 9.30 GiB -> 87,069 tokens total
+  seq_len=  2048: 0.219 GiB/seq, max concurrent = 42
+  seq_len=  4096: 0.438 GiB/seq, max concurrent = 21
+  seq_len= 16384: 1.750 GiB/seq, max concurrent = 5

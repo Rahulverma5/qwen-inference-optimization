@@ -1,0 +1,15 @@
+{
+  "workloads": "ok",
+  "merge": "ok",
+  "kv_predict": "ok",
+  "server": "ok",
+  "sweep_short_v1": "ok",
+  "sweep_long_v1": "ok",
+  "sweep_shared_prefix_v1": "ok",
+  "sweep_spider_v1": "ok",
+  "open_spider_v1": "ok",
+  "vllm_bench_c1": "ok",
+  "vllm_bench_c8": "ok",
+  "vllm_bench_c32": "ok",
+  "report": "ok"
+}
