@@ -53,3 +53,32 @@ def test_build_command_booleans_and_overrides():
     cmd = build_command("m", profile, "qwen-sql", 8000)
     assert "--no-enable-prefix-caching" in cmd and "--enable-prefix-caching" not in cmd
     assert cmd[cmd.index("--max-num-seqs") + 1] == "64"
+
+
+def test_combine_sums_queues_and_takes_fullest_kv():
+    from bench.server_metrics import combine
+
+    row = combine([{"running": 3, "waiting": 1, "kv_usage": 0.2, "preemptions": 1},
+                   {"running": 5, "waiting": 0, "kv_usage": 0.7, "preemptions": None}])
+    assert (row["running"], row["waiting"], row["kv_usage"], row["preemptions"]) == (8, 1, 0.7, 1)
+    assert row["prefix_hits"] is None
+
+
+def test_spec_decode_summary():
+    rows = [{"spec_drafts": 0, "spec_draft_tokens": 0, "spec_accepted": 0},
+            {"spec_drafts": 100, "spec_draft_tokens": 400, "spec_accepted": 300}]
+    s = summarize_samples(rows)
+    assert s["spec_acceptance_rate"] == pytest.approx(0.75)
+    assert s["spec_mean_accepted_len"] == pytest.approx(4.0)  # 3 accepted + 1 bonus per step
+    assert "spec_accepted_delta" not in s
+
+
+def test_parse_model_load_and_dict_flags():
+    from bench.server import parse_model_load
+
+    log = "INFO [gpu_model_runner.py:4821] Model loading took 1.18 GiB memory and 4.213 seconds\n"
+    assert parse_model_load(log) == {"weights_gib": 1.18, "weights_load_s": 4.213}
+    assert parse_model_load("nothing") == {}
+    cmd = build_command("m", {"speculative-config": {"method": "ngram", "num_speculative_tokens": 4}},
+                        "q", 8000)
+    assert cmd[cmd.index("--speculative-config") + 1] == '{"method": "ngram", "num_speculative_tokens": 4}'

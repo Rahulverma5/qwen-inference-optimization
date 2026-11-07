@@ -20,6 +20,10 @@
 | CLI launcher | [scripts/kaggle_run.py](../../scripts/kaggle_run.py) | Runs the notebook on Kaggle GPUs from the laptop. Code ships as a private dataset built from `git archive HEAD`, and the run records the commit, so every result traces to exact code. |
 | MLflow hooks | [tracking/](../../tracking/__init__.py) | Training curves through the HF Trainer callback and one run per eval. No-op without `MLFLOW_TRACKING_URI`. |
 
+### Architecture and precision
+
+![QLoRA fine-tuning architecture: precision of every tensor](../finetune_architecture.png)
+
 ### Key decisions
 
 | Decision | Why | Alternative considered |

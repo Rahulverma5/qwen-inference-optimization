@@ -44,3 +44,13 @@ def test_spider_prompts_use_serving_format(tmp_path):
     assert len(ps) == 4 and len({p["dev_index"] for p in ps}) == 4
     assert all("PetType" in p["prompt"] and p["max_tokens"] == 128 for p in ps)
     assert ps == make_spider_prompts({"num_prompts": 4, "output_tokens": 128}, 0, tmp_path, Tok())
+
+
+def test_mixed_lengths_without_changing_plain_workloads():
+    plain = {"num_prompts": 50, "prompt_tokens": 10, "output_tokens": 4}
+    mixed = plain | {"long_prompt_tokens": 80, "long_fraction": 0.2}
+    lengths = [len(encode(p["prompt"])) for p in make_prompts(mixed, 3, encode, decode)]
+    assert set(lengths) == {10, 80} and 3 <= lengths.count(80) <= 20
+    # A spec without the long keys draws no extra random numbers: Week 2 files stay byte-identical.
+    assert make_prompts(plain, 3, encode, decode) == make_prompts(
+        plain | {"long_fraction": 0.5}, 3, encode, decode)

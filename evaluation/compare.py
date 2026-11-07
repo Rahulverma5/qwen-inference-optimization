@@ -4,13 +4,15 @@
         --a reports/week1/run4/preds/base_fp16.jsonl --b reports/week1/run4/preds/sft_fp16.jsonl \
         --out reports/week1/base_vs_sft.json
 
-Reused in Week 3 to compare quantized variants against the fp16 model.
+Reused in Week 3 to compare quantized variants against the fp16 model: `mcnemar_p` says
+whether an accuracy change is distinguishable from flip noise.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 import sqlite3
 from collections import Counter
@@ -50,6 +52,16 @@ def classify(spider_dir: Path, ex: dict, pred: str) -> tuple[bool, str | None]:
     return results_match(rows, gold, ordered="order by" in ex["query"].lower()), None
 
 
+def mcnemar_p(fixed: int, broken: int) -> float:
+    """Exact two-sided McNemar test: under H0 each discordant pair is a fair coin flip.
+    Exact (binomial) rather than chi-squared, because quantized variants flip few questions."""
+    n = fixed + broken
+    if n == 0:
+        return 1.0
+    tail = sum(math.comb(n, k) for k in range(min(fixed, broken) + 1)) / 2**n
+    return min(1.0, 2 * tail)
+
+
 def load(path: Path) -> dict[int, str]:
     return {r["id"]: r["sql"] for r in map(json.loads, path.read_text().splitlines())}
 
@@ -83,6 +95,7 @@ def compare(spider_dir: Path, examples: list[dict], a: dict[int, str], b: dict[i
         "fixed_by_b": flips[(False, True)],
         "broken_by_b": flips[(True, False)],
         "both_wrong": flips[(False, False)],
+        "mcnemar_p": mcnemar_p(flips[(False, True)], flips[(True, False)]),
         "by_complexity_proxy": {
             k: {"n": c["n"], "acc_a": round(c["a"] / c["n"], 3), "acc_b": round(c["b"] / c["n"], 3)}
             for k, c in sorted(by_bucket.items(), key=lambda kv: -kv[1]["n"])
@@ -101,8 +114,9 @@ def main() -> None:
     p.add_argument("--a", type=Path, required=True, help="reference predictions")
     p.add_argument("--b", type=Path, required=True, help="candidate predictions")
     p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--limit", type=int, default=None, help="first N questions (a subset eval)")
     a = p.parse_args()
-    examples = json.loads((a.spider_dir / a.split).read_text())
+    examples = json.loads((a.spider_dir / a.split).read_text())[: a.limit]
     report = {"a": str(a.a), "b": str(a.b)} | compare(a.spider_dir, examples, load(a.a), load(a.b))
     a.out.parent.mkdir(parents=True, exist_ok=True)
     a.out.write_text(json.dumps(report, indent=2))

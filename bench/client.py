@@ -7,6 +7,14 @@ Two arrival modes:
 
     python -m bench.client --url http://localhost:8000 --model qwen \
         --prompts data/workloads/short_v1.jsonl --concurrency 1 2 4 8 16 --out reports/runs/vllm_fp16
+
+Several --url values spread requests round-robin over independent replicas (a plain L4 load
+balancer); the server sampler then scrapes all of them.
+
+Requests per level default to the whole prompt file. --min-requests M --waves W sends
+min(file, max(M, W x level)) instead: enough waves at high load for stable percentiles,
+without spending minutes at c=1 (always the first prompts of the file, so configs see the
+same ones).
 """
 
 from __future__ import annotations
@@ -61,39 +69,46 @@ async def send_one(client: httpx.AsyncClient, url: str, model: str, item: dict, 
     return rec
 
 
-async def run_closed_loop(url, model, items, concurrency, ignore_eos, timeout):
+def num_requests(available: int, level: float, min_requests: int | None, waves: int | None) -> int:
+    if min_requests is None and waves is None:
+        return available
+    return min(available, max(min_requests or 0, int((waves or 0) * level)))
+
+
+async def run_closed_loop(urls, model, items, concurrency, ignore_eos, timeout):
     sem = asyncio.Semaphore(concurrency)
     limits = httpx.Limits(max_connections=concurrency)
     async with httpx.AsyncClient(timeout=timeout, limits=limits) as client:
         async def guarded(i, item):
             async with sem:
-                return await send_one(client, url, model, item, i, ignore_eos)
+                return await send_one(client, urls[i % len(urls)], model, item, i, ignore_eos)
 
         t0 = time.perf_counter()
         records = await asyncio.gather(*(guarded(i, it) for i, it in enumerate(items)))
         return list(records), time.perf_counter() - t0
 
 
-async def run_open_loop(url, model, items, rate, ignore_eos, timeout, seed=0):
+async def run_open_loop(urls, model, items, rate, ignore_eos, timeout, seed=0):
     rng = random.Random(seed)
     async with httpx.AsyncClient(timeout=timeout, limits=httpx.Limits(max_connections=None)) as c:
         tasks = []
         t0 = time.perf_counter()
         for i, item in enumerate(items):
-            tasks.append(asyncio.create_task(send_one(c, url, model, item, i, ignore_eos)))
+            tasks.append(asyncio.create_task(
+                send_one(c, urls[i % len(urls)], model, item, i, ignore_eos)))
             await asyncio.sleep(rng.expovariate(rate))
         records = await asyncio.gather(*tasks)
         return list(records), time.perf_counter() - t0
 
 
-async def measure(url, model, items, level, closed, ignore_eos, timeout, scrape):
-    """One sweep level, with the server sampled for the whole window when `scrape` is set."""
-    run = (run_closed_loop(url, model, items, level, ignore_eos, timeout) if closed
-           else run_open_loop(url, model, items, level, ignore_eos, timeout))
+async def measure(urls, model, items, level, closed, ignore_eos, timeout, scrape):
+    """One sweep level, with the server(s) sampled for the whole window when `scrape` is set."""
+    run = (run_closed_loop(urls, model, items, level, ignore_eos, timeout) if closed
+           else run_open_loop(urls, model, items, level, ignore_eos, timeout))
     if not scrape:
         recs, wall = await run
         return recs, wall, None
-    async with Sampler(url) as sampler:
+    async with Sampler(urls) as sampler:
         recs, wall = await run
     return recs, wall, sampler
 
@@ -136,13 +151,16 @@ def write_records(path: Path, records: list[RequestRecord]) -> None:
 
 def main() -> None:
     p = argparse.ArgumentParser()
-    p.add_argument("--url", default="http://localhost:8000")
+    p.add_argument("--url", nargs="+", default=["http://localhost:8000"],
+                   help="one or more servers; several = round-robin over replicas")
     p.add_argument("--model", required=True, help="served model name")
     p.add_argument("--prompts", required=True, help="JSONL from bench.workloads")
     mode = p.add_mutually_exclusive_group(required=True)
     mode.add_argument("--concurrency", type=int, nargs="+")
     mode.add_argument("--rate", type=float, nargs="+")
     p.add_argument("--warmup", type=int, default=10)
+    p.add_argument("--min-requests", type=int, default=None)
+    p.add_argument("--waves", type=int, default=None, help="requests per level = waves x level")
     p.add_argument("--no-ignore-eos", action="store_true")
     p.add_argument("--timeout", type=float, default=600)
     p.add_argument("--label", default="run", help="config label stored with results")
@@ -155,18 +173,21 @@ def main() -> None:
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     ignore_eos = not a.no_ignore_eos
-    meta = env_metadata(a.url) | {"label": a.label, "prompts": a.prompts}
+    meta = env_metadata(a.url[0]) | {"label": a.label, "prompts": a.prompts, "urls": a.url}
     (out / "env.json").write_text(json.dumps(meta, indent=2))
 
-    asyncio.run(run_closed_loop(a.url, a.model, items[: a.warmup], 1, ignore_eos, a.timeout))
+    # Warm-up hits every replica (CUDA graphs, allocator).
+    warm = items[: max(a.warmup, len(a.url))]
+    asyncio.run(run_closed_loop(a.url, a.model, warm, len(a.url), ignore_eos, a.timeout))
     summaries = []
     for level in a.concurrency or a.rate:
         tag = f"c{level}" if a.concurrency else f"r{level}"
-        was_reset = reset_prefix_cache(a.url)
+        was_reset = all([reset_prefix_cache(u) for u in a.url])
         if not was_reset:
             print(f"{tag}: prefix cache NOT reset; TTFT may be optimistic")
+        n = num_requests(len(items), level, a.min_requests, a.waves)
         recs, wall, sampler = asyncio.run(measure(
-            a.url, a.model, items, level, bool(a.concurrency), ignore_eos, a.timeout,
+            a.url, a.model, items[:n], level, bool(a.concurrency), ignore_eos, a.timeout,
             scrape=not a.no_scrape))
         write_records(out / f"requests_{tag}.csv", recs)
         s = {"label": a.label, "mode": tag} | summarize(recs, wall)
@@ -186,7 +207,7 @@ def main() -> None:
         w.writerows(summaries)
     for s in summaries:
         log_run("serving-benchmarks", f"{a.label}-{s['mode']}",
-                params={"label": a.label, "mode": s["mode"], "prompts": a.prompts, "url": a.url,
+                params={"label": a.label, "mode": s["mode"], "prompts": a.prompts, "url": ",".join(a.url),
                         "gpu": meta.get("gpu"), "ignore_eos": ignore_eos},
                 metrics={k: v for k, v in s.items() if k not in ("label", "mode")},
                 artifacts=[out / f"requests_{s['mode']}.csv", out / f"server_{s['mode']}.csv",

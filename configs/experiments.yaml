@@ -1,0 +1,123 @@
+# Week 3 serving experiments (bench.experiments). Each experiment changes ONE thing relative to
+# `fp16`, the baseline re-measured in the same session (Week 2 numbers are not reused: the
+# prefix-cache reset changed the client, and the Kaggle machine differs run to run).
+# Fields: model (variant dir under --models-dir), set (flags over the `baseline` profile in
+# configs/serving.yaml), replicas x gpus_per_replica (>1 GPU per replica = tensor parallel),
+# workloads (names; levels from `levels` unless the experiment overrides them), quality (key of
+# the Spider eval to pair with, defaults to model), question (what it tests).
+
+served_model_name: qwen-sql
+
+# Closed-loop concurrency per workload, shared so rows compare at equal load. Low levels skip
+# where a level costs minutes and answers nothing new (long_v1 at c=1 was measured in Week 2).
+levels:
+  spider_v1: [1, 4, 16, 64]
+  short_v1: [1, 4, 16, 64]
+  long_v1: [4, 16]
+  shared_prefix_v1: [4, 16]
+  mixed_v1: [4, 16, 32]
+
+# Requests per level = min(file, max(min_requests, waves x c)).
+min_requests: 40
+waves: 4
+
+cost:
+  # Kaggle is free; to compare configs in money, price GPU time at an on-demand T4. GCP lists
+  # the T4 GPU at $0.35/GPU-hour (us-central1, GPU only, VM extra); verify before quoting.
+  usd_per_gpu_hour: 0.35
+  # Workload whose SLO capacity sets cost per 1M output tokens: the product's own traffic.
+  workload: spider_v1
+
+experiments:
+  fp16:
+    workloads: [spider_v1, short_v1, long_v1, shared_prefix_v1, mixed_v1]
+    question: In-session baseline; every row below is compared to it.
+
+  # --- compression (same flags, different weights) ---
+  awq_w4a16:
+    model: awq_w4a16
+    workloads: [spider_v1, short_v1, long_v1]
+    question: 4-bit weights cut the per-step weight read 3x, but Exllama dequant runs on CUDA cores. Net effect by batch size?
+  gptq_w4a16:
+    model: gptq_w4a16
+    workloads: [spider_v1, short_v1, long_v1]
+    question: Same kernel as AWQ (symmetric, no zero points); any speed difference is the zero-point cost.
+  w8a8_int8:
+    model: w8a8_int8
+    workloads: [spider_v1, short_v1, long_v1]
+    question: INT8 tensor cores (sm75 has them) - does W8A8 win at high batch, where W4A16 dequant hurts?
+
+  # --- attention: Week 2 found attention, not weights, dominates per-token cost with context ---
+  attn_flex:
+    set: {attention-backend: FLEX_ATTENTION}
+    workloads: [spider_v1, short_v1, long_v1]
+    question: Is TRITON_ATTN's ~11%-of-bandwidth KV read the backend's fault? FlexAttention is the other sm75 option.
+  eager:
+    set: {enforce-eager: true}
+    workloads: [spider_v1, short_v1]
+    question: What do CUDA graphs buy? Without them every decode step pays ~28 layers of kernel-launch overhead.
+
+  # --- KV cache ---
+  kv_fp8_e5m2:
+    set: {kv-cache-dtype: fp8_e5m2}
+    quality: fp16_kv_fp8_e5m2
+    workloads: [spider_v1, long_v1]
+    question: Half the KV bytes - 2x the cache, and attention reads half as much. Faster on long_v1? Accuracy cost?
+  kv_fp8_e4m3:
+    set: {kv-cache-dtype: fp8}
+    workloads: [spider_v1, long_v1]
+    question: e4m3 needs hardware fp8 conversions in Triton (sm89+); expected to fail on sm75. Record how.
+  util_0.5:
+    set: {gpu-memory-utilization: 0.5}
+    workloads: [long_v1]
+    question: Shrink the KV cache below what long_v1 c=16 needs (~37k tokens) - what do preemptions cost?
+  capacity_awq_kv_fp8:
+    model: awq_w4a16
+    set: {kv-cache-dtype: fp8_e5m2}
+    quality: awq_w4a16
+    workloads: [long_v1]
+    question: Combination, not an ablation. The README's 32 x 4k target needs smaller weights AND KV - does it fit?
+
+  # --- scheduler ---
+  prefix_cache_off:
+    set: {enable-prefix-caching: false}
+    workloads: [spider_v1, shared_prefix_v1]
+    question: Spider prompts share 91.6% per-DB prefixes. How much TTFT does the prefix cache save on real traffic?
+  max_seqs_16:
+    set: {max-num-seqs: 16}
+    workloads: [spider_v1, short_v1]
+    question: Capping the batch protects TPOT but queues requests - where does the trade flip?
+  chunk_512:
+    set: {max-num-batched-tokens: 512}
+    workloads: [mixed_v1]
+    question: Smaller prefill chunks - smoother ITL for short requests, slower TTFT for long ones?
+  chunk_8192:
+    set: {max-num-batched-tokens: 8192}
+    workloads: [mixed_v1]
+    question: Whole 2k prefills in one step - best TTFT, worst ITL spikes?
+  chunked_prefill_off:
+    set: {enable-chunked-prefill: false, max-num-batched-tokens: 4096}
+    workloads: [mixed_v1]
+    question: No chunking at all. vLLM V1 may refuse; if it runs, ITL p99 should be the worst of the three.
+
+  # --- speculative decoding (spider: SQL copies table/column names from the prompt) ---
+  spec_ngram:
+    set: {speculative-config: {method: ngram, num_speculative_tokens: 4, prompt_lookup_max: 4, prompt_lookup_min: 2}}
+    workloads: [spider_v1]
+    question: Prompt-lookup drafts are free to propose. High acceptance on schema-copying SQL? Where does it stop paying?
+  spec_draft_0.6b:
+    set: {speculative-config: {method: draft_model, model: Qwen/Qwen3-0.6B, num_speculative_tokens: 4}}
+    workloads: [spider_v1]
+    question: The draft is the stock 0.6B, not fine-tuned; it doesn't know the SQL style. Acceptance vs ngram?
+
+  # --- two GPUs: one model split across both, or two copies ---
+  tp2:
+    gpus_per_replica: 2
+    workloads: [spider_v1, short_v1, long_v1]
+    levels: {spider_v1: [1, 4, 16, 64, 128], short_v1: [1, 4, 16, 64, 128], long_v1: [4, 16, 32]}
+    question: TP=2 halves weights and KV per GPU but all-reduces twice per layer over PCIe (no NVLink on T4).
+  replicas2:
+    replicas: 2
+    workloads: [spider_v1, short_v1, long_v1]
+    levels: {spider_v1: [1, 4, 16, 64, 128], short_v1: [1, 4, 16, 64, 128], long_v1: [4, 16, 32]}
+    question: Two independent copies behind round-robin. Expect 2x throughput at equal latency, no help at c=1.

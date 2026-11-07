@@ -39,17 +39,22 @@ def take_tokens(text: str, target: int, encode: Callable[[str], list[int]]) -> l
 
 
 def make_prompts(spec: dict, seed: int, encode, decode) -> list[dict]:
+    """Synthetic prompts of exact token length. With `long_prompt_tokens` + `long_fraction`, each
+    prompt is long with that probability (mixed traffic, for chunked-prefill experiments). The
+    extra random draw happens only for such specs, so existing workloads stay byte-identical."""
     rng = random.Random(seed)
     n, p_tok, o_tok = spec["num_prompts"], spec["prompt_tokens"], spec["output_tokens"]
     shared = spec.get("shared_prefix_tokens", 0)
+    long_tok, long_frac = spec.get("long_prompt_tokens"), spec.get("long_fraction", 0.0)
     prefix_ids = take_tokens(_filler(rng, shared * 2), shared, encode) if shared else []
     prompts = []
     for i in range(n):
+        length = long_tok if long_tok and rng.random() < long_frac else p_tok
         # Unique leading id in the suffix so prefix caching can only reuse the shared part.
-        suffix = f" [req {i}] " + _filler(rng, (p_tok - shared) * 2)
+        suffix = f" [req {i}] " + _filler(rng, (length - shared) * 2)
         # Concatenate ids and decode once: decoding pieces separately and joining strings
         # merges tokens at the boundary and changes the length.
-        ids = prefix_ids + take_tokens(suffix, p_tok - shared, encode)
+        ids = prefix_ids + take_tokens(suffix, length - shared, encode)
         prompts.append({"id": i, "prompt": decode(ids), "max_tokens": o_tok})
     return prompts
 

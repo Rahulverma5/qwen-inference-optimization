@@ -1,0 +1,35 @@
+# Week 3 compression variants of the fine-tuned (merged fp16) model.
+# Every variant is calibrated on the same Spider *train* sample (dev stays untouched for eval),
+# rendered exactly like the SFT rows: chat-template prompt + gold SQL + EOS.
+calibration:
+  splits: [train_spider.json, train_others.json]
+  num_samples: 256        # llm-compressor examples use 256-512; Spider rows are short (p50 467 tokens)
+  max_seq_length: 2048    # covers 99% of train rows; longer rows are truncated (stats only, no loss)
+  seed: 0
+
+# llm-compressor recipes: a list of {ModifierName: kwargs}, applied in order by oneshot().
+# Kernels on T4 (sm75, vLLM 0.19): W4A16 runs on Exllama (Marlin/Machete/Conch need sm80+),
+# W8A8-INT8 on CUTLASS int8 scaled_mm (min capability 75).
+variants:
+  awq_w4a16:
+    # AWQ's standard form: asymmetric int4, group 128 (zero points; Exllama supports them).
+    modifiers:
+      - AWQModifier: {scheme: W4A16_ASYM, targets: [Linear], ignore: [lm_head]}
+  gptq_w4a16:
+    # Symmetric int4, group 128; static act-order reorders columns at calibration time only,
+    # so there is no g_idx gather at runtime.
+    modifiers:
+      - GPTQModifier: {scheme: W4A16, targets: [Linear], ignore: [lm_head], dampening_frac: 0.01}
+  w8a8_int8:
+    # SmoothQuant moves activation outliers into the weights (alpha 0.8 is llm-compressor's
+    # W8A8 example value), then GPTQ rounds weights to int8 per channel; activations are
+    # quantized per token at runtime (dynamic), so no activation scales are calibrated.
+    modifiers:
+      - SmoothQuantModifier: {smoothing_strength: 0.8}
+      - GPTQModifier: {scheme: W8A8, targets: [Linear], ignore: [lm_head]}
+
+# GGUF for CPU serving (llama.cpp, Weeks 4-5). Built from source at a pinned tag.
+gguf:
+  llama_cpp_repo: https://github.com/ggml-org/llama.cpp
+  llama_cpp_ref: b11600   # 2026-10-13
+  types: [Q8_0, Q4_K_M]

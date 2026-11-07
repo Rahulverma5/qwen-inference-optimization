@@ -6,6 +6,9 @@
     python scripts/kaggle_run.py stage --week 1         # build upload folders locally only (dry run)
     python scripts/kaggle_run.py run --week 1 --attach models/week1_run3/sft/adapter=qwen-sql-week1-adapter
                                                         # also upload a local dir as a private dataset
+    python scripts/kaggle_run.py run --week 3 --part b --kernel-source qwen-sql-week3a
+                                                        # notebook week3b_kaggle.ipynb, mounting the
+                                                        # output (models) of kernel qwen-sql-week3a
 
 Code reaches Kaggle as a private dataset holding `git archive HEAD` (plus a COMMIT file), so
 every run is tied to an exact commit and no public GitHub repo is needed. Uncommitted changes
@@ -46,11 +49,12 @@ def username() -> str:
     sys.exit("could not read Kaggle username; run `kaggle config view`")
 
 
-def kernel_slug(week: int) -> str:
-    return f"qwen-sql-week{week}"
+def kernel_slug(tag: str) -> str:
+    return f"qwen-sql-week{tag}"
 
 
-def stage(week: int, user: str, attach: list[tuple[Path, str]] = ()) -> tuple[Path, Path, str]:
+def stage(tag: str, user: str, attach: list[tuple[Path, str]] = (),
+          kernel_sources: list[str] = ()) -> tuple[Path, Path, str]:
     if sh("git", "-C", str(ROOT), "status", "--porcelain", "--untracked-files=no").strip():
         print("warning: uncommitted changes to tracked files are not uploaded")
     commit = sh("git", "-C", str(ROOT), "rev-parse", "--short", "HEAD").strip()
@@ -62,15 +66,15 @@ def stage(week: int, user: str, attach: list[tuple[Path, str]] = ()) -> tuple[Pa
     sh("git", "-C", str(ROOT), "archive", "--format=tar", "-o", str(tar), "HEAD")
     (code / "COMMIT").write_text(commit + "\n")
 
-    nb_src = ROOT / "notebooks" / f"week{week}_kaggle.ipynb"
+    nb_src = ROOT / "notebooks" / f"week{tag}_kaggle.ipynb"
     if not nb_src.exists():
         sys.exit(f"missing {nb_src}")
     kern = STAGE / "kernel"
     kern.mkdir()
     shutil.copy(nb_src, kern / nb_src.name)
     (kern / "kernel-metadata.json").write_text(json.dumps({
-        "id": f"{user}/{kernel_slug(week)}",
-        "title": kernel_slug(week),
+        "id": f"{user}/{kernel_slug(tag)}",
+        "title": kernel_slug(tag),
         "code_file": nb_src.name,
         "language": "python",
         "kernel_type": "notebook",
@@ -80,7 +84,7 @@ def stage(week: int, user: str, attach: list[tuple[Path, str]] = ()) -> tuple[Pa
         "machine_shape": ACCELERATOR,
         "dataset_sources": [f"{user}/{CODE_SLUG}", *(f"{user}/{slug}" for _, slug in attach)],
         "competition_sources": [],
-        "kernel_sources": [],
+        "kernel_sources": [f"{user}/{slug}" for slug in kernel_sources],
         "model_sources": [],
     }, indent=2))
     return code, kern, commit
@@ -116,17 +120,18 @@ def stage_attachment(src: Path, slug: str) -> Path:
     return dest
 
 
-def status(week: int, user: str) -> str:
-    return kaggle("kernels", "status", f"{user}/{kernel_slug(week)}", check=False).strip()
+def status(tag: str, user: str) -> str:
+    return kaggle("kernels", "status", f"{user}/{kernel_slug(tag)}", check=False).strip()
 
 
-def fetch(week: int, user: str) -> Path:
-    dest = ROOT / "reports" / f"week{week}" / "kaggle"
+def fetch(week: int, part: str, user: str) -> Path:
+    tag = f"{week}{part}"
+    dest = ROOT / "reports" / f"week{week}" / ("kaggle" + (f"_{part}" if part else ""))
     dest.mkdir(parents=True, exist_ok=True)
     # Only the small results bundle and the log; model weights stay on Kaggle as kernel output.
-    kaggle("kernels", "output", f"{user}/{kernel_slug(week)}", "-p", str(dest), "-o",
-           "--file-pattern", rf"^(week{week}_results\.zip|[^/]+\.log)$")  # top level only
-    zips = list(dest.glob(f"week{week}_results.zip"))
+    kaggle("kernels", "output", f"{user}/{kernel_slug(tag)}", "-p", str(dest), "-o",
+           "--file-pattern", rf"^(week{tag}_results\.zip|[^/]+\.log)$")  # top level only
+    zips = list(dest.glob(f"week{tag}_results.zip"))
     if zips:
         shutil.unpack_archive(zips[0], dest / "results")
     print(f"fetched -> {dest}")
@@ -137,21 +142,25 @@ def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
     p.add_argument("action", choices=["stage", "run", "status", "fetch"])
     p.add_argument("--week", type=int, required=True)
+    p.add_argument("--part", default="", help="multi-notebook weeks: a, b, ... (week3a_kaggle.ipynb)")
     p.add_argument("--no-wait", action="store_true", help="push and return without polling")
     p.add_argument("--attach", action="append", default=[], metavar="DIR=SLUG",
                    help="upload a local dir as private dataset SLUG and attach it to the run")
+    p.add_argument("--kernel-source", action="append", default=[], metavar="SLUG",
+                   help="mount another of your kernels' output (e.g. qwen-sql-week3a)")
     a = p.parse_args()
     user = username()
+    tag = f"{a.week}{a.part}"
 
     if a.action == "status":
-        print(status(a.week, user))
+        print(status(tag, user))
         return
     if a.action == "fetch":
-        fetch(a.week, user)
+        fetch(a.week, a.part, user)
         return
 
     attach = [(Path(spec.split("=", 1)[0]), spec.split("=", 1)[1]) for spec in a.attach]
-    code, kern, commit = stage(a.week, user, attach)
+    code, kern, commit = stage(tag, user, attach, a.kernel_source)
     staged_attach = [(stage_attachment(src, slug), slug) for src, slug in attach]
     print(f"staged commit {commit} -> {STAGE}")
     if a.action == "stage":
@@ -161,16 +170,16 @@ def main() -> None:
     for folder, slug in staged_attach:
         upload_dataset(folder, user, slug, f"attached to commit {commit}")
     print(kaggle("kernels", "push", "-p", str(kern), "--accelerator", ACCELERATOR))
-    print(f"https://www.kaggle.com/code/{user}/{kernel_slug(a.week)}")
+    print(f"https://www.kaggle.com/code/{user}/{kernel_slug(tag)}")
     if a.no_wait:
         return
     while True:
-        st = status(a.week, user)
+        st = status(tag, user)
         print(time.strftime("%H:%M:%S"), st, flush=True)
         if any(w in st.lower() for w in ("complete", "error", "cancel")):
             break
         time.sleep(120)
-    fetch(a.week, user)
+    fetch(a.week, a.part, user)
 
 
 if __name__ == "__main__":

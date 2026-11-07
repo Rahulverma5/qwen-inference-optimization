@@ -6,6 +6,9 @@ workloads:
   long_v1:           {num_prompts: 100, prompt_tokens: 2048, output_tokens: 256}
   shared_prefix_v1:  {num_prompts: 200, prompt_tokens: 1536, output_tokens: 256, shared_prefix_tokens: 1024}
   spider_v1:         {num_prompts: 300, source: spider_dev, output_tokens: 128}
+  # Week 3, chunked prefill: 20% 2k-token prompts arriving among short chat turns. The question
+  # is how much a long prefill stalls the decodes of everyone else (ITL/TPOT tail).
+  mixed_v1:          {num_prompts: 200, prompt_tokens: 128, output_tokens: 128, long_prompt_tokens: 2048, long_fraction: 0.2}
 sweep:
   concurrency: [1, 2, 4, 8, 16, 32, 64]
   warmup_requests: 10
@@ -19,3 +22,4 @@ slo:
   long_v1:          {ttft_s_p95: 2.0, tpot_s_p95: 0.050}
   shared_prefix_v1: {ttft_s_p95: 1.0, tpot_s_p95: 0.050}
   spider_v1:        {ttft_s_p95: 1.0, tpot_s_p95: 0.050, e2e_s_p95: 3.0}
+  mixed_v1:         {ttft_s_p95: 2.0, tpot_s_p95: 0.050}   # same as long_v1: p95 TTFT is a long prompt's

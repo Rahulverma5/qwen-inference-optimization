@@ -17,7 +17,7 @@ free-tier resources.
 |---|---|---|
 | 1 | T4 smoke test, baseline Spider eval, QLoRA SFT, merge | **done**: Spider dev exec accuracy 55.9% → **64.6%** (+8.7, p≈4e-9) after 77 min QLoRA on 2× T4 ([write-up](docs/weeks/week1.md)) |
 | 2 | Streaming benchmark harness, KV-cache capacity model, T4 SLOs | **done**: one T4 serves Spider at **8.3 req/s** (8 concurrent) within p95 SLOs; KV model within 0.8% of vLLM; decode cost dominated by attention at ~11% of T4 bandwidth ([write-up](docs/weeks/week2.md)) |
-| 3 | AWQ / GPTQ / W8A8 / GGUF + serving experiments (batching, prefix cache, chunked prefill, TP=2 vs replicas, spec decoding) | — |
+| 3 | AWQ / GPTQ / W8A8 / GGUF + serving experiments (batching, prefix cache, chunked prefill, TP=2 vs replicas, spec decoding) | code + predictions ready, Kaggle runs pending ([write-up](docs/weeks/week3.md)) |
 | 4 | FastAPI gateway (auth, rate limit, 429 back-pressure, health/ready, metrics), Docker, compose + Prometheus/Grafana | — |
 | 5 | Terraform: Cloud Run + EC2, CloudWatch / Cloud Monitoring, CI deploy, write-up | — |
 
@@ -27,9 +27,10 @@ free-tier resources.
 configs/      model ids, frozen benchmark workloads
 finetune/     prompt format (shared by train/eval/bench), QLoRA SFT, LoRA merge
 evaluation/   Spider execution accuracy, vLLM batch generation
-bench/        async streaming load generator, latency metrics, KV-cache calculator
+bench/        async streaming load generator, latency metrics, KV-cache calculator,
+              serving-experiment runner, experiment matrix + Pareto plot
 tracking/     MLflow logging helper (no-op unless MLFLOW_TRACKING_URI is set)
-quantize/     llm-compressor recipes, GGUF export                       (week 3)
+quantize/     llm-compressor recipes (AWQ, GPTQ, W8A8), Spider calibration set, GGUF export
 serving/      gateway + Dockerfiles + compose                           (week 4)
 infra/        Terraform for GCP and AWS                                 (week 5)
 notebooks/    thin Kaggle launchers; all logic lives in the packages above
@@ -62,7 +63,7 @@ python -m venv .venv && .venv/bin/pip install -e '.[dev]'
 
 Spider data (pinned, checksum-verified): `python scripts/get_spider.py --out data`.
 
-On Kaggle from this machine: `python scripts/kaggle_run.py run --week 1` (uploads HEAD as a private dataset, runs on T4 ×2, fetches results). Or import [notebooks/week1_kaggle.ipynb](notebooks/week1_kaggle.ipynb) on kaggle.com.
+On Kaggle from this machine: `python scripts/kaggle_run.py run --week 1` (uploads HEAD as a private dataset, runs on T4 ×2, fetches results). Week 3 runs in two parts: `--week 3 --part a`, then `--week 3 --part b --kernel-source qwen-sql-week3a`. Or import [notebooks/week1_kaggle.ipynb](notebooks/week1_kaggle.ipynb) on kaggle.com.
 
 Weekly write-ups (what, why, results, interview notes): [docs/weeks/](docs/weeks/).
 
