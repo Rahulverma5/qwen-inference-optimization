@@ -1,8 +1,12 @@
 # Week 3: Compression and serving optimization
 
-**Goal:** Make the Week 1 model cheaper to serve without making it worse at SQL. Compress it four ways and measure what each costs in accuracy. Then change one vLLM serving knob at a time against an fp16 baseline re-measured in the same session. The result is an experiment matrix (speed × quality × memory × cost) and a Pareto plot of what's worth shipping.
+**Goal:** Make the Week 1 model cheaper to serve without making it worse at SQL. Compress it four ways and measure what each costs in accuracy. Then change one serving knob at a time against a baseline, and end with an experiment matrix (speed × quality × memory × cost) and a Pareto plot of what's worth shipping.
 
-**Status: code built and unit-tested (52 tests); Kaggle runs pending.** As in Week 2, predictions are written down *before* the run.
+**Status: compression done (part a); CPU serving study (part c) pending.** GGUF Q4_K_M is 3.1× smaller than fp16 with no measurable accuracy loss (+0.2 points, p = 0.92). That's the deployment format. As in Week 2, predictions are written down *before* each run.
+
+### Plan change (2026-11-09): CPU serving replaces GPU serving
+
+The deployment target has no GPU: free cloud tiers (GCP trial, AWS free plan) offer none. So the vLLM-on-T4 serving experiments (**part b**) were cancelled before they ran. They wouldn't change any deployment decision. The serving study now runs the GGUF model on `llama-server`, on a Kaggle CPU-only notebook (**part c**: 4 vCPUs, no GPU quota). That machine is closer to a Cloud Run or EC2 instance than to a T4. The part b code (`configs/experiments.yaml`, `bench/experiments.py`) stays in the repo, unrun; its predictions below are kept but marked untested.
 
 ---
 
@@ -21,7 +25,8 @@
 | Matrix + Pareto | [bench/matrix.py](../../bench/matrix.py) | Variant table (accuracy, Δ, McNemar p, perplexity, size, load time), serving table (SLO capacity, $/1M tokens, **$/1k queries**, KV tokens, spec acceptance), every point vs fp16 at equal load, and the accuracy-vs-cost Pareto frontier. |
 | Harness extensions | [bench/client.py](../../bench/client.py), [bench/server_metrics.py](../../bench/server_metrics.py), [bench/server.py](../../bench/server.py) | Round-robin over replicas with summed server metrics, spec-decode counters, weight memory/load-time parsing, JSON flags (`--speculative-config`), and per-level request counts so c=1 doesn't take minutes. |
 | Mixed workload | `mixed_v1` in [configs/workloads.yaml](../../configs/workloads.yaml) | 20% 2k-token prompts among 128-token ones, for chunked prefill. The extra random draw only happens for this spec, so v1 workload files stay byte-identical (tested). |
-| Kaggle notebooks | [week3a](../../notebooks/week3a_kaggle.ipynb), [week3b](../../notebooks/week3b_kaggle.ipynb) | **3a** quantizes and evaluates quality, and keeps the models as kernel output. **3b** mounts them (`--kernel-source`) and runs the serving experiments. Split so a serving failure doesn't cost the 1–2 h of quantization. |
+| Kaggle notebooks | [week3a](../../notebooks/week3a_kaggle.ipynb), [week3b](../../notebooks/week3b_kaggle.ipynb), [week3c](../../notebooks/week3c_kaggle.ipynb) | **3a** quantizes and evaluates quality, and keeps the models as kernel output. **3b** (cancelled) would mount them for GPU serving. **3c** mounts the GGUFs on a CPU-only machine. Split so a serving failure doesn't cost the 1–2 h of quantization. |
+| CPU serving plan + runner | [configs/cpu_experiments.yaml](../../configs/cpu_experiments.yaml), [bench/cpu_experiments.py](../../bench/cpu_experiments.py) | 10 llama-server experiments, one flag each vs Q4_K_M: quant level, threads (2-vCPU shape), slots, prompt cache, host-RAM cache, n-gram speculation, flash attention, KV q8_0. A **fresh server per load level**, the only reset that clears both the slot caches and the host cache, so no level warms the next (Week 2's leakage bug can't happen by construction). Also measures live Spider accuracy of a config. Same result layout as the GPU runner, so `bench.matrix` reads both. |
 
 ### Key decisions
 
@@ -65,7 +70,7 @@ Week 2's model of a decode step: **TPOT ≈ 17.7 ms + 3.2 ms per 1k tokens of ba
 - Spider-SQL perplexity separates variants more clearly than WikiText. Calibration was on SQL, so WikiText may *rise* more than SQL perplexity does.
 - fp8 e5m2 KV: **measurable loss possible (−0.5 to −2)**. Two mantissa bits is coarse for keys, and attention logits amplify key error.
 
-**Speed** (spider and short at the 4 levels; fp16 c=1 TPOT ≈ 16.4 ms):
+**GPU speed** (*untested: part b cancelled*; spider and short at the 4 levels; fp16 c=1 TPOT ≈ 16.4 ms):
 - **W4A16:** the weight read shrinks ~2.5× → c=1 TPOT **11–14 ms**, not ~7 ms. Exllama dequantizes on CUDA cores and the fp16 lm_head is still read every step. At c=64 W4A16 is **no faster, possibly slower** than fp16: dequant work scales with batch, the bandwidth saving doesn't. Nothing changes on long_v1, where attention dominates.
 - **W8A8:** c=1 TPOT ~12–14 ms. Best of the three at high batch (INT8 tensor cores, 2× fp16 peak). This is the variant to beat.
 - **attn_flex:** not faster than TRITON_ATTN for decode on sm75 (FlexAttention also compiles to Triton). Low confidence.
@@ -81,7 +86,22 @@ Week 2's model of a decode step: **TPOT ≈ 17.7 ms + 3.2 ms per 1k tokens of ba
 - **spec_draft_0.6b:** **worse than ngram.** The stock 0.6B doesn't know the fine-tuned SQL style, and its own weight read (~1.2 GiB) costs ~35% of a target step. Small gain at c=1, loss from c=16.
 - **tp2 vs replicas2:** **replicas win on spider throughput** (~2× fp16 at SLO, at 2× the cost, so equal $/query), and also on cost/query vs TP2. TP2 wins c=1 latency (weights and KV split: ~10–12 ms TPOT; PCIe all-reduce of 2 × 28 small messages per step adds ~2–3 ms) and long_v1 (attention halved per GPU).
 
-**Shipping guess:** W8A8 + prefix caching (on by default) + ngram speculation at low load. Replicas, not TP, when a second GPU is available. W4A16 only if memory, not latency, is the constraint.
+**Shipping guess (GPU, untested):** W8A8 + prefix caching (on by default) + ngram speculation at low load. Replicas, not TP, when a second GPU is available. W4A16 only if memory, not latency, is the constraint.
+
+### CPU predictions (part c, written before its run)
+
+Prior evidence: part a's llama.cpp eval on the same Kaggle 4-vCPU machine logged **~4.2 decode tok/s per slot with 4 slots busy (~17 tok/s total)** and **15–27 tok/s per slot for uncached prefill**. In that eval 92.5% of requests computed < 100 prompt tokens: dev questions arrive grouped by database, so a slot's cached schema got reused. `spider_v1` samples databases at random, so it gets far fewer cache hits.
+
+- **llama-bench:** prefill (pp512) ~60–100 tok/s at 4 threads, near-linear from 1 to 2 threads and flatter from 2 to 4 (4 vCPUs are likely 2 physical cores with hyper-threading). Decode (tg128) ~10–15 tok/s at 4 threads, flattening early (bandwidth-bound).
+- **Baseline SLO capacity:** an uncached spider request is ~300–900 prompt tokens at ~60–100 tok/s (3–15 s) plus ~25 tokens at ~10 tok/s (2.5 s). **The 10 s p95 SLO fails or barely passes even at c=1.** One 4-vCPU box serves ≲ 0.3 req/s within SLO. The SLO stays as registered; a miss is the finding.
+- **q8_0:** decode ~1.4× slower (1.7× the bytes, partly offset by cheaper dequant); prefill about equal. Accuracy identical (−0.2, p 0.81, from part a).
+- **threads_2:** prefill ~1.6–2× slower (compute-bound), decode only ~1.2× slower. Real cloud 2-vCPU shapes will look like this.
+- **parallel_1 vs 4 vs 8:** on CPU there is little idle compute to batch into. 4 slots give **≤ 1.5×** the throughput of 1 at much worse per-request latency; 8 slots no more throughput than 4.
+- **no_prompt_cache:** small effect on `spider_v1` (random DB order, few slot hits). It would be large on database-grouped traffic.
+- **host_cache_1g: the biggest win.** 1 GiB holds ~20 schemas of ~400 tokens × 112 KiB, i.e. every dev database. After the first request per DB, prefill drops to the ~25-token question: **E2E −50% or more**.
+- **spec_ngram:** CPU decode is bandwidth-bound like a GPU's at batch 1, so verifying 4 drafted tokens costs little more than 1. **Acceptance ~40–60%, decode +20–40% faster at c=1**, a smaller gain at c=8.
+- **flash_attn_off:** within ±10% (short contexts).
+- **kv_q8_0:** within ±10% speed. Halves KV memory; that matters only for a < 2 GiB instance.
 
 ---
 
@@ -90,20 +110,53 @@ Week 2's model of a decode step: **TPOT ≈ 17.7 ms + 3.2 ms per 1k tokens of ba
 ```bash
 # 3a: quantize + quality (~2.5-3 h of T4 time)
 python scripts/kaggle_run.py run --week 3 --part a --attach models/week1_run3/sft/adapter=qwen-sql-week1-adapter
-# 3b: serving experiments on 3a's models (~3 h)
-python scripts/kaggle_run.py run --week 3 --part b --kernel-source qwen-sql-week3a
-# results land in reports/week3/kaggle_a/ and reports/week3/kaggle_b/
+# 3c: CPU serving study on 3a's GGUFs (CPU-only notebook, no GPU quota; ~4 h)
+python scripts/kaggle_run.py run --week 3 --part c --cpu --kernel-source qwen-sql-week3a
+# results land in reports/week3/kaggle_a/ and reports/week3/kaggle_c/
 ```
 
-Locally (CPU), from fetched results: `python -m bench.matrix --experiments reports/week3/kaggle_b/results/experiments --quality reports/week3/kaggle_a/results reports/week3/kaggle_b/results --out reports/week3/report`.
-
-Total ≈ 6 GPU-hours of the 30/week. Each part fits one 12 h session with margin.
+Locally, from fetched results: `python -m bench.matrix --plan configs/cpu_experiments.yaml --experiments reports/week3/kaggle_c/results/experiments --quality reports/week3/kaggle_a/results reports/week3/kaggle_c/results --out reports/week3/report`.
 
 ---
 
 ## Results
 
-*To fill from the two runs: variants table, serving table, Pareto plot, predictions vs measurements, ship decision.*
+### Part a: compression and quality
+
+Commit `c9b6f56`, 2× Tesla T4, vLLM 0.19.0, llm-compressor 0.10.0.4, llama.cpp b11600. Kaggle queued the run for ~2 h, so a second copy (`-r2`) was pushed. Both eventually ran, which turned an accident into a reproducibility test. Raw results: [run 1](../../reports/week3/kaggle_a/results/), [run 2](../../reports/week3/kaggle_a_r2/results/).
+
+| Variant | Size GiB (× smaller) | Exec acc, run 1 / run 2 | Δ vs fp16 (McNemar p) | WikiText PPL Δ | Spider-SQL PPL Δ |
+|---|---|---|---|---|---|
+| fp16 | 3.20 (1.0×) | 64.7% / 64.7% | — | 15.91 | 1.386 |
+| **GGUF Q4_K_M** | **1.03 (3.1×)** | 64.9% / 64.9% | **+0.2 (0.92)** | +8.3% | +4.0% |
+| GGUF Q8_0 | 1.71 (1.9×) | 64.5% / 64.5% | −0.2 (0.81) | +0.3% | +0.4% |
+| W8A8-INT8 | 1.89 (1.7×) | 64.0% / 63.1% | −0.7 (0.51) / −1.6 (0.053) | +0.9% | +0.1% |
+| GPTQ W4A16 | 1.26 (2.6×) | 62.4% / 63.2% | −2.3 (**0.025**) / −1.5 (0.14) | +17.5% | +0.2% |
+| AWQ W4A16 | — | failed (see below) | — | — | — |
+| Q4_K_M on llama.cpp CPU, 200 q | — | 56.0% / 52.5% | +1.5 (0.61) / −2.0 (0.42), vs fp16 on the same 200 | — | — |
+
+**Findings**
+1. **GGUF Q4_K_M loses nothing measurable at 3.1× compression.** It beats both 4-bit llm-compressor formats here. K-quants use mixed precision (the most sensitive tensors keep 6 bits), and their 32-weight sub-blocks get finer scales than group-128.
+2. **llm-compressor results aren't reproducible run to run.** fp16 and GGUF scored identically twice (the eval is deterministic), but GPTQ moved 0.8 points and W8A8 0.9 between identical runs. Cause: `oneshot` shuffles calibration samples with an unseeded `RandomSampler`. Same samples, different order, so different float rounding in the accumulated statistics. That flips rounding decisions for weights near a quantization boundary, and accuracy moves by about one point. **One quantization run can't support a 1-point claim.** Fixed: our fixed-seed sample, `shuffle_calibration_samples=False`, `torch.manual_seed`.
+3. **AWQ failed in fp16:** every candidate scale in layer 0's grid search had loss `inf`. The squared output error summed over 138k calibration tokens exceeds fp16's maximum (65,504). GPTQ survived because it accumulates its Hessian in fp32. Fixed by calibrating AWQ in fp32 and casting to fp16 before saving. It wasn't re-run: part b was going to rebuild it, and the CPU deployment doesn't need it.
+4. **Perplexity didn't predict SQL accuracy.** GPTQ's Spider-SQL perplexity moved +0.2% while its accuracy fell 1.5–2.3 points. Perplexity averages over every token, and an execution failure comes from one wrong identifier. WikiText moved the most (+17.5%), as predicted: calibration was on SQL.
+5. **llama.cpp CPU accuracy varied ±3.5 points between runs** on the same 200 questions. With 4 slots, batch composition changes the float summation order, and 200 questions is a small sample. Part c measures all 1,034.
+
+**Predictions vs measurements (part a)**
+
+| Prediction | Measured | Verdict |
+|---|---|---|
+| Sizes: W4A16 ~1.3, W8A8 ~1.9, Q8_0 ~1.8, Q4_K_M ~1.1 GiB | 1.26, 1.89, 1.71, 1.03 | ✅ |
+| W8A8 and Q8_0 within noise | Q8_0 −0.2 (p 0.81) ✅; W8A8 −0.7 / −1.6 (p 0.51 / 0.053) | ⚠️ borderline in one run |
+| W4A16 and Q4_K_M −0.5 to −2 | GPTQ −2.3 / −1.5 ✅; Q4_K_M **+0.2** | ❌ for Q4_K_M: better than predicted |
+| SQL perplexity separates variants more than WikiText | the reverse: SQL PPL flat, WikiText +17.5% | ❌ |
+| AWQ vs GPTQ within 1 point | AWQ didn't run (fp16 overflow) | — |
+
+**Other costs:** GPTQ took 9.3 min and SmoothQuant+GPTQ 10.6 min to calibrate on one T4. Building llama.cpp took 5.6 min, then 16 s to convert and 1.4 min to quantize to Q4_K_M.
+
+### Part c: CPU serving
+
+*Pending the run.*
 
 ---
 

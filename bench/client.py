@@ -166,6 +166,9 @@ def main() -> None:
     p.add_argument("--label", default="run", help="config label stored with results")
     p.add_argument("--no-scrape", action="store_true",
                    help="don't sample the server's /metrics and nvidia-smi during each level")
+    p.add_argument("--fresh-server", action="store_true",
+                   help="the server was just restarted for this run (llama.cpp): its caches are "
+                        "empty, so skip the vLLM-only /reset_prefix_cache call")
     p.add_argument("--out", required=True)
     a = p.parse_args()
 
@@ -182,7 +185,7 @@ def main() -> None:
     summaries = []
     for level in a.concurrency or a.rate:
         tag = f"c{level}" if a.concurrency else f"r{level}"
-        was_reset = all([reset_prefix_cache(u) for u in a.url])
+        was_reset = a.fresh_server or all([reset_prefix_cache(u) for u in a.url])
         if not was_reset:
             print(f"{tag}: prefix cache NOT reset; TTFT may be optimistic")
         n = num_requests(len(items), level, a.min_requests, a.waves)

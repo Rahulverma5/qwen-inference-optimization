@@ -31,11 +31,11 @@ from bench.report import INK, MUTED, SERIES, SURFACE, _style, closed_loop, load_
 NAN = float("nan")
 
 
-def usd_per_million_tokens(out_tok_s: float, num_gpus: int, usd_per_gpu_hour: float) -> float:
-    """GPU cost of 1M output tokens at a sustained throughput."""
+def usd_per_million_tokens(out_tok_s: float, num_units: int, usd_per_unit_hour: float) -> float:
+    """Cost of 1M output tokens at a sustained throughput; a unit is a GPU or a CPU instance."""
     if not out_tok_s or out_tok_s != out_tok_s:
         return NAN
-    return usd_per_gpu_hour * num_gpus / (out_tok_s * 3600) * 1e6
+    return usd_per_unit_hour * num_units / (out_tok_s * 3600) * 1e6
 
 
 def pareto_front(points: list[dict], x: str, y: str) -> list[dict]:
@@ -147,18 +147,20 @@ def detail_rows(rows: list[dict], baseline: str = "fp16") -> list[dict]:
 def serving_rows(results: dict[str, dict], rows: list[dict], quality: dict[str, dict],
                  slos: dict, cost: dict) -> list[dict]:
     wl = cost["workload"]
+    price = cost.get("usd_per_unit_hour", cost.get("usd_per_gpu_hour"))
     table = []
     for name, r in results.items():
         sweep = closed_loop([x for x in rows if x["experiment"] == name], f"{name}/{wl}")
         best = max_under_slo(sweep, slos.get(wl, {})) if sweep else None
         servers = r.get("servers") or [{}]
         acc = quality.get(r["quality"], {}).get("score", {}).get("exec_accuracy", NAN)
+        units = r.get("num_units", r.get("num_gpus", 1))
         table.append({
             "experiment": name,
             "status": r["status"],
             "model": r["model"],
             "change": ", ".join(f"{k}={v}" for k, v in r["set"].items()) or "-",
-            "num_gpus": r["num_gpus"],
+            "num_units": units,
             "exec_accuracy": acc,
             "kv_cache_tokens": sum(s.get("kv_cache_tokens", 0) for s in servers) or NAN,
             "weights_gib": servers[0].get("weights_gib", NAN),
@@ -168,11 +170,10 @@ def serving_rows(results: dict[str, dict], rows: list[dict], quality: dict[str, 
             "slo_out_tok_s": best["output_tok_per_s"] if best else NAN,
             "slo_rps": best["request_throughput_rps"] if best else NAN,
             "usd_per_1m_tokens": usd_per_million_tokens(
-                best["output_tok_per_s"] if best else NAN, r["num_gpus"], cost["usd_per_gpu_hour"]),
+                best["output_tok_per_s"] if best else NAN, units, price),
             # a SQL answer is ~25 tokens, so per query is the unit a product owner prices in
             "usd_per_1k_requests": usd_per_million_tokens(
-                best["request_throughput_rps"] if best else NAN, r["num_gpus"],
-                cost["usd_per_gpu_hour"]) / 1000,
+                best["request_throughput_rps"] if best else NAN, units, price) / 1000,
             # acceptance depends on the text, not the load; report the lowest level's
             "spec_acceptance": sweep[0].get("spec_acceptance_rate", NAN) if sweep else NAN,
         })
@@ -201,7 +202,7 @@ VARIANT_COLS = [
 ]
 SERVING_COLS = [
     ("experiment", "Experiment", ""), ("status", "Status", ""), ("change", "Change", ""),
-    ("num_gpus", "GPUs", ""), ("exec_accuracy", "Exec acc", ".1%"),
+    ("num_units", "Units", ""), ("exec_accuracy", "Exec acc", ".1%"),
     ("weights_gib", "Weights GiB", ".2f"), ("kv_cache_tokens", "KV tokens", ",.0f"),
     ("ready_s", "Ready s", ".0f"), ("peak_out_tok_s", "Peak tok/s", ".0f"),
     ("slo_max_c", "Max c @SLO", ""), ("slo_out_tok_s", "tok/s @SLO", ".0f"),
@@ -211,17 +212,17 @@ SERVING_COLS = [
 ]
 
 
-def plot_pareto(table: list[dict], out: Path) -> Path:
+def plot_pareto(table: list[dict], out: Path, workload: str) -> Path:
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
     pts = [r for r in table if r["status"] == "ok"]
-    front = pareto_front(pts, "usd_per_1m_tokens", "exec_accuracy")
+    front = pareto_front(pts, "usd_per_1k_requests", "exec_accuracy")
     on = {r["experiment"] for r in front}
     fig, ax = plt.subplots(figsize=(7.5, 4.8), facecolor=SURFACE)
-    plotted = sorted((r for r in pts if r["usd_per_1m_tokens"] == r["usd_per_1m_tokens"]
-                      and r["exec_accuracy"] == r["exec_accuracy"]), key=lambda r: r["usd_per_1m_tokens"])
+    plotted = sorted((r for r in pts if r["usd_per_1k_requests"] == r["usd_per_1k_requests"]
+                      and r["exec_accuracy"] == r["exec_accuracy"]), key=lambda r: r["usd_per_1k_requests"])
     # Serving configs of one model share its accuracy and sit on one row: stagger their labels.
     offsets = [(6, 4), (6, -11), (6, 15)]
     row_count: dict[float, int] = {}
@@ -230,16 +231,16 @@ def plot_pareto(table: list[dict], out: Path) -> Path:
         y = r["exec_accuracy"] * 100
         k = row_count.get(round(y, 1), 0)
         row_count[round(y, 1)] = k + 1
-        ax.plot(r["usd_per_1m_tokens"], y, marker="o", markersize=8 if frontier else 6,
+        ax.plot(r["usd_per_1k_requests"], y, marker="o", markersize=8 if frontier else 6,
                 color=SERIES[0] if frontier else MUTED, markeredgecolor=SURFACE,
                 markeredgewidth=1.5, linestyle="none", zorder=3)
-        ax.annotate(r["experiment"], (r["usd_per_1m_tokens"], y), textcoords="offset points",
+        ax.annotate(r["experiment"], (r["usd_per_1k_requests"], y), textcoords="offset points",
                     xytext=offsets[k % len(offsets)], fontsize=8, color=INK if frontier else MUTED)
-    ax.plot([r["usd_per_1m_tokens"] for r in front], [r["exec_accuracy"] * 100 for r in front],
+    ax.plot([r["usd_per_1k_requests"] for r in front], [r["exec_accuracy"] * 100 for r in front],
             color=SERIES[0], linewidth=2, marker="o", markersize=8, markeredgecolor=SURFACE,
             zorder=2, label="Pareto frontier (not beaten on both cost and accuracy)")
     ax.legend(frameon=False, fontsize=9, labelcolor=INK, loc="best")
-    _style(ax, "GPU cost per 1M output tokens at SLO capacity (USD, spider_v1)",
+    _style(ax, f"Cost per 1,000 queries at SLO capacity (USD, {workload})",
            "Spider dev execution accuracy (%)")
     ax.set_title("Accuracy vs serving cost (up and left is better)", color=INK, fontsize=11, loc="left")
     fig.tight_layout()
@@ -259,7 +260,8 @@ def main() -> None:
     a = p.parse_args()
 
     plan = yaml.safe_load(Path(a.plan).read_text())
-    slos = yaml.safe_load(Path(a.workloads_config).read_text()).get("slo", {})
+    # a plan may carry its own SLOs (CPU: E2E-only, looser than the T4's)
+    slos = yaml.safe_load(Path(a.workloads_config).read_text()).get("slo", {}) | plan.get("slo", {})
     quality = load_quality(a.quality)
     results, rows = load_experiments(a.experiments)
     order = {name: i for i, name in enumerate(plan["experiments"])}
@@ -270,7 +272,7 @@ def main() -> None:
     (a.out / "variants.md").write_text(md_table(variants, VARIANT_COLS))
     table = serving_rows(results, rows, quality, slos, plan["cost"])
     (a.out / "serving.md").write_text(md_table(table, SERVING_COLS))
-    detail = detail_rows(rows)
+    detail = detail_rows(rows, baseline=next(iter(plan["experiments"])))  # first = baseline
     if detail:
         with (a.out / "detail.csv").open("w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=list(detail[0]))
@@ -279,7 +281,7 @@ def main() -> None:
     print((a.out / "variants.md").read_text())
     print((a.out / "serving.md").read_text())
     if table:
-        print("wrote", plot_pareto(table, a.out))
+        print("wrote", plot_pareto(table, a.out, plan["cost"]["workload"]))
 
 
 if __name__ == "__main__":

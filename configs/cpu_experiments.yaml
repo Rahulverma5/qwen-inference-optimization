@@ -1,0 +1,83 @@
+# Week 3 CPU serving experiments (bench.cpu_experiments): the fine-tuned model as GGUF on
+# llama-server, the engine the cloud deployment runs (no free cloud GPUs). Each experiment
+# changes ONE thing vs `q4_k_m` (the baseline); every load level gets a fresh server, so no
+# prompt cache carries over between levels (Week 2's leakage bug, fixed by construction here).
+
+served_model_name: qwen-sql
+
+models:             # GGUF files from Week 3a (quantize.gguf)
+  q4_k_m: qwen3-1.7b-spider-Q4_K_M.gguf
+  q8_0: qwen3-1.7b-spider-Q8_0.gguf
+
+baseline:           # llama-server flags (True -> --flag, False -> --no-flag)
+  threads: 4        # Kaggle CPU notebook: 4 vCPUs
+  parallel: 4       # slots = requests decoded together (continuous batching)
+  ctx-size: 8192    # 2,048 per slot: longest dev prompt 919 + 128 output
+  flash-attn: "on"
+  cache-prompt: true
+  cache-ram: 0      # host-RAM prompt cache off in the baseline (tested below); 8 GiB default
+  metrics: true
+
+levels:
+  spider_v1: [1, 2, 4, 8]
+  short_v1: [1, 4]
+
+min_requests: 24
+waves: 3
+
+# CPU SLO, fixed before the run. A text-to-SQL answer is used whole (the query runs when
+# complete), so the bound is end-to-end; 10 s p95 is about as long as a user waits for a query
+# before giving up. The T4 SLOs (E2E 3 s) can't apply to a 4-vCPU box.
+slo:
+  spider_v1: {e2e_s_p95: 10.0}
+  short_v1: {e2e_s_p95: 20.0}
+
+cost:
+  # Price one 4-vCPU / 4 GiB instance-hour. Cloud Run instance-based list price is about
+  # $0.0864 per vCPU-h + $0.009 per GiB-h (~$0.38/h for this shape); verify before quoting.
+  # Week 5 replaces this with the measured bill of the real deployment.
+  usd_per_unit_hour: 0.38
+  workload: spider_v1
+
+experiments:
+  q4_k_m:
+    quality: llamacpp_q4_k_m
+    workloads: [spider_v1, short_v1]
+    question: Baseline. What does one 4-vCPU box serve within a 10 s p95?
+  q8_0:
+    model: q8_0
+    quality: gguf_q8_0
+    workloads: [spider_v1, short_v1]
+    question: 1.7x the bytes per token. CPU decode is bandwidth-bound - is Q8_0 ~1.6x slower, or does Q4_K's dequant math close the gap?
+  threads_2:
+    set: {threads: 2}
+    workloads: [spider_v1, short_v1]
+    question: The 2-vCPU shape (EC2 free plan, small Cloud Run). Prefill is compute-bound (scales with threads), decode bandwidth-bound (may not).
+  parallel_1:
+    set: {parallel: 1, ctx-size: 2048}
+    workloads: [spider_v1]
+    question: No batching - requests queue. How much do 4 slots buy on CPU, where there's little idle compute to share?
+  parallel_8:
+    set: {parallel: 8, ctx-size: 16384}
+    workloads: [spider_v1]
+    question: More slots than cores. Throughput flat, latency worse?
+  no_prompt_cache:
+    set: {cache-prompt: false}
+    workloads: [spider_v1]
+    question: Spider prompts share 91.6% per database. On CPU prefill dominates a request (~400 prompt vs ~25 output tokens) - this should be the biggest single lever.
+  host_cache_1g:
+    set: {cache-ram: 1024}
+    workloads: [spider_v1]
+    question: A host-RAM prompt cache keeps schemas evicted from the 4 slots. 20 dev databases > 4 slots, so hits should rise.
+  spec_ngram:
+    set: {spec-type: ngram-simple, draft-max: 4}
+    workloads: [spider_v1]
+    question: Prompt-lookup drafts (SQL copies schema identifiers). Does it pay on CPU, where verification costs real compute?
+  flash_attn_off:
+    set: {flash-attn: "off"}
+    workloads: [spider_v1]
+    question: llama.cpp's CPU flash attention vs the plain path.
+  kv_q8_0:
+    set: {cache-type-k: q8_0, cache-type-v: q8_0}
+    workloads: [spider_v1]
+    question: Half the KV memory (fits a smaller instance). Speed cost on CPU?

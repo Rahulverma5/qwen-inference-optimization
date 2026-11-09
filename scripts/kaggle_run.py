@@ -9,6 +9,8 @@
     python scripts/kaggle_run.py run --week 3 --part b --kernel-source qwen-sql-week3a
                                                         # notebook week3b_kaggle.ipynb, mounting the
                                                         # output (models) of kernel qwen-sql-week3a
+    python scripts/kaggle_run.py run --week 3 --part c --cpu --kernel-source qwen-sql-week3a
+                                                        # CPU-only notebook (no GPU quota)
 
 Code reaches Kaggle as a private dataset holding `git archive HEAD` (plus a COMMIT file), so
 every run is tied to an exact commit and no public GitHub repo is needed. Uncommitted changes
@@ -54,7 +56,7 @@ def kernel_slug(tag: str) -> str:
 
 
 def stage(tag: str, user: str, attach: list[tuple[Path, str]] = (),
-          kernel_sources: list[str] = ()) -> tuple[Path, Path, str]:
+          kernel_sources: list[str] = (), cpu: bool = False) -> tuple[Path, Path, str]:
     if sh("git", "-C", str(ROOT), "status", "--porcelain", "--untracked-files=no").strip():
         print("warning: uncommitted changes to tracked files are not uploaded")
     commit = sh("git", "-C", str(ROOT), "rev-parse", "--short", "HEAD").strip()
@@ -79,9 +81,9 @@ def stage(tag: str, user: str, attach: list[tuple[Path, str]] = (),
         "language": "python",
         "kernel_type": "notebook",
         "is_private": "true",
-        "enable_gpu": "true",
+        "enable_gpu": "false" if cpu else "true",
         "enable_internet": "true",
-        "machine_shape": ACCELERATOR,
+        **({} if cpu else {"machine_shape": ACCELERATOR}),
         "dataset_sources": [f"{user}/{CODE_SLUG}", *(f"{user}/{slug}" for _, slug in attach)],
         "competition_sources": [],
         "kernel_sources": [f"{user}/{slug}" for slug in kernel_sources],
@@ -148,6 +150,7 @@ def main() -> None:
                    help="upload a local dir as private dataset SLUG and attach it to the run")
     p.add_argument("--kernel-source", action="append", default=[], metavar="SLUG",
                    help="mount another of your kernels' output (e.g. qwen-sql-week3a)")
+    p.add_argument("--cpu", action="store_true", help="CPU-only notebook (uses no GPU quota)")
     a = p.parse_args()
     user = username()
     tag = f"{a.week}{a.part}"
@@ -160,7 +163,7 @@ def main() -> None:
         return
 
     attach = [(Path(spec.split("=", 1)[0]), spec.split("=", 1)[1]) for spec in a.attach]
-    code, kern, commit = stage(tag, user, attach, a.kernel_source)
+    code, kern, commit = stage(tag, user, attach, a.kernel_source, a.cpu)
     staged_attach = [(stage_attachment(src, slug), slug) for src, slug in attach]
     print(f"staged commit {commit} -> {STAGE}")
     if a.action == "stage":
@@ -169,7 +172,7 @@ def main() -> None:
     upload_dataset(code, user, CODE_SLUG, f"commit {commit}")
     for folder, slug in staged_attach:
         upload_dataset(folder, user, slug, f"attached to commit {commit}")
-    print(kaggle("kernels", "push", "-p", str(kern), "--accelerator", ACCELERATOR))
+    print(kaggle("kernels", "push", "-p", str(kern), *([] if a.cpu else ["--accelerator", ACCELERATOR])))
     print(f"https://www.kaggle.com/code/{user}/{kernel_slug(tag)}")
     if a.no_wait:
         return

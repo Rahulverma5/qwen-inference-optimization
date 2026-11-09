@@ -84,18 +84,24 @@ def wait_ready(url: str, proc: subprocess.Popen, timeout_s: float) -> bool:
 
 def launch(model: str, profile: dict, served_name: str, port: int, log_path: Path,
            timeout_s: float = 900, env: dict | None = None) -> tuple[subprocess.Popen, dict]:
-    """Start a server in its own session and wait for /health. Returns (process, startup facts);
-    facts["ready"] is False if it died or timed out (the process is then already stopped)."""
-    cmd = build_command(model, profile, served_name, port)
-    log_path.parent.mkdir(parents=True, exist_ok=True)
-    log_path.with_suffix(".cmd").write_text(" ".join(cmd) + "\n")
-    print("$", " ".join(cmd), flush=True)
-    env = os.environ | {
+    """Start a vLLM server from a profile; see launch_cmd."""
+    env = {
         "VLLM_USE_FLASHINFER_SAMPLER": "0",  # same JIT problem as the attention backend
         "VLLM_SERVER_DEV_MODE": "1",  # exposes /reset_prefix_cache, used by bench.client per level
     } | (env or {})
+    return launch_cmd(build_command(model, profile, served_name, port), port, log_path, timeout_s, env)
+
+
+def launch_cmd(cmd: list[str], port: int, log_path: Path, timeout_s: float = 900,
+               env: dict | None = None) -> tuple[subprocess.Popen, dict]:
+    """Start any OpenAI-compatible server (vLLM, llama-server) in its own session and wait for
+    /health. Returns (process, startup facts); facts["ready"] is False if it died or timed out
+    (the process is then already stopped)."""
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    log_path.with_suffix(".cmd").write_text(" ".join(cmd) + "\n")
+    print("$", " ".join(cmd), flush=True)
     with log_path.open("w") as log:
-        proc = subprocess.Popen(cmd, stdout=log, stderr=subprocess.STDOUT, env=env,
+        proc = subprocess.Popen(cmd, stdout=log, stderr=subprocess.STDOUT, env=os.environ | (env or {}),
                                 start_new_session=True)  # survives this script exiting
     log_path.with_suffix(".pid").write_text(f"{proc.pid}\n")
     t0 = time.time()

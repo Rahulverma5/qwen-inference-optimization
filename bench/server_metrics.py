@@ -22,8 +22,8 @@ from pathlib import Path
 import httpx
 
 GAUGES = {
-    "running": ("vllm:num_requests_running",),
-    "waiting": ("vllm:num_requests_waiting",),
+    "running": ("vllm:num_requests_running", "llamacpp:requests_processing"),
+    "waiting": ("vllm:num_requests_waiting", "llamacpp:requests_deferred"),
     "kv_usage": ("vllm:kv_cache_usage_perc", "vllm:gpu_cache_usage_perc"),
 }
 COUNTERS = {
@@ -31,9 +31,13 @@ COUNTERS = {
     "prefix_queries": ("vllm:prefix_cache_queries_total", "vllm:gpu_prefix_cache_queries_total"),
     "prefix_hits": ("vllm:prefix_cache_hits_total", "vllm:gpu_prefix_cache_hits_total"),
     # speculative decoding (V1): proposals made, tokens proposed, tokens the target accepted
-    "spec_drafts": ("vllm:spec_decode_num_drafts_total",),
-    "spec_draft_tokens": ("vllm:spec_decode_num_draft_tokens_total",),
-    "spec_accepted": ("vllm:spec_decode_num_accepted_tokens_total",),
+    "spec_drafts": ("vllm:spec_decode_num_drafts_total", "llamacpp:spec_decode_num_drafts_total"),
+    "spec_draft_tokens": ("vllm:spec_decode_num_draft_tokens_total",
+                          "llamacpp:spec_decode_num_draft_tokens_total"),
+    "spec_accepted": ("vllm:spec_decode_num_accepted_tokens_total",
+                      "llamacpp:spec_decode_num_accepted_tokens_total"),
+    # llama.cpp: prompt tokens actually computed; vs tokens sent, gives the prompt-cache saving
+    "prompt_computed": ("llamacpp:prompt_tokens_total",),
 }
 MAX_ACROSS_SERVERS = {"kv_usage"}
 

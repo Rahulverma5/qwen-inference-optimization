@@ -15,3 +15,8 @@ mlruns/
 *.tfstate*
 .env
 .kaggle_stage/
+# local llama.cpp checkout/build (Week 3 CPU benchmarks)
+build/
+# Kaggle bundles: results/ dirs are committed, the zips and raw kernel logs are not
+reports/**/*_results.zip
+reports/week3/**/qwen-sql-*.log

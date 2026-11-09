@@ -3,7 +3,7 @@
     python -m quantize.gguf --model models/fp16 --out models/gguf --llama-cpp build/llama.cpp
 
 Clones llama.cpp at the tag pinned in configs/quant.yaml and builds only the CPU tools it
-needs (llama-quantize, llama-server), converts HF -> f16 GGUF, then quantizes to each type
+needs (llama-quantize, llama-server, llama-bench), converts HF -> f16 GGUF, then quantizes to each type
 (Q8_0, Q4_K_M). The f16 intermediate is deleted; gguf_info.json records sizes and times.
 
 The converter runs against the gguf-py shipped in the same checkout (PYTHONPATH), not the
@@ -33,7 +33,7 @@ def setup_commands(repo: str, ref: str, llama_dir: Path, jobs: int) -> list[list
         ["cmake", "-S", str(llama_dir), "-B", str(build), "-DGGML_CUDA=OFF",
          "-DLLAMA_OPENSSL=OFF", "-DCMAKE_BUILD_TYPE=Release"],
         ["cmake", "--build", str(build), "--target", "llama-quantize", "llama-server",
-         "-j", str(jobs)],
+         "llama-bench", "-j", str(jobs)],
     ]
 
 
@@ -60,12 +60,16 @@ def run(cmd: list[str], env: dict | None = None) -> float:
 
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
-    p.add_argument("--model", type=Path, required=True, help="merged fp16 checkpoint dir")
-    p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--model", type=Path, help="merged fp16 checkpoint dir")
+    p.add_argument("--out", type=Path)
     p.add_argument("--llama-cpp", type=Path, required=True, help="checkout/build dir")
     p.add_argument("--config", default="configs/quant.yaml")
     p.add_argument("--stem", default="qwen3-1.7b-spider")
+    p.add_argument("--setup-only", action="store_true",
+                   help="just clone and build the tools (CPU benchmarks of existing GGUFs)")
     a = p.parse_args()
+    if not a.setup_only and not (a.model and a.out):
+        p.error("--model and --out are required unless --setup-only")
 
     cfg = yaml.safe_load(Path(a.config).read_text())["gguf"]
     info: dict = {"llama_cpp_ref": cfg["llama_cpp_ref"], "files": {}}
@@ -73,6 +77,9 @@ def main() -> None:
         t = sum(run(c) for c in setup_commands(cfg["llama_cpp_repo"], cfg["llama_cpp_ref"],
                                                a.llama_cpp, os.cpu_count() or 4))
         info["build_time_s"] = round(t, 1)
+    if a.setup_only:
+        print(json.dumps(info, indent=2))
+        return
 
     a.out.mkdir(parents=True, exist_ok=True)
     env = os.environ | {"PYTHONPATH": str(a.llama_cpp / "gguf-py")}
