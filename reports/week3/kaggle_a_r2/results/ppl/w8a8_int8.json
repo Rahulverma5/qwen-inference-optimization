@@ -1,0 +1,14 @@
+{
+  "model": "/kaggle/working/models/w8a8_int8",
+  "window": 1024,
+  "wikitext": {
+    "ppl": 16.042637915201947,
+    "tokens": 298716,
+    "sequences": 292
+  },
+  "spider": {
+    "ppl": 1.3927980761104963,
+    "tokens": 32648,
+    "sequences": 1034
+  }
+}

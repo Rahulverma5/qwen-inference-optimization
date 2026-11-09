@@ -1,0 +1,12 @@
+The tokenizer you are loading from '/kaggle/working/models/fp16' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
+{
+  "n": 200,
+  "exec_accuracy": 0.525,
+  "valid_sql_rate": 0.74,
+  "url": "http://localhost:8080",
+  "gen_time_s": 449.5855614049997,
+  "concurrency": 4,
+  "errors": 0,
+  "latency_s_p50": 6.951195101000849,
+  "latency_s_p95": 21.97752251699967
+}

@@ -1,0 +1,14 @@
+{
+  "model": "/kaggle/working/models/gguf/qwen3-1.7b-spider-Q8_0.gguf",
+  "window": 1024,
+  "wikitext": {
+    "ppl": 15.961686991811055,
+    "tokens": 298716,
+    "sequences": 292
+  },
+  "spider": {
+    "ppl": 1.3907091983285538,
+    "tokens": 32648,
+    "sequences": 1034
+  }
+}

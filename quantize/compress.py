@@ -67,14 +67,23 @@ def main() -> None:
     print(f"calibration: {len(ds)} samples, {n_tokens:,} tokens")
 
     # Loaded on CPU; llm-compressor's sequential pipeline moves one decoder layer at a time to
-    # the GPU. fp16, because the T4 has no bf16 (the checkpoint dtype).
-    model = AutoModelForCausalLM.from_pretrained(a.model, torch_dtype=torch.float16)
+    # the GPU. fp16 by default, because the T4 has no bf16 (the checkpoint dtype); a variant can
+    # ask for fp32 calibration (AWQ: its fp16 scale search overflows, Week 3a run 1).
+    cal_dtype = getattr(torch, spec.get("calibration_dtype", "float16"))
+    model = AutoModelForCausalLM.from_pretrained(a.model, torch_dtype=cal_dtype)
+    # Our sample is already drawn with a fixed seed; llm-compressor's own shuffle uses an unseeded
+    # RandomSampler. Order only changes float rounding in the accumulated statistics, yet two
+    # identical Week 3a runs differed by ~1 point (GPTQ 62.4 vs 63.2%): rounding decisions near
+    # a quantization boundary flip. Fixed order + seed makes a variant reproducible.
+    torch.manual_seed(cal["seed"])
     t0 = time.perf_counter()
     oneshot(model=model, dataset=ds, recipe=build_recipe(spec["modifiers"]),
-            max_seq_length=cal["max_seq_length"], num_calibration_samples=len(ds))
+            max_seq_length=cal["max_seq_length"], num_calibration_samples=len(ds),
+            shuffle_calibration_samples=False)
     elapsed = time.perf_counter() - t0
 
     a.out.mkdir(parents=True, exist_ok=True)
+    model.to(torch.float16)  # scales and unquantized layers ship in the serving dtype
     model.save_pretrained(a.out, save_compressed=True)
     tok.save_pretrained(a.out)
     info = {
@@ -82,6 +91,7 @@ def main() -> None:
         "modifiers": spec["modifiers"],
         "calibration_samples": len(ds),
         "calibration_tokens": n_tokens,
+        "calibration_dtype": str(cal_dtype).removeprefix("torch."),
         "quantize_time_s": round(elapsed, 1),
         "size_gib": round(dir_size_gib(a.out), 3),
         "source_size_gib": round(dir_size_gib(Path(a.model)), 3),

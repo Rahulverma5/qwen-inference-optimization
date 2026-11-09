@@ -13,6 +13,9 @@ calibration:
 variants:
   awq_w4a16:
     # AWQ's standard form: asymmetric int4, group 128 (zero points; Exllama supports them).
+    # Calibrated in fp32: in fp16 every grid point of layer 0's scale search had loss inf
+    # (Week 3a run 1); the summed squared output error passes fp16's max of 65,504.
+    calibration_dtype: float32
     modifiers:
       - AWQModifier: {scheme: W4A16_ASYM, targets: [Linear], ignore: [lm_head]}
   gptq_w4a16:

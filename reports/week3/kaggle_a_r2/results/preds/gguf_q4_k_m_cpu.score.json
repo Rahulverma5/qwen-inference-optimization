@@ -1,0 +1,11 @@
+{
+  "n": 200,
+  "exec_accuracy": 0.525,
+  "valid_sql_rate": 0.74,
+  "url": "http://localhost:8080",
+  "gen_time_s": 449.5855614049997,
+  "concurrency": 4,
+  "errors": 0,
+  "latency_s_p50": 6.951195101000849,
+  "latency_s_p95": 21.97752251699967
+}

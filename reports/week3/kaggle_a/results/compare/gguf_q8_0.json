@@ -1,0 +1,77 @@
+{
+  "a": "/kaggle/working/week3a/preds/fp16.jsonl",
+  "b": "/kaggle/working/week3a/preds/gguf_q8_0.jsonl",
+  "n": 1034,
+  "acc_a": 0.6470019342359767,
+  "acc_b": 0.6450676982591876,
+  "both_right": 659,
+  "fixed_by_b": 8,
+  "broken_by_b": 10,
+  "both_wrong": 357,
+  "mcnemar_p": 0.8145294189453125,
+  "by_complexity_proxy": {
+    "simple": {
+      "n": 333,
+      "acc_a": 0.853,
+      "acc_b": 0.853
+    },
+    "agg/order": {
+      "n": 211,
+      "acc_a": 0.701,
+      "acc_b": 0.701
+    },
+    "join+agg/order": {
+      "n": 180,
+      "acc_a": 0.439,
+      "acc_b": 0.428
+    },
+    "nested/set-op": {
+      "n": 159,
+      "acc_a": 0.478,
+      "acc_b": 0.484
+    },
+    "join": {
+      "n": 151,
+      "acc_a": 0.543,
+      "acc_b": 0.536
+    }
+  },
+  "exec_errors_a": {
+    "no such column": 125,
+    "ambiguous column name": 3,
+    "misuse of aggregate function count()": 3,
+    "misuse of aggregate": 2,
+    "no such table": 2,
+    "near \"FROM\"": 1
+  },
+  "exec_errors_b": {
+    "no such column": 126,
+    "misuse of aggregate function count()": 4,
+    "ambiguous column name": 3,
+    "misuse of aggregate": 2,
+    "no such table": 2,
+    "misuse of aggregate function sum()": 1
+  },
+  "examples_fixed": [
+    38,
+    50,
+    223,
+    224,
+    710,
+    747,
+    982,
+    983
+  ],
+  "examples_broken": [
+    53,
+    392,
+    407,
+    633,
+    636,
+    712,
+    886,
+    906,
+    923,
+    1019
+  ]
+}

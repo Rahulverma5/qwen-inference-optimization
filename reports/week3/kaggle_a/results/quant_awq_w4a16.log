@@ -1,0 +1,223 @@
+The tokenizer you are loading from '/kaggle/working/models/fp16' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
+`torch_dtype` is deprecated! Use `dtype` instead!
+calibration: 256 samples, 138,151 tokens
+2026-11-09T12:19:29.400893+0000 | __init__ | WARNING - Disabling tokenizer parallelism due to threading conflict between FastTokenizer and Datasets. Set TOKENIZERS_PARALLELISM=false to suppress this warning.
+The tokenizer you are loading from '/kaggle/working/models/fp16' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
+2026-11-09T12:19:29.867501+0000 | reset | INFO - Compression lifecycle reset
+2026-11-09T12:19:29.869278+0000 | from_modifiers | INFO - Creating recipe from modifiers
+2026-11-09T12:19:29.903618+0000 | on_initialize | INFO - No AWQModifier.mappings provided, inferring from model...
+2026-11-09T12:19:29.914690+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.0.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.915102+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.1.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.915411+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.2.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.915692+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.3.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.916022+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.4.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.916321+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.5.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.916606+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.6.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.916882+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.7.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.917178+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.8.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.917452+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.9.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.917729+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.10.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.918064+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.11.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.918357+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.12.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.918661+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.13.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.918956+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.14.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.919308+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.15.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.919583+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.16.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.919859+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.17.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.920151+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.18.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.920435+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.19.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.920707+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.20.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.921031+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.21.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.921346+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.22.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.921665+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.23.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.922016+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.24.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.922360+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.25.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.922725+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.26.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.923094+0000 | _set_resolved_mappings | WARNING - skipping AWQ for model.layers.27.self_attn.v_proj for mapping AWQMapping(smooth_layer='re:.*v_proj$', balance_layers=['re:.*o_proj$'], activation_hook_target=None) because found incompatible balance layers
+2026-11-09T12:19:29.932424+0000 | initialize | INFO - Compression lifecycle initialized for 1 modifiers
+2026-11-09T12:19:29.932668+0000 | IndependentPipeline | INFO - Inferred `SequentialPipeline` for `AWQModifier`
+W1109 12:19:30.344000 283 torch/fx/_symbolic_trace.py:53] is_fx_tracing will return true for both fx.symbolic_trace and torch.export. Please use is_fx_tracing_symbolic_tracing() for specifically fx.symbolic_trace or torch.compiler.is_compiling() for specifically torch.export/compile.
+
+Preparing cache:   0%|          | 0/256 [00:00<?, ?it/s]
+Preparing cache:  44%|████▍     | 112/256 [00:00<00:00, 1112.13it/s]
+Preparing cache:  93%|█████████▎| 239/256 [00:00<00:00, 1201.31it/s]
+Preparing cache: 100%|██████████| 256/256 [00:00<00:00, 1180.16it/s]
+
+(1/29): Calibrating:   0%|          | 0/256 [00:00<?, ?it/s]
+(1/29): Calibrating:   0%|          | 1/256 [00:00<03:32,  1.20it/s]
+(1/29): Calibrating:   5%|▌         | 14/256 [00:00<00:12, 19.73it/s]
+(1/29): Calibrating:  11%|█         | 28/256 [00:01<00:05, 39.84it/s]
+(1/29): Calibrating:  15%|█▍        | 38/256 [00:01<00:04, 46.44it/s]
+(1/29): Calibrating:  21%|██        | 53/256 [00:01<00:03, 67.06it/s]
+(1/29): Calibrating:  25%|██▌       | 64/256 [00:01<00:02, 73.15it/s]
+(1/29): Calibrating:  31%|███       | 79/256 [00:01<00:01, 90.53it/s]
+(1/29): Calibrating:  36%|███▌      | 92/256 [00:01<00:01, 99.37it/s]
+(1/29): Calibrating:  41%|████      | 104/256 [00:01<00:01, 103.68it/s]
+(1/29): Calibrating:  47%|████▋     | 120/256 [00:01<00:01, 117.50it/s]
+(1/29): Calibrating:  52%|█████▏    | 134/256 [00:01<00:00, 123.59it/s]
+(1/29): Calibrating:  59%|█████▊    | 150/256 [00:02<00:00, 132.71it/s]
+(1/29): Calibrating:  64%|██████▍   | 165/256 [00:02<00:00, 137.24it/s]
+(1/29): Calibrating:  71%|███████   | 181/256 [00:02<00:00, 142.17it/s]
+(1/29): Calibrating:  77%|███████▋  | 196/256 [00:02<00:00, 133.91it/s]
+(1/29): Calibrating:  83%|████████▎ | 213/256 [00:02<00:00, 142.73it/s]
+(1/29): Calibrating:  90%|█████████ | 231/256 [00:02<00:00, 151.59it/s]
+(1/29): Calibrating:  96%|█████████▋| 247/256 [00:02<00:00, 145.05it/s]
+(1/29): Calibrating: 100%|██████████| 256/256 [00:02<00:00, 91.69it/s] 
+
+Smoothing:   0%|          | 0/3 [00:00<?, ?it/s]
+
+Grid search for model.layers.0.input_layernorm:   0%|          | 0/20 [00:00<?, ?it/s][A
+
+Grid search for model.layers.0.input_layernorm:   0%|          | 0/20 [00:01<?, ?it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:   5%|▌         | 1/20 [00:01<00:19,  1.00s/it, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:   5%|▌         | 1/20 [00:01<00:19,  1.00s/it, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  10%|█         | 2/20 [00:01<00:15,  1.14it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  10%|█         | 2/20 [00:02<00:15,  1.14it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  15%|█▌        | 3/20 [00:02<00:14,  1.20it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  15%|█▌        | 3/20 [00:03<00:14,  1.20it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  20%|██        | 4/20 [00:03<00:13,  1.22it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  20%|██        | 4/20 [00:04<00:13,  1.22it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  25%|██▌       | 5/20 [00:04<00:12,  1.24it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  25%|██▌       | 5/20 [00:04<00:12,  1.24it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  30%|███       | 6/20 [00:04<00:11,  1.25it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  30%|███       | 6/20 [00:05<00:11,  1.25it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  35%|███▌      | 7/20 [00:05<00:10,  1.25it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  35%|███▌      | 7/20 [00:06<00:10,  1.25it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  40%|████      | 8/20 [00:06<00:09,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  40%|████      | 8/20 [00:07<00:09,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  45%|████▌     | 9/20 [00:07<00:08,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  45%|████▌     | 9/20 [00:08<00:08,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  50%|█████     | 10/20 [00:08<00:07,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  50%|█████     | 10/20 [00:08<00:07,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  55%|█████▌    | 11/20 [00:08<00:07,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  55%|█████▌    | 11/20 [00:09<00:07,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  60%|██████    | 12/20 [00:09<00:06,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  60%|██████    | 12/20 [00:10<00:06,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  65%|██████▌   | 13/20 [00:10<00:05,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  65%|██████▌   | 13/20 [00:11<00:05,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  70%|███████   | 14/20 [00:11<00:04,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  70%|███████   | 14/20 [00:12<00:04,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  75%|███████▌  | 15/20 [00:12<00:03,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  75%|███████▌  | 15/20 [00:12<00:03,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  80%|████████  | 16/20 [00:12<00:03,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  80%|████████  | 16/20 [00:13<00:03,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  85%|████████▌ | 17/20 [00:13<00:02,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  85%|████████▌ | 17/20 [00:14<00:02,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  90%|█████████ | 18/20 [00:14<00:01,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  90%|█████████ | 18/20 [00:15<00:01,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  95%|█████████▌| 19/20 [00:15<00:00,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm:  95%|█████████▌| 19/20 [00:16<00:00,  1.26it/s, best_error=inf][A
+
+Grid search for model.layers.0.input_layernorm: 100%|██████████| 20/20 [00:16<00:00,  1.26it/s, best_error=inf][A
+
+                                                                                                               [A
+Smoothing:   0%|          | 0/3 [00:16<?, ?it/s]
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/kaggle/working/repo/quantize/compress.py", line 94, in <module>
+    main()
+    ~~~~^^
+  File "/kaggle/working/repo/quantize/compress.py", line 73, in main
+    oneshot(model=model, dataset=ds, recipe=build_recipe(spec["modifiers"]),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            max_seq_length=cal["max_seq_length"], num_calibration_samples=len(ds))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/llmcompressor/entrypoints/oneshot.py", line 411, in oneshot
+    one_shot()
+    ~~~~~~~~^^
+  File "/usr/local/lib/python3.13/dist-packages/llmcompressor/entrypoints/oneshot.py", line 188, in __call__
+    self.apply_recipe_modifiers(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        calibration_dataloader=calibration_dataloader,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        recipe_stage=self.recipe_args.stage,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/llmcompressor/entrypoints/oneshot.py", line 239, in apply_recipe_modifiers
+    pipeline(
+    ~~~~~~~~^
+        self.model,
+        ^^^^^^^^^^^
+        calibration_dataloader,
+        ^^^^^^^^^^^^^^^^^^^^^^^
+        self.dataset_args,
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/llmcompressor/pipelines/independent/pipeline.py", line 45, in __call__
+    pipeline(model, dataloader, dataset_args)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/llmcompressor/pipelines/sequential/helpers.py", line 565, in wrapper
+    return func(*args, **kwargs)
+  File "/usr/local/lib/python3.13/dist-packages/llmcompressor/pipelines/sequential/pipeline.py", line 162, in __call__
+    LifecycleCallbacks.sequential_epoch_end(subgraph)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/llmcompressor/core/session_functions.py", line 165, in sequential_epoch_end
+    return cls.event(EventType.SEQUENTIAL_EPOCH_END, subgraph=subgraph, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/llmcompressor/core/session_functions.py", line 89, in event
+    return active_session().event(event_type, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/llmcompressor/core/session.py", line 187, in event
+    mod_data = self._lifecycle.event(
+        event_type=event_type, batch_data=batch_data, loss=loss, **kwargs
+    )
+  File "/usr/local/lib/python3.13/dist-packages/llmcompressor/core/lifecycle.py", line 204, in event
+    data = mod.update_event(state=self.state, event=event, **kwargs)
+  File "/usr/local/lib/python3.13/dist-packages/llmcompressor/modifiers/modifier.py", line 122, in update_event
+    self.on_event(state, event, **kwargs)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/llmcompressor/modifiers/awq/base.py", line 264, in on_event
+    self._apply_smoothing(state.model)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+  File "/usr/local/lib/python3.13/dist-packages/llmcompressor/modifiers/awq/base.py", line 556, in _apply_smoothing
+    best_scales = self._compute_best_scale(
+        mapping, fp16_outputs, orig_layer_weights
+    )
+  File "/usr/local/lib/python3.13/dist-packages/llmcompressor/modifiers/awq/base.py", line 769, in _compute_best_scale
+    raise Exception(
+    ...<4 lines>...
+    )
+Exception: No finite loss was found in best scalesgrid search. This typically means NaN values are appearing in the forward pass of the parent module. If you encounter this error, raise an issue at https://github.com/vllm-project/llm-compressor/issues

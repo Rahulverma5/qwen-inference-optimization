@@ -1,0 +1,26 @@
+{
+  "variant": "w8a8_int8",
+  "modifiers": [
+    {
+      "SmoothQuantModifier": {
+        "smoothing_strength": 0.8
+      }
+    },
+    {
+      "GPTQModifier": {
+        "scheme": "W8A8",
+        "targets": [
+          "Linear"
+        ],
+        "ignore": [
+          "lm_head"
+        ]
+      }
+    }
+  ],
+  "calibration_samples": 256,
+  "calibration_tokens": 138151,
+  "quantize_time_s": 634.3,
+  "size_gib": 1.908,
+  "source_size_gib": 3.22
+}

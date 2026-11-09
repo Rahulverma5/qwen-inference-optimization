@@ -80,3 +80,11 @@ def test_serving_rows_slo_capacity_and_cost(tmp_path):
     assert t["fp16"]["usd_per_1m_tokens"] == pytest.approx(0.36 / (400 * 3600) * 1e6)
     assert t["fp16"]["usd_per_1k_requests"] == pytest.approx(0.36 / (400 / 30 * 3600) * 1e3)
     assert t["replicas2"]["kv_cache_tokens"] == 2 * 86400 and t["replicas2"]["exec_accuracy"] == 0.646
+
+
+def test_subset_delta_uses_paired_comparison(tmp_path):
+    _write(tmp_path / "preds/fp16.score.json", {"n": 1034, "exec_accuracy": 0.647, "valid_sql_rate": 0.87})
+    _write(tmp_path / "preds/cpu.score.json", {"n": 200, "exec_accuracy": 0.525, "valid_sql_rate": 0.74})
+    _write(tmp_path / "compare/cpu.json", {"n": 200, "acc_a": 0.545, "acc_b": 0.525, "mcnemar_p": 0.42})
+    rows = {r["variant"]: r for r in variant_rows(load_quality([tmp_path]))}
+    assert rows["cpu"]["delta_pts"] == pytest.approx(-2.0)  # not 52.5 - 64.7

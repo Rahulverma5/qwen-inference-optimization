@@ -1,0 +1,14 @@
+{
+  "model": "/kaggle/working/models/gptq_w4a16",
+  "window": 1024,
+  "wikitext": {
+    "ppl": 18.25646595190546,
+    "tokens": 298716,
+    "sequences": 292
+  },
+  "spider": {
+    "ppl": 1.385036332012952,
+    "tokens": 32648,
+    "sequences": 1034
+  }
+}

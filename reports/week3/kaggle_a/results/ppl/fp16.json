@@ -1,0 +1,14 @@
+{
+  "model": "/kaggle/working/models/fp16",
+  "window": 1024,
+  "wikitext": {
+    "ppl": 15.907473930678524,
+    "tokens": 298716,
+    "sequences": 292
+  },
+  "spider": {
+    "ppl": 1.385828790865561,
+    "tokens": 32648,
+    "sequences": 1034
+  }
+}

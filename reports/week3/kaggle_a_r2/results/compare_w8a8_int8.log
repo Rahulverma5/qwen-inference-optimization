@@ -1,0 +1,79 @@
+{
+  "a": "/kaggle/working/week3a/preds/fp16.jsonl",
+  "b": "/kaggle/working/week3a/preds/w8a8_int8.jsonl",
+  "n": 1034,
+  "acc_a": 0.6470019342359767,
+  "acc_b": 0.6305609284332688,
+  "both_right": 626,
+  "fixed_by_b": 26,
+  "broken_by_b": 43,
+  "both_wrong": 339,
+  "mcnemar_p": 0.053289363816513634,
+  "by_complexity_proxy": {
+    "simple": {
+      "n": 333,
+      "acc_a": 0.853,
+      "acc_b": 0.838
+    },
+    "agg/order": {
+      "n": 211,
+      "acc_a": 0.701,
+      "acc_b": 0.682
+    },
+    "join+agg/order": {
+      "n": 180,
+      "acc_a": 0.439,
+      "acc_b": 0.367
+    },
+    "nested/set-op": {
+      "n": 159,
+      "acc_a": 0.478,
+      "acc_b": 0.509
+    },
+    "join": {
+      "n": 151,
+      "acc_a": 0.543,
+      "acc_b": 0.543
+    }
+  },
+  "exec_errors_a": {
+    "no such column": 125,
+    "ambiguous column name": 3,
+    "misuse of aggregate function count()": 3,
+    "misuse of aggregate": 2,
+    "no such table": 2,
+    "near \"FROM\"": 1
+  },
+  "exec_errors_b": {
+    "no such column": 133,
+    "ambiguous column name": 5,
+    "no such table": 4,
+    "misuse of aggregate function count()": 3,
+    "misuse of aggregate": 2,
+    "1st ORDER BY term does not match any column in the result se": 1
+  },
+  "examples_fixed": [
+    32,
+    38,
+    41,
+    50,
+    71,
+    84,
+    113,
+    224,
+    253,
+    308
+  ],
+  "examples_broken": [
+    40,
+    83,
+    141,
+    142,
+    162,
+    226,
+    279,
+    403,
+    404,
+    405
+  ]
+}

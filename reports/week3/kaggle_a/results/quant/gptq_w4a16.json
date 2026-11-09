@@ -1,0 +1,22 @@
+{
+  "variant": "gptq_w4a16",
+  "modifiers": [
+    {
+      "GPTQModifier": {
+        "scheme": "W4A16",
+        "targets": [
+          "Linear"
+        ],
+        "ignore": [
+          "lm_head"
+        ],
+        "dampening_frac": 0.01
+      }
+    }
+  ],
+  "calibration_samples": 256,
+  "calibration_tokens": 138151,
+  "quantize_time_s": 558.5,
+  "size_gib": 1.271,
+  "source_size_gib": 3.22
+}

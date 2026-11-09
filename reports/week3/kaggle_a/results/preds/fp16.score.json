@@ -1,0 +1,11 @@
+{
+  "n": 1034,
+  "exec_accuracy": 0.6470019342359767,
+  "valid_sql_rate": 0.8684719535783365,
+  "model": "/kaggle/working/models/fp16",
+  "gen_time_s": 50.05006057599985,
+  "load_time_s": 83.72132061100001,
+  "model_size_gib": 3.2048535495996475,
+  "kv_cache_dtype": "auto",
+  "attention_backend": "TRITON_ATTN"
+}

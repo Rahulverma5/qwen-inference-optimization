@@ -63,6 +63,17 @@ def load_quality(dirs: list[Path]) -> dict[str, dict]:
     return q
 
 
+def delta_pts(key: str, score: dict, compare: dict | None, ref_acc: float) -> float:
+    """Accuracy change vs fp16 in points, on the same questions: the paired comparison when one
+    exists (a subset eval, e.g. 200 questions on CPU, must not be held against fp16's full-set
+    accuracy), else the difference of full-set accuracies."""
+    if key == "fp16":
+        return 0.0
+    if compare and "acc_b" in compare:
+        return (compare["acc_b"] - compare["acc_a"]) * 100
+    return (score["exec_accuracy"] - ref_acc) * 100
+
+
 def variant_rows(quality: dict[str, dict]) -> list[dict]:
     ref = quality.get("fp16", {})
     ref_acc = ref.get("score", {}).get("exec_accuracy", NAN)
@@ -79,7 +90,7 @@ def variant_rows(quality: dict[str, dict]) -> list[dict]:
             "variant": key,
             "n": s["n"],
             "exec_accuracy": s["exec_accuracy"],
-            "delta_pts": (s["exec_accuracy"] - ref_acc) * 100 if key != "fp16" else 0.0,
+            "delta_pts": delta_pts(key, s, f.get("compare"), ref_acc),
             "mcnemar_p": f.get("compare", {}).get("mcnemar_p", NAN),
             "valid_sql_rate": s["valid_sql_rate"],
             "size_gib": size,

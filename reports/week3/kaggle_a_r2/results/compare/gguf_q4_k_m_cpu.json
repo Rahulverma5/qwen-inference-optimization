@@ -1,0 +1,67 @@
+{
+  "a": "/kaggle/working/week3a/preds/fp16.jsonl",
+  "b": "/kaggle/working/week3a/preds/gguf_q4_k_m_cpu.jsonl",
+  "n": 200,
+  "acc_a": 0.545,
+  "acc_b": 0.525,
+  "both_right": 100,
+  "fixed_by_b": 5,
+  "broken_by_b": 9,
+  "both_wrong": 86,
+  "mcnemar_p": 0.4239501953125,
+  "by_complexity_proxy": {
+    "simple": {
+      "n": 65,
+      "acc_a": 0.892,
+      "acc_b": 0.862
+    },
+    "join+agg/order": {
+      "n": 40,
+      "acc_a": 0.35,
+      "acc_b": 0.3
+    },
+    "nested/set-op": {
+      "n": 35,
+      "acc_a": 0.257,
+      "acc_b": 0.314
+    },
+    "join": {
+      "n": 32,
+      "acc_a": 0.344,
+      "acc_b": 0.25
+    },
+    "agg/order": {
+      "n": 28,
+      "acc_a": 0.607,
+      "acc_b": 0.643
+    }
+  },
+  "exec_errors_a": {
+    "no such column": 46,
+    "ambiguous column name": 1,
+    "misuse of aggregate function count()": 1
+  },
+  "exec_errors_b": {
+    "no such column": 50,
+    "misuse of aggregate function count()": 1,
+    "incomplete input": 1
+  },
+  "examples_fixed": [
+    31,
+    32,
+    50,
+    71,
+    124
+  ],
+  "examples_broken": [
+    18,
+    34,
+    58,
+    83,
+    89,
+    93,
+    136,
+    147,
+    184
+  ]
+}

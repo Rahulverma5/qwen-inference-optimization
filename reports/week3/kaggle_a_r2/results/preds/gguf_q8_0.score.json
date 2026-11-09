@@ -1,0 +1,11 @@
+{
+  "n": 1034,
+  "exec_accuracy": 0.6450676982591876,
+  "valid_sql_rate": 0.8655705996131529,
+  "model": "/kaggle/working/models/gguf/qwen3-1.7b-spider-Q8_0.gguf",
+  "gen_time_s": 267.2577133240002,
+  "load_time_s": 173.75562941900034,
+  "model_size_gib": 1.7084424495697021,
+  "kv_cache_dtype": "auto",
+  "attention_backend": "TRITON_ATTN"
+}

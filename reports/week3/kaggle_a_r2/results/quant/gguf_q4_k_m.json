@@ -1,0 +1,6 @@
+{
+  "file": "qwen3-1.7b-spider-Q4_K_M.gguf",
+  "size_gib": 1.031,
+  "quantize_time_s": 80.6,
+  "llama_cpp_ref": "b11600"
+}
