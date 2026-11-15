@@ -33,6 +33,15 @@ def render(tokenizer, messages: list[dict], add_generation_prompt: bool) -> str:
     )
 
 
+def render_generation_prompt(messages: list[dict]) -> str:
+    """`render(tok, messages, add_generation_prompt=True)` without a tokenizer: Qwen3's ChatML
+    with thinking off, for plain system/user/assistant text messages. The gateway uses it so its
+    image needs no `transformers`; tests/test_prompt.py checks it byte-for-byte against the real
+    template, so it can't drift from what SFT and the Week 3 evals used."""
+    out = [f"<|im_start|>{m['role']}\n{m['content'].strip()}<|im_end|>\n" for m in messages]
+    return "".join(out) + "<|im_start|>assistant\n<think>\n\n</think>\n\n"
+
+
 _FENCE = re.compile(r"```(?:sql)?\s*(.*?)```", re.S | re.I)
 _THINK = re.compile(r"<think>.*?</think>", re.S)
 

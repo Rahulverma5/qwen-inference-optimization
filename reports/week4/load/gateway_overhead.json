@@ -1,0 +1,13 @@
+{
+ "direct_ms_p50_p95": [
+  104.8,
+  129.4
+ ],
+ "gateway_ms_p50_p95": [
+  103.3,
+  115.2
+ ],
+ "overhead_ms_p50": -1.6,
+ "n": 30,
+ "request": "cached prompt, max_tokens=1"
+}

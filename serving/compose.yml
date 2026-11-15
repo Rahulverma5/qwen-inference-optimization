@@ -1,0 +1,63 @@
+# Local production-like stack: gateway -> llama-server (GGUF Q4_K_M, CPU) + Prometheus + Grafana.
+#   cp serving/.env.example serving/.env   # set GATEWAY_API_KEYS
+#   docker compose -f serving/compose.yml up -d --build
+# gateway :8000 | llama-server 127.0.0.1:8080 | Prometheus :9090 | Grafana :3000 (dashboard "Qwen SQL gateway")
+name: qwen-sql
+
+services:
+  llama:
+    # official CPU server build. Week 3 benchmarked b11600, which has no published image; b11610 is
+    # the nearest published build (10 commits later). Same flags as the Week 3 ship decision:
+    # one slot (FIFO beats shared slots on CPU), 2k context, 1 GiB host-RAM prompt cache.
+    image: ghcr.io/ggml-org/llama.cpp:server-b11610
+    command: >
+      -m /models/${MODEL_FILE:-qwen3-1.7b-spider-Q4_K_M.gguf} --alias qwen-sql
+      --host 0.0.0.0 --port 8080 --threads ${LLAMA_THREADS:-4} --parallel 1 --ctx-size 2048
+      --cache-ram ${LLAMA_CACHE_RAM_MIB:-1024} --flash-attn on --metrics
+    volumes:
+      - ${MODEL_DIR:-../models/week3/models/gguf}:/models:ro
+    ports: ["127.0.0.1:8080:8080"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 60s
+
+  gateway:
+    build: {context: .., dockerfile: serving/docker/Dockerfile.gateway}
+    image: qwen-sql-gateway:dev
+    environment:
+      GATEWAY_BACKEND_URL: http://llama:8080
+      GATEWAY_API_KEYS: ${GATEWAY_API_KEYS:?set GATEWAY_API_KEYS in serving/.env}
+      GATEWAY_MAX_IN_FLIGHT: ${GATEWAY_MAX_IN_FLIGHT:-1}
+      GATEWAY_MAX_QUEUE: ${GATEWAY_MAX_QUEUE:-2}
+      GATEWAY_MAX_QUEUE_WAIT_S: ${GATEWAY_MAX_QUEUE_WAIT_S:-6}
+      GATEWAY_RATE_PER_S: ${GATEWAY_RATE_PER_S:-1}
+      GATEWAY_BURST: ${GATEWAY_BURST:-5}
+    ports: ["8000:8000"]
+    depends_on:
+      llama: {condition: service_healthy}
+    restart: unless-stopped
+    stop_grace_period: 35s   # > uvicorn's 30 s drain, so in-flight requests finish before SIGKILL
+
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports: ["9090:9090"]
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:12.1.0
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"        # local only: view dashboards without logging in
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports: ["3000:3000"]
+    depends_on: [prometheus]
+    restart: unless-stopped

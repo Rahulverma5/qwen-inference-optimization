@@ -1,0 +1,64 @@
+{
+ "backend_killed_mid_stream": {
+  "client_got_error_event": true,
+  "http_status": 200,
+  "chunks_before_end": 7,
+  "stream_ended_after_kill_s": 0.0,
+  "total_s": 1.8,
+  "ready_503_after_s": 0.06,
+  "request_while_down": "502 backend_unavailable",
+  "state_5s_after_kill": {
+   "status": "exited",
+   "restarts_since_start": null,
+   "exit_code": 137
+  },
+  "docker_restarted_it": false,
+  "ready_again_after_start_s": 5.86,
+  "gateway_in_flight_after": 0.0
+ },
+ "oversized_input": {
+  "gateway_limit": {
+   "status": 413,
+   "s": 0.012,
+   "body": {
+    "detail": {
+     "error": "too_large",
+     "message": "input is 20236 chars; limit 8000"
+    }
+   }
+  },
+  "backend_context_limit": {
+   "status": 400,
+   "s": 0.013,
+   "body": "{\"error\":{\"code\":400,\"message\":\"request (7799 tokens) exceeds the available context size (2048 tokens), try increasing it\",\"type\":\"exceed_context_size_error\",\"n_prompt_tokens\":7799,\"n_ctx\":2048}}"
+  }
+ },
+ "client_disconnects": {
+  "stream_slot_freed_after_s": 0.07,
+  "next_request": {
+   "status": 200,
+   "s": 0.16
+  },
+  "non_stream_slot_held_after_client_left_s": 0.09
+ },
+ "sigterm_drain": {
+  "new_request_during_drain": "ReadError",
+  "in_flight_request": {
+   "status": 200,
+   "finished_after_sigterm_s": 4.84
+  },
+  "gateway_stopped_after_s": 5.51,
+  "gateway_exit": {
+   "status": "exited",
+   "restarts_since_start": null,
+   "exit_code": 0
+  },
+  "gateway_ready_again_s": 1.84
+ },
+ "backend_process_exits": {
+  "ready_503_after_s": 0.05,
+  "ready_200_again_after_s": 8.75,
+  "restart_count_delta": 1,
+  "first_request_after": 200
+ }
+}

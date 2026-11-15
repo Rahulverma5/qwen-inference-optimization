@@ -1,0 +1,13 @@
+{
+ "burst_of": 10,
+ "config": "rate 1/s, burst 5, 1 in flight, queue 2",
+ "by_outcome": {
+  "429 queue_full": 2,
+  "200": 3,
+  "429 rate_limited": 5
+ },
+ "retry_after": [
+  "1",
+  "6"
+ ]
+}

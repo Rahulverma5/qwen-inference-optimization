@@ -1,0 +1,20 @@
+{
+ "sent": 41,
+ "wall_s": 349.0,
+ "by_status": {
+  "200": 41
+ },
+ "success_rate": 1.0,
+ "goodput_req_s": 0.117,
+ "ok_latency_s": {
+  "p50": 100.085,
+  "p95": 231.84,
+  "max": 239.502
+ },
+ "ok_queue_wait_s_p95": 224.1,
+ "rejected_latency_s_p95": null,
+ "ok_within_10s": 0.049,
+ "exec_accuracy_of_answered": 0.902,
+ "mode": "open rate=0.3/s for 120.0s",
+ "seed": 1
+}

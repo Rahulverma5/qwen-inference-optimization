@@ -1,0 +1,282 @@
+{
+ "uid": "qwen-sql-gateway",
+ "title": "Qwen SQL gateway",
+ "schemaVersion": 39,
+ "version": 1,
+ "refresh": "5s",
+ "time": {
+  "from": "now-15m",
+  "to": "now"
+ },
+ "panels": [
+  {
+   "type": "timeseries",
+   "title": "Requests/s by status",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prom"
+   },
+   "gridPos": {
+    "x": 0,
+    "y": 0,
+    "w": 12,
+    "h": 8
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "reqps"
+    },
+    "overrides": []
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "sum by (status) (rate(gateway_requests_total{route!~\"/metrics|/health|/ready\"}[1m]))",
+     "legendFormat": "{{status}}"
+    }
+   ]
+  },
+  {
+   "type": "timeseries",
+   "title": "Gateway latency (e2e) p50 / p95",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prom"
+   },
+   "gridPos": {
+    "x": 12,
+    "y": 0,
+    "w": 12,
+    "h": 8
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "s"
+    },
+    "overrides": []
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "histogram_quantile(0.5, sum by (le) (rate(gateway_request_seconds_bucket[1m])))",
+     "legendFormat": "p50"
+    },
+    {
+     "refId": "B",
+     "expr": "histogram_quantile(0.95, sum by (le) (rate(gateway_request_seconds_bucket[1m])))",
+     "legendFormat": "p95"
+    },
+    {
+     "refId": "C",
+     "expr": "10",
+     "legendFormat": "SLO p95 (10 s)"
+    }
+   ]
+  },
+  {
+   "type": "timeseries",
+   "title": "Queue depth and in-flight",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prom"
+   },
+   "gridPos": {
+    "x": 0,
+    "y": 8,
+    "w": 12,
+    "h": 8
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    },
+    "overrides": []
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "gateway_queue_depth",
+     "legendFormat": "waiting"
+    },
+    {
+     "refId": "B",
+     "expr": "gateway_in_flight",
+     "legendFormat": "at backend"
+    }
+   ]
+  },
+  {
+   "type": "timeseries",
+   "title": "Rejections/s by reason (429/401/413)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prom"
+   },
+   "gridPos": {
+    "x": 12,
+    "y": 8,
+    "w": 12,
+    "h": 8
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "reqps"
+    },
+    "overrides": []
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "sum by (reason) (rate(gateway_rejections_total[1m]))",
+     "legendFormat": "{{reason}}"
+    }
+   ]
+  },
+  {
+   "type": "timeseries",
+   "title": "Backend errors and retries",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prom"
+   },
+   "gridPos": {
+    "x": 0,
+    "y": 16,
+    "w": 12,
+    "h": 8
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "reqps"
+    },
+    "overrides": []
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "sum by (kind) (rate(gateway_backend_errors_total[1m]))",
+     "legendFormat": "{{kind}}"
+    },
+    {
+     "refId": "B",
+     "expr": "rate(gateway_backend_retries_total[1m])",
+     "legendFormat": "retries"
+    }
+   ]
+  },
+  {
+   "type": "timeseries",
+   "title": "Queue wait p95 / TTFT p95 (streaming)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prom"
+   },
+   "gridPos": {
+    "x": 12,
+    "y": 16,
+    "w": 12,
+    "h": 8
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "s"
+    },
+    "overrides": []
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "histogram_quantile(0.95, sum by (le) (rate(gateway_queue_wait_seconds_bucket[1m])))",
+     "legendFormat": "queue wait p95"
+    },
+    {
+     "refId": "B",
+     "expr": "histogram_quantile(0.95, sum by (le) (rate(gateway_ttft_seconds_bucket[1m])))",
+     "legendFormat": "TTFT p95"
+    }
+   ]
+  },
+  {
+   "type": "timeseries",
+   "title": "llama-server tokens/s (prompt = prefill, predicted = decode)",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prom"
+   },
+   "gridPos": {
+    "x": 0,
+    "y": 24,
+    "w": 12,
+    "h": 8
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    },
+    "overrides": []
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "rate(llamacpp:prompt_tokens_total[1m])",
+     "legendFormat": "prompt tok/s computed"
+    },
+    {
+     "refId": "B",
+     "expr": "rate(llamacpp:prompt_tokens_cached_total[1m])",
+     "legendFormat": "prompt tok/s from cache"
+    },
+    {
+     "refId": "C",
+     "expr": "rate(llamacpp:tokens_predicted_total[1m])",
+     "legendFormat": "generated tok/s"
+    }
+   ]
+  },
+  {
+   "type": "timeseries",
+   "title": "llama-server busy / deferred / ready",
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prom"
+   },
+   "gridPos": {
+    "x": 12,
+    "y": 24,
+    "w": 12,
+    "h": 8
+   },
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    },
+    "overrides": []
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "expr": "llamacpp:requests_processing",
+     "legendFormat": "processing"
+    },
+    {
+     "refId": "B",
+     "expr": "llamacpp:requests_deferred",
+     "legendFormat": "deferred (queued in llama)"
+    },
+    {
+     "refId": "C",
+     "expr": "gateway_ready",
+     "legendFormat": "gateway ready"
+    },
+    {
+     "refId": "D",
+     "expr": "up{job=\"llama\"}",
+     "legendFormat": "llama up"
+    }
+   ]
+  }
+ ],
+ "tags": [
+  "qwen-sql"
+ ]
+}

@@ -1,0 +1,5 @@
+# Gateway runtime only (the image installs nothing else). Versions verified by tests/test_gateway.py.
+fastapi==0.163.1
+uvicorn==0.54.0
+httpx==0.28.1
+prometheus-client==0.26.0

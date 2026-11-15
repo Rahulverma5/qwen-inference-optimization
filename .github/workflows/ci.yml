@@ -13,6 +13,21 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
-      - run: pip install -e '.[dev]'
+      - run: pip install -e '.[dev,serve]'
       - run: ruff check .
       - run: pytest -q
+
+  gateway-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f serving/docker/Dockerfile.gateway -t qwen-sql-gateway:ci .
+      - name: smoke test (liveness up, readiness down without a backend, auth enforced)
+        run: |
+          docker run -d --name gw -p 8000:8000 -e GATEWAY_API_KEYS=ci -e GATEWAY_BACKEND_URL=http://127.0.0.1:9 qwen-sql-gateway:ci
+          for i in $(seq 1 20); do curl -fs localhost:8000/health && break; sleep 1; done
+          test "$(curl -s -o /dev/null -w '%{http_code}' localhost:8000/ready)" = 503
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST localhost:8000/v1/sql -d '{}')" = 401
+          test "$(docker inspect -f '{{.Config.User}}' qwen-sql-gateway:ci)" = app
+      - run: docker compose -f serving/compose.yml config -q
+        env: {GATEWAY_API_KEYS: ci}

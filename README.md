@@ -18,7 +18,7 @@ free-tier resources.
 | 1 | T4 smoke test, baseline Spider eval, QLoRA SFT, merge | **done**: Spider dev exec accuracy 55.9% → **64.6%** (+8.7, p≈4e-9) after 77 min QLoRA on 2× T4 ([write-up](docs/weeks/week1.md)) |
 | 2 | Streaming benchmark harness, KV-cache capacity model, T4 SLOs | **done**: one T4 serves Spider at **8.3 req/s** (8 concurrent) within p95 SLOs; KV model within 0.8% of vLLM; decode cost dominated by attention at ~11% of T4 bandwidth ([write-up](docs/weeks/week2.md)) |
 | 3 | AWQ / GPTQ / W8A8 / GGUF compression; serving study (CPU, llama.cpp) | **done**: GGUF Q4_K_M is 3.1× smaller with no measurable accuracy loss (−0.4 pts served live on CPU, p=0.76). One 4-vCPU box serves **~0.2–0.3 req/s** within a 10 s p95. CPU batching buys nothing; a host-RAM prompt cache gives +42%. GPU reference: GPTQ is 2.7× cheaper per query than fp16 on T4 ([write-up](docs/weeks/week3.md)) |
-| 4 | FastAPI gateway (auth, rate limit, 429 back-pressure, health/ready, metrics), Docker, compose + Prometheus/Grafana | — |
+| 4 | FastAPI gateway (auth, rate limit, 429 back-pressure, health/ready, metrics), Docker, compose + Prometheus/Grafana | **done**: gateway overhead ≈ 0 ms; under 3× overload, 429 back-pressure keeps accepted requests at a **7.3 s median vs 100 s** unbounded, same throughput. 5 failure drills pass (crash self-heals in 8.8 s); one found and fixed an abandoned-request slot leak (27 s → 0.09 s) ([write-up](docs/weeks/week4.md)) |
 | 5 | Terraform: Cloud Run + EC2, CloudWatch / Cloud Monitoring, CI deploy, write-up | — |
 
 ## Layout
@@ -31,7 +31,7 @@ bench/        async streaming load generator, latency metrics, KV-cache calculat
               serving-experiment runner, experiment matrix + Pareto plot
 tracking/     MLflow logging helper (no-op unless MLFLOW_TRACKING_URI is set)
 quantize/     llm-compressor recipes (AWQ, GPTQ, W8A8), Spider calibration set, GGUF export
-serving/      gateway + Dockerfiles + compose                           (week 4)
+serving/      gateway, Dockerfile, compose + Prometheus/Grafana, load test, failure drills
 infra/        Terraform for GCP and AWS                                 (week 5)
 notebooks/    thin Kaggle launchers; all logic lives in the packages above
 reports/      CSVs, plots, decision memo, failure analysis
@@ -64,6 +64,9 @@ python -m venv .venv && .venv/bin/pip install -e '.[dev]'
 Spider data (pinned, checksum-verified): `python scripts/get_spider.py --out data`.
 
 On Kaggle from this machine: `python scripts/kaggle_run.py run --week 1` (uploads HEAD as a private dataset, runs on T4 ×2, fetches results). Week 3 runs in two parts: `--week 3 --part a` (GPU), then `--week 3 --part c --cpu --kernel-source qwen-sql-week3a` (CPU-only, no GPU quota). Or import [notebooks/week1_kaggle.ipynb](notebooks/week1_kaggle.ipynb) on kaggle.com.
+
+Local serving stack (Week 4): `cp serving/.env.example serving/.env` (set a key), then
+`docker compose -f serving/compose.yml up -d --build`; gateway on :8000, Grafana on :3000.
 
 Weekly write-ups (what, why, results, interview notes): [docs/weeks/](docs/weeks/).
 

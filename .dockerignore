@@ -1,0 +1,5 @@
+*
+!finetune/__init__.py
+!finetune/prompt.py
+!serving/
+serving/**/__pycache__

@@ -1,0 +1,41 @@
+{"i": 285, "db": "employee_hire_evaluation", "t_send": 0.482, "status": 200, "sql": "SELECT name FROM shop WHERE shop_id NOT IN (SELECT shop_id FROM hiring)", "queue_wait_s": 0.0, "prompt_cached": 38, "latency_s": 5.795, "correct": true}
+{"i": 344, "db": "cre_Doc_Template_Mgt", "t_send": 6.749, "status": 200, "sql": "SELECT Template_Type_Code FROM Templates GROUP BY Template_Type_Code ORDER BY count(*) DESC LIMIT 1", "queue_wait_s": 0.0, "prompt_cached": 264, "latency_s": 2.686, "correct": true}
+{"i": 981, "db": "dog_kennels", "t_send": 11.561, "status": 200, "sql": "SELECT count(*) FROM owners WHERE owner_id NOT IN (SELECT owner_id FROM dogs)", "queue_wait_s": 0.0, "prompt_cached": 689, "latency_s": 2.735, "correct": true}
+{"i": 510, "db": "student_transcripts_tracking", "t_send": 12.541, "status": 200, "sql": "SELECT count(*) FROM courses", "queue_wait_s": 1.745, "prompt_cached": 39, "latency_s": 18.546, "correct": true}
+{"i": 973, "db": "dog_kennels", "t_send": 14.821, "status": 429, "reason": "queue_timeout", "latency_s": 6.007}
+{"i": 562, "db": "student_transcripts_tracking", "t_send": 16.812, "status": 429, "reason": "queue_timeout", "latency_s": 6.008}
+{"i": 668, "db": "poker_player", "t_send": 20.327, "status": 429, "reason": "queue_full", "latency_s": 0.008}
+{"i": 483, "db": "wta_1", "t_send": 25.509, "status": 200, "sql": "SELECT winner_name ,  winner_rank FROM matches JOIN players ON winner_id  =  player_id ORDER BY winner_age LIMIT 3", "queue_wait_s": 5.574, "prompt_cached": 38, "latency_s": 14.969, "correct": true}
+{"i": 570, "db": "student_transcripts_tracking", "t_send": 25.835, "status": 429, "reason": "queue_timeout", "latency_s": 6.005}
+{"i": 451, "db": "wta_1", "t_send": 25.931, "status": 429, "reason": "queue_full", "latency_s": 0.007}
+{"i": 384, "db": "course_teach", "t_send": 31.953, "status": 429, "reason": "queue_timeout", "latency_s": 6.007}
+{"i": 888, "db": "network_1", "t_send": 33.845, "status": 429, "reason": "queue_timeout", "latency_s": 6.008}
+{"i": 831, "db": "orchestra", "t_send": 38.632, "status": 200, "sql": "SELECT avg(Attendance) FROM show", "queue_wait_s": 1.84, "prompt_cached": 38, "latency_s": 8.378, "correct": true}
+{"i": 495, "db": "battle_death", "t_send": 38.639, "status": 429, "reason": "queue_full", "latency_s": 0.012}
+{"i": 893, "db": "network_1", "t_send": 40.603, "status": 429, "reason": "queue_timeout", "latency_s": 6.006}
+{"i": 869, "db": "network_1", "t_send": 44.869, "status": 200, "sql": "SELECT grade FROM Highschooler WHERE name  =  \"Kyle\"", "queue_wait_s": 2.133, "prompt_cached": 38, "latency_s": 7.323, "correct": true}
+{"i": 73, "db": "pets_1", "t_send": 45.731, "status": 429, "reason": "queue_full", "latency_s": 0.007}
+{"i": 1017, "db": "singer", "t_send": 55.42, "status": 200, "sql": "SELECT Citizenship ,  max(Net_Worth_Millions) FROM singer GROUP BY Citizenship", "queue_wait_s": 0.0, "prompt_cached": 38, "latency_s": 4.449, "correct": true}
+{"i": 95, "db": "car_1", "t_send": 63.141, "status": 200, "sql": "SELECT model FROM cars_data ORDER BY horsepower LIMIT 1", "queue_wait_s": 0.0, "prompt_cached": 39, "latency_s": 8.146, "correct": false}
+{"i": 909, "db": "network_1", "t_send": 63.243, "status": 429, "reason": "queue_timeout", "latency_s": 6.012}
+{"i": 649, "db": "poker_player", "t_send": 63.328, "status": 429, "reason": "queue_timeout", "latency_s": 6.007}
+{"i": 910, "db": "network_1", "t_send": 65.929, "status": 429, "reason": "queue_full", "latency_s": 0.009}
+{"i": 890, "db": "network_1", "t_send": 75.261, "status": 200, "sql": "SELECT T2.name FROM friend AS T1 JOIN highschooler AS T2 ON T1.friend_id  =  T2.id WHERE T1.student_id  =  (SELECT id FROM highschooler WHERE name  =  'Kyle')", "queue_wait_s": 0.0, "prompt_cached": 162, "latency_s": 5.571, "correct": true}
+{"i": 641, "db": "tvshow", "t_send": 76.859, "status": 200, "sql": "SELECT id FROM TV_Channel GROUP BY Country HAVING count(*)  >  2", "queue_wait_s": 3.966, "prompt_cached": 38, "latency_s": 11.329, "correct": true}
+{"i": 13, "db": "concert_singer", "t_send": 77.671, "status": 429, "reason": "queue_timeout", "latency_s": 6.01}
+{"i": 976, "db": "dog_kennels", "t_send": 79.501, "status": 429, "reason": "queue_full", "latency_s": 0.009}
+{"i": 397, "db": "course_teach", "t_send": 79.599, "status": 429, "reason": "queue_full", "latency_s": 0.007}
+{"i": 874, "db": "network_1", "t_send": 80.436, "status": 429, "reason": "queue_full", "latency_s": 0.007}
+{"i": 707, "db": "world_1", "t_send": 82.355, "status": 200, "sql": "SELECT sum(surfacearea) FROM country WHERE region  =  \"Caribbean\"", "queue_wait_s": 5.829, "prompt_cached": 38, "latency_s": 20.699, "correct": true}
+{"i": 714, "db": "world_1", "t_send": 84.639, "status": 429, "reason": "queue_timeout", "latency_s": 6.007}
+{"i": 799, "db": "world_1", "t_send": 85.521, "status": 429, "reason": "queue_full", "latency_s": 0.008}
+{"i": 509, "db": "student_transcripts_tracking", "t_send": 86.399, "status": 429, "reason": "queue_full", "latency_s": 0.024}
+{"i": 525, "db": "student_transcripts_tracking", "t_send": 87.219, "status": 429, "reason": "queue_full", "latency_s": 0.008}
+{"i": 950, "db": "dog_kennels", "t_send": 89.271, "status": 429, "reason": "queue_timeout", "latency_s": 6.007}
+{"i": 39, "db": "concert_singer", "t_send": 90.411, "status": 429, "reason": "queue_full", "latency_s": 0.008}
+{"i": 1023, "db": "singer", "t_send": 90.483, "status": 429, "reason": "queue_full", "latency_s": 0.008}
+{"i": 499, "db": "battle_death", "t_send": 96.543, "status": 429, "reason": "queue_timeout", "latency_s": 6.008}
+{"i": 835, "db": "orchestra", "t_send": 99.254, "status": 200, "sql": "SELECT count(DISTINCT Nationality) FROM conductor", "queue_wait_s": 3.791, "prompt_cached": 285, "latency_s": 5.575, "correct": true}
+{"i": 895, "db": "network_1", "t_send": 102.678, "status": 200, "sql": "SELECT id FROM highschooler WHERE id NOT IN (SELECT student_id FROM friend)", "queue_wait_s": 2.146, "prompt_cached": 162, "latency_s": 4.487, "correct": true}
+{"i": 267, "db": "employee_hire_evaluation", "t_send": 103.364, "status": 200, "sql": "SELECT count(*) ,  LOCATION FROM shop GROUP BY LOCATION", "queue_wait_s": 3.797, "prompt_cached": 38, "latency_s": 10.275, "correct": true}
+{"i": 50, "db": "pets_1", "t_send": 119.7, "status": 200, "sql": "SELECT max(weight) ,  pet_type FROM pets GROUP BY pet_type", "queue_wait_s": 0.0, "prompt_cached": 38, "latency_s": 4.649, "correct": false}

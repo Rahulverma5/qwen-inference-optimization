@@ -20,3 +20,5 @@ build/
 # Kaggle bundles: results/ dirs are committed, the zips and raw kernel logs are not
 reports/**/*_results.zip
 reports/week3/**/qwen-sql-*.log
+# compose secrets
+serving/.env
