@@ -1,0 +1,32 @@
+{
+  "name": "fp16",
+  "model": "fp16",
+  "set": {},
+  "replicas": 1,
+  "gpus_per_replica": 1,
+  "quality": "fp16",
+  "question": "In-session baseline; every row below is compared to it.",
+  "num_gpus": 1,
+  "servers": [
+    {
+      "ready": true,
+      "ready_s": 103.4,
+      "kv_cache_tokens": 86400,
+      "max_concurrency_seq_len": 4096,
+      "max_concurrency": 21.09,
+      "weights_gib": 3.22,
+      "weights_load_s": 2.519691,
+      "gpus": "0",
+      "port": 8000
+    }
+  ],
+  "workloads": {
+    "spider_v1": "ok",
+    "short_v1": "ok",
+    "long_v1": "ok",
+    "shared_prefix_v1": "ok",
+    "mixed_v1": "ok"
+  },
+  "status": "ok",
+  "wall_s": 1219.0
+}

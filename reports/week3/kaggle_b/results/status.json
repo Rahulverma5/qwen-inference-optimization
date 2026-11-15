@@ -1,0 +1,8 @@
+{
+  "workloads": "ok",
+  "quant_awq_w4a16": "failed",
+  "eval_fp16_kv_fp8_e5m2": "failed",
+  "compare_fp16_kv_fp8_e5m2": "skipped",
+  "experiments": "ok",
+  "matrix": "ok"
+}

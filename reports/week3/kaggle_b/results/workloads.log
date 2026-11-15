@@ -1,0 +1,5 @@
+wrote 200 prompts -> /kaggle/working/week3b/workloads/short_v1.jsonl
+wrote 100 prompts -> /kaggle/working/week3b/workloads/long_v1.jsonl
+wrote 200 prompts -> /kaggle/working/week3b/workloads/shared_prefix_v1.jsonl
+wrote 300 prompts -> /kaggle/working/week3b/workloads/spider_v1.jsonl
+wrote 200 prompts -> /kaggle/working/week3b/workloads/mixed_v1.jsonl

@@ -1,0 +1,32 @@
+{
+  "name": "attn_flex",
+  "model": "fp16",
+  "set": {
+    "attention-backend": "FLEX_ATTENTION"
+  },
+  "replicas": 1,
+  "gpus_per_replica": 1,
+  "quality": "fp16",
+  "question": "Is TRITON_ATTN's ~11%-of-bandwidth KV read the backend's fault? FlexAttention is the other sm75 option.",
+  "num_gpus": 1,
+  "servers": [
+    {
+      "ready": true,
+      "ready_s": 75.8,
+      "kv_cache_tokens": 86912,
+      "max_concurrency_seq_len": 4096,
+      "max_concurrency": 21.22,
+      "weights_gib": 3.22,
+      "weights_load_s": 2.55019,
+      "gpus": "0",
+      "port": 8000
+    }
+  ],
+  "workloads": {
+    "spider_v1": "ok",
+    "short_v1": "ok",
+    "long_v1": "ok"
+  },
+  "status": "ok",
+  "wall_s": 1277.2
+}

@@ -1,0 +1,1 @@
+vllm serve /kaggle/working/models/fp16 --served-model-name qwen-sql --port 8000 --dtype float16 --max-model-len 4096 --gpu-memory-utilization 0.5 --max-num-seqs 256 --attention-backend TRITON_ATTN --enable-prefix-caching --enable-chunked-prefill --seed 0

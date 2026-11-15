@@ -1,0 +1,15 @@
+{
+  "name": "awq_w4a16",
+  "model": "awq_w4a16",
+  "set": {},
+  "replicas": 1,
+  "gpus_per_replica": 1,
+  "quality": "awq_w4a16",
+  "question": "4-bit weights cut the per-step weight read 3x, but Exllama dequant runs on CUDA cores. Net effect by batch size?",
+  "num_gpus": 1,
+  "servers": [],
+  "workloads": {},
+  "status": "missing_model",
+  "error_tail": "no model for variant 'awq_w4a16' at /kaggle/working/models/awq_w4a16",
+  "wall_s": 0.0
+}

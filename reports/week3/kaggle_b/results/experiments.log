@@ -1,0 +1,221 @@
+=== fp16: In-session baseline; every row below is compared to it.
+$ vllm serve /kaggle/working/models/fp16 --served-model-name qwen-sql --port 8000 --dtype float16 --max-model-len 4096 --gpu-memory-utilization 0.9 --max-num-seqs 256 --attention-backend TRITON_ATTN --enable-prefix-caching --enable-chunked-prefill --seed 0
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/spider_v1.jsonl --concurrency 1 4 16 64 --min-requests 40 --waves 4 --label fp16/spider_v1 --out /kaggle/working/week3b/experiments/fp16/spider_v1 --no-ignore-eos
+    c1: 1.76 req/s, 55 out tok/s, TTFT p95 131 ms, TPOT p95 16.7 ms, errors 0.0%, KV max 1%, waiting max 0
+    c4: 4.51 req/s, 142 out tok/s, TTFT p95 226 ms, TPOT p95 26.6 ms, errors 0.0%, KV max 2%, waiting max 0
+   c16: 9.41 req/s, 279 out tok/s, TTFT p95 595 ms, TPOT p95 52.5 ms, errors 0.0%, KV max 5%, waiting max 0
+   c64: 15.79 req/s, 481 out tok/s, TTFT p95 1728 ms, TPOT p95 118.7 ms, errors 0.0%, KV max 11%, waiting max 18
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/short_v1.jsonl --concurrency 1 4 16 64 --min-requests 40 --waves 4 --label fp16/short_v1 --out /kaggle/working/week3b/experiments/fp16/short_v1
+    c1: 0.39 req/s, 49 out tok/s, TTFT p95 46 ms, TPOT p95 23.0 ms, errors 0.0%, KV max 0%, waiting max 0
+    c4: 1.52 req/s, 194 out tok/s, TTFT p95 138 ms, TPOT p95 20.3 ms, errors 0.0%, KV max 1%, waiting max 0
+   c16: 3.97 req/s, 508 out tok/s, TTFT p95 440 ms, TPOT p95 30.6 ms, errors 0.0%, KV max 5%, waiting max 0
+   c64: 6.71 req/s, 860 out tok/s, TTFT p95 1604 ms, TPOT p95 67.1 ms, errors 0.0%, KV max 19%, waiting max 14
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/long_v1.jsonl --concurrency 4 16 --min-requests 40 --waves 4 --label fp16/long_v1 --out /kaggle/working/week3b/experiments/fp16/long_v1
+    c4: 0.28 req/s, 72 out tok/s, TTFT p95 2851 ms, TPOT p95 51.8 ms, errors 0.0%, KV max 11%, waiting max 2
+   c16: 0.37 req/s, 95 out tok/s, TTFT p95 13001 ms, TPOT p95 161.7 ms, errors 0.0%, KV max 43%, waiting max 13
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/shared_prefix_v1.jsonl --concurrency 4 16 --min-requests 40 --waves 4 --label fp16/shared_prefix_v1 --out /kaggle/working/week3b/experiments/fp16/shared_prefix_v1
+    c4: 0.39 req/s, 100 out tok/s, TTFT p95 1156 ms, TPOT p95 38.7 ms, errors 0.0%, KV max 5%, waiting max 0
+   c16: 0.59 req/s, 152 out tok/s, TTFT p95 4591 ms, TPOT p95 102.9 ms, errors 0.0%, KV max 15%, waiting max 9
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/mixed_v1.jsonl --concurrency 4 16 32 --min-requests 40 --waves 4 --label fp16/mixed_v1 --out /kaggle/working/week3b/experiments/fp16/mixed_v1
+    c4: 0.85 req/s, 109 out tok/s, TTFT p95 1827 ms, TPOT p95 39.4 ms, errors 0.0%, KV max 6%, waiting max 1
+   c16: 1.40 req/s, 179 out tok/s, TTFT p95 4942 ms, TPOT p95 90.6 ms, errors 0.0%, KV max 16%, waiting max 11
+   c32: 1.75 req/s, 225 out tok/s, TTFT p95 8547 ms, TPOT p95 155.6 ms, errors 0.0%, KV max 32%, waiting max 25
+=== fp16: ok in 1219 s
+=== awq_w4a16: 4-bit weights cut the per-step weight read 3x, but Exllama dequant runs on CUDA cores. Net effect by batch size?
+=== awq_w4a16: missing_model in 0 s
+=== gptq_w4a16: Same kernel as AWQ (symmetric, no zero points); any speed difference is the zero-point cost.
+$ vllm serve /kaggle/working/models/gptq_w4a16 --served-model-name qwen-sql --port 8000 --dtype float16 --max-model-len 4096 --gpu-memory-utilization 0.9 --max-num-seqs 256 --attention-backend TRITON_ATTN --enable-prefix-caching --enable-chunked-prefill --seed 0
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/spider_v1.jsonl --concurrency 1 4 16 64 --min-requests 40 --waves 4 --label gptq_w4a16/spider_v1 --out /kaggle/working/week3b/experiments/gptq_w4a16/spider_v1 --no-ignore-eos
+    c1: 3.13 req/s, 98 out tok/s, TTFT p95 129 ms, TPOT p95 9.2 ms, errors 0.0%, KV max 1%, waiting max 0
+    c4: 6.95 req/s, 217 out tok/s, TTFT p95 220 ms, TPOT p95 18.2 ms, errors 0.0%, KV max 2%, waiting max 0
+   c16: 11.90 req/s, 354 out tok/s, TTFT p95 626 ms, TPOT p95 48.9 ms, errors 0.0%, KV max 4%, waiting max 0
+   c64: 15.98 req/s, 505 out tok/s, TTFT p95 1756 ms, TPOT p95 121.3 ms, errors 0.0%, KV max 9%, waiting max 29
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/short_v1.jsonl --concurrency 1 4 16 64 --min-requests 40 --waves 4 --label gptq_w4a16/short_v1 --out /kaggle/working/week3b/experiments/gptq_w4a16/short_v1
+    c1: 0.90 req/s, 115 out tok/s, TTFT p95 37 ms, TPOT p95 8.5 ms, errors 0.0%, KV max 0%, waiting max 0
+    c4: 2.77 req/s, 355 out tok/s, TTFT p95 126 ms, TPOT p95 11.0 ms, errors 0.0%, KV max 1%, waiting max 0
+   c16: 5.63 req/s, 721 out tok/s, TTFT p95 395 ms, TPOT p95 21.4 ms, errors 0.0%, KV max 4%, waiting max 0
+   c64: 7.81 req/s, 999 out tok/s, TTFT p95 1628 ms, TPOT p95 58.7 ms, errors 0.0%, KV max 16%, waiting max 14
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/long_v1.jsonl --concurrency 4 16 --min-requests 40 --waves 4 --label gptq_w4a16/long_v1 --out /kaggle/working/week3b/experiments/gptq_w4a16/long_v1
+    c4: 0.34 req/s, 87 out tok/s, TTFT p95 2917 ms, TPOT p95 42.3 ms, errors 0.0%, KV max 9%, waiting max 2
+   c16: 0.39 req/s, 100 out tok/s, TTFT p95 13401 ms, TPOT p95 153.4 ms, errors 0.0%, KV max 35%, waiting max 13
+=== gptq_w4a16: ok in 588 s
+=== w8a8_int8: INT8 tensor cores (sm75 has them) - does W8A8 win at high batch, where W4A16 dequant hurts?
+$ vllm serve /kaggle/working/models/w8a8_int8 --served-model-name qwen-sql --port 8000 --dtype float16 --max-model-len 4096 --gpu-memory-utilization 0.9 --max-num-seqs 256 --attention-backend TRITON_ATTN --enable-prefix-caching --enable-chunked-prefill --seed 0
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/spider_v1.jsonl --concurrency 1 4 16 64 --min-requests 40 --waves 4 --label w8a8_int8/spider_v1 --out /kaggle/working/week3b/experiments/w8a8_int8/spider_v1 --no-ignore-eos
+    c1: 1.97 req/s, 63 out tok/s, TTFT p95 110 ms, TPOT p95 14.7 ms, errors 0.0%, KV max 1%, waiting max 0
+    c4: 5.39 req/s, 167 out tok/s, TTFT p95 198 ms, TPOT p95 22.4 ms, errors 0.0%, KV max 2%, waiting max 0
+   c16: 10.60 req/s, 316 out tok/s, TTFT p95 425 ms, TPOT p95 48.1 ms, errors 0.0%, KV max 5%, waiting max 0
+   c64: 17.01 req/s, 513 out tok/s, TTFT p95 1490 ms, TPOT p95 116.4 ms, errors 0.0%, KV max 9%, waiting max 0
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/short_v1.jsonl --concurrency 1 4 16 64 --min-requests 40 --waves 4 --label w8a8_int8/short_v1 --out /kaggle/working/week3b/experiments/w8a8_int8/short_v1
+    c1: 0.54 req/s, 69 out tok/s, TTFT p95 34 ms, TPOT p95 14.5 ms, errors 0.0%, KV max 0%, waiting max 0
+    c4: 1.87 req/s, 239 out tok/s, TTFT p95 100 ms, TPOT p95 16.4 ms, errors 0.0%, KV max 1%, waiting max 0
+   c16: 4.74 req/s, 607 out tok/s, TTFT p95 328 ms, TPOT p95 25.6 ms, errors 0.0%, KV max 4%, waiting max 0
+   c64: 7.83 req/s, 1002 out tok/s, TTFT p95 1182 ms, TPOT p95 57.9 ms, errors 0.0%, KV max 17%, waiting max 4
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/long_v1.jsonl --concurrency 4 16 --min-requests 40 --waves 4 --label w8a8_int8/long_v1 --out /kaggle/working/week3b/experiments/w8a8_int8/long_v1
+    c4: 0.31 req/s, 79 out tok/s, TTFT p95 2637 ms, TPOT p95 47.2 ms, errors 0.0%, KV max 9%, waiting max 2
+   c16: 0.39 req/s, 100 out tok/s, TTFT p95 11965 ms, TPOT p95 152.6 ms, errors 0.0%, KV max 37%, waiting max 13
+=== w8a8_int8: ok in 655 s
+=== attn_flex: Is TRITON_ATTN's ~11%-of-bandwidth KV read the backend's fault? FlexAttention is the other sm75 option.
+$ vllm serve /kaggle/working/models/fp16 --served-model-name qwen-sql --port 8000 --dtype float16 --max-model-len 4096 --gpu-memory-utilization 0.9 --max-num-seqs 256 --attention-backend FLEX_ATTENTION --enable-prefix-caching --enable-chunked-prefill --seed 0
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/spider_v1.jsonl --concurrency 1 4 16 64 --min-requests 40 --waves 4 --label attn_flex/spider_v1 --out /kaggle/working/week3b/experiments/attn_flex/spider_v1 --no-ignore-eos
+    c1: 1.40 req/s, 44 out tok/s, TTFT p95 180 ms, TPOT p95 22.8 ms, errors 0.0%, KV max 1%, waiting max 0
+    c4: 2.31 req/s, 73 out tok/s, TTFT p95 3149 ms, TPOT p95 57.7 ms, errors 0.0%, KV max 2%, waiting max 0
+   c16: 5.41 req/s, 161 out tok/s, TTFT p95 854 ms, TPOT p95 87.6 ms, errors 0.0%, KV max 5%, waiting max 0
+   c64: 9.02 req/s, 275 out tok/s, TTFT p95 2316 ms, TPOT p95 207.9 ms, errors 0.0%, KV max 11%, waiting max 32
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/short_v1.jsonl --concurrency 1 4 16 64 --min-requests 40 --waves 4 --label attn_flex/short_v1 --out /kaggle/working/week3b/experiments/attn_flex/short_v1
+    c1: 0.39 req/s, 50 out tok/s, TTFT p95 62 ms, TPOT p95 19.9 ms, errors 0.0%, KV max 0%, waiting max 0
+    c4: 1.15 req/s, 148 out tok/s, TTFT p95 160 ms, TPOT p95 27.8 ms, errors 0.0%, KV max 1%, waiting max 0
+   c16: 2.42 req/s, 310 out tok/s, TTFT p95 479 ms, TPOT p95 50.5 ms, errors 0.0%, KV max 5%, waiting max 0
+   c64: 3.83 req/s, 490 out tok/s, TTFT p95 1684 ms, TPOT p95 120.4 ms, errors 0.0%, KV max 19%, waiting max 22
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/long_v1.jsonl --concurrency 4 16 --min-requests 40 --waves 4 --label attn_flex/long_v1 --out /kaggle/working/week3b/experiments/attn_flex/long_v1
+    c4: 0.13 req/s, 33 out tok/s, TTFT p95 5255 ms, TPOT p95 113.7 ms, errors 0.0%, KV max 11%, waiting max 2
+   c16: 0.14 req/s, 37 out tok/s, TTFT p95 24141 ms, TPOT p95 415.0 ms, errors 0.0%, KV max 42%, waiting max 13
+=== attn_flex: ok in 1277 s
+=== eager: What do CUDA graphs buy? Without them every decode step pays ~28 layers of kernel-launch overhead.
+$ vllm serve /kaggle/working/models/fp16 --served-model-name qwen-sql --port 8000 --dtype float16 --max-model-len 4096 --gpu-memory-utilization 0.9 --max-num-seqs 256 --attention-backend TRITON_ATTN --enable-prefix-caching --enable-chunked-prefill --seed 0 --enforce-eager
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/spider_v1.jsonl --concurrency 1 4 16 64 --min-requests 40 --waves 4 --label eager/spider_v1 --out /kaggle/working/week3b/experiments/eager/spider_v1 --no-ignore-eos
+    c1: 0.95 req/s, 30 out tok/s, TTFT p95 122 ms, TPOT p95 33.0 ms, errors 0.0%, KV max 1%, waiting max 0
+    c4: 2.58 req/s, 81 out tok/s, TTFT p95 2296 ms, TPOT p95 42.5 ms, errors 0.0%, KV max 2%, waiting max 0
+   c16: 6.91 req/s, 205 out tok/s, TTFT p95 2126 ms, TPOT p95 92.5 ms, errors 0.0%, KV max 5%, waiting max 6
+   c64: 15.03 req/s, 458 out tok/s, TTFT p95 1765 ms, TPOT p95 120.7 ms, errors 0.0%, KV max 11%, waiting max 13
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/short_v1.jsonl --concurrency 1 4 16 64 --min-requests 40 --waves 4 --label eager/short_v1 --out /kaggle/working/week3b/experiments/eager/short_v1
+    c1: 0.25 req/s, 32 out tok/s, TTFT p95 74 ms, TPOT p95 32.7 ms, errors 0.0%, KV max 0%, waiting max 0
+    c4: 0.91 req/s, 116 out tok/s, TTFT p95 138 ms, TPOT p95 34.5 ms, errors 0.0%, KV max 1%, waiting max 0
+   c16: 3.33 req/s, 426 out tok/s, TTFT p95 432 ms, TPOT p95 37.0 ms, errors 0.0%, KV max 5%, waiting max 0
+   c64: 6.44 req/s, 825 out tok/s, TTFT p95 1593 ms, TPOT p95 66.6 ms, errors 0.0%, KV max 19%, waiting max 15
+=== eager: ok in 443 s
+=== kv_fp8_e5m2: Half the KV bytes - 2x the cache, and attention reads half as much. Faster on long_v1? Accuracy cost?
+$ vllm serve /kaggle/working/models/fp16 --served-model-name qwen-sql --port 8000 --dtype float16 --max-model-len 4096 --gpu-memory-utilization 0.9 --max-num-seqs 256 --attention-backend TRITON_ATTN --enable-prefix-caching --enable-chunked-prefill --seed 0 --kv-cache-dtype fp8_e5m2
+=== kv_fp8_e5m2: server_failed in 46 s
+=== kv_fp8_e4m3: e4m3 needs hardware fp8 conversions in Triton (sm89+); expected to fail on sm75. Record how.
+$ vllm serve /kaggle/working/models/fp16 --served-model-name qwen-sql --port 8000 --dtype float16 --max-model-len 4096 --gpu-memory-utilization 0.9 --max-num-seqs 256 --attention-backend TRITON_ATTN --enable-prefix-caching --enable-chunked-prefill --seed 0 --kv-cache-dtype fp8
+=== kv_fp8_e4m3: server_failed in 61 s
+=== util_0.5: Shrink the KV cache below what long_v1 c=16 needs (~37k tokens) - what do preemptions cost?
+$ vllm serve /kaggle/working/models/fp16 --served-model-name qwen-sql --port 8000 --dtype float16 --max-model-len 4096 --gpu-memory-utilization 0.5 --max-num-seqs 256 --attention-backend TRITON_ATTN --enable-prefix-caching --enable-chunked-prefill --seed 0
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/long_v1.jsonl --concurrency 4 16 --min-requests 40 --waves 4 --label util_0.5/long_v1 --out /kaggle/working/week3b/experiments/util_0.5/long_v1
+    c4: 0.28 req/s, 72 out tok/s, TTFT p95 2893 ms, TPOT p95 51.9 ms, errors 0.0%, KV max 29%, waiting max 2
+   c16: 0.35 req/s, 91 out tok/s, TTFT p95 21357 ms, TPOT p95 154.5 ms, errors 0.0%, KV max 100%, waiting max 13
+=== util_0.5: ok in 455 s
+=== capacity_awq_kv_fp8: Combination, not an ablation. The README's 32 x 4k target needs smaller weights AND KV - does it fit?
+=== capacity_awq_kv_fp8: missing_model in 0 s
+=== prefix_cache_off: Spider prompts share 91.6% per-DB prefixes. How much TTFT does the prefix cache save on real traffic?
+$ vllm serve /kaggle/working/models/fp16 --served-model-name qwen-sql --port 8000 --dtype float16 --max-model-len 4096 --gpu-memory-utilization 0.9 --max-num-seqs 256 --attention-backend TRITON_ATTN --no-enable-prefix-caching --enable-chunked-prefill --seed 0
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/spider_v1.jsonl --concurrency 1 4 16 64 --min-requests 40 --waves 4 --label prefix_cache_off/spider_v1 --out /kaggle/working/week3b/experiments/prefix_cache_off/spider_v1 --no-ignore-eos
+    c1: 1.60 req/s, 50 out tok/s, TTFT p95 220 ms, TPOT p95 17.3 ms, errors 0.0%, KV max 1%, waiting max 0
+    c4: 3.78 req/s, 119 out tok/s, TTFT p95 310 ms, TPOT p95 34.2 ms, errors 0.0%, KV max 2%, waiting max 0
+   c16: 6.26 req/s, 186 out tok/s, TTFT p95 912 ms, TPOT p95 78.5 ms, errors 0.0%, KV max 8%, waiting max 0
+   c64: 7.54 req/s, 230 out tok/s, TTFT p95 4765 ms, TPOT p95 320.0 ms, errors 0.0%, KV max 31%, waiting max 46
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/shared_prefix_v1.jsonl --concurrency 4 16 --min-requests 40 --waves 4 --label prefix_cache_off/shared_prefix_v1 --out /kaggle/working/week3b/experiments/prefix_cache_off/shared_prefix_v1
+    c4: 0.35 req/s, 90 out tok/s, TTFT p95 1725 ms, TPOT p95 42.4 ms, errors 0.0%, KV max 8%, waiting max 1
+   c16: 0.50 req/s, 127 out tok/s, TTFT p95 8194 ms, TPOT p95 122.1 ms, errors 0.0%, KV max 33%, waiting max 11
+=== prefix_cache_off: ok in 457 s
+=== max_seqs_16: Capping the batch protects TPOT but queues requests - where does the trade flip?
+$ vllm serve /kaggle/working/models/fp16 --served-model-name qwen-sql --port 8000 --dtype float16 --max-model-len 4096 --gpu-memory-utilization 0.9 --max-num-seqs 16 --attention-backend TRITON_ATTN --enable-prefix-caching --enable-chunked-prefill --seed 0
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/spider_v1.jsonl --concurrency 1 4 16 64 --min-requests 40 --waves 4 --label max_seqs_16/spider_v1 --out /kaggle/working/week3b/experiments/max_seqs_16/spider_v1 --no-ignore-eos
+    c1: 1.70 req/s, 53 out tok/s, TTFT p95 137 ms, TPOT p95 17.2 ms, errors 0.0%, KV max 1%, waiting max 0
+    c4: 4.34 req/s, 136 out tok/s, TTFT p95 244 ms, TPOT p95 27.3 ms, errors 0.0%, KV max 2%, waiting max 0
+   c16: 9.07 req/s, 270 out tok/s, TTFT p95 536 ms, TPOT p95 56.0 ms, errors 0.0%, KV max 5%, waiting max 0
+   c64: 10.64 req/s, 324 out tok/s, TTFT p95 5115 ms, TPOT p95 49.6 ms, errors 0.0%, KV max 6%, waiting max 48
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/short_v1.jsonl --concurrency 1 4 16 64 --min-requests 40 --waves 4 --label max_seqs_16/short_v1 --out /kaggle/working/week3b/experiments/max_seqs_16/short_v1
+    c1: 0.39 req/s, 50 out tok/s, TTFT p95 46 ms, TPOT p95 22.3 ms, errors 0.0%, KV max 0%, waiting max 0
+    c4: 1.52 req/s, 194 out tok/s, TTFT p95 131 ms, TPOT p95 20.2 ms, errors 0.0%, KV max 1%, waiting max 0
+   c16: 3.95 req/s, 506 out tok/s, TTFT p95 428 ms, TPOT p95 30.7 ms, errors 0.0%, KV max 5%, waiting max 0
+   c64: 3.91 req/s, 500 out tok/s, TTFT p95 12467 ms, TPOT p95 30.7 ms, errors 0.0%, KV max 5%, waiting max 48
+=== max_seqs_16: ok in 356 s
+=== chunk_512: Smaller prefill chunks - smoother ITL for short requests, slower TTFT for long ones?
+$ vllm serve /kaggle/working/models/fp16 --served-model-name qwen-sql --port 8000 --dtype float16 --max-model-len 4096 --gpu-memory-utilization 0.9 --max-num-seqs 256 --attention-backend TRITON_ATTN --enable-prefix-caching --enable-chunked-prefill --seed 0 --max-num-batched-tokens 512
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/mixed_v1.jsonl --concurrency 4 16 32 --min-requests 40 --waves 4 --label chunk_512/mixed_v1 --out /kaggle/working/week3b/experiments/chunk_512/mixed_v1
+    c4: 0.84 req/s, 108 out tok/s, TTFT p95 1116 ms, TPOT p95 43.7 ms, errors 0.0%, KV max 6%, waiting max 1
+   c16: 1.39 req/s, 179 out tok/s, TTFT p95 5322 ms, TPOT p95 88.4 ms, errors 0.0%, KV max 16%, waiting max 10
+   c32: 1.76 req/s, 225 out tok/s, TTFT p95 9230 ms, TPOT p95 157.8 ms, errors 0.0%, KV max 32%, waiting max 23
+=== chunk_512: ok in 269 s
+=== chunk_8192: Whole 2k prefills in one step - best TTFT, worst ITL spikes?
+$ vllm serve /kaggle/working/models/fp16 --served-model-name qwen-sql --port 8000 --dtype float16 --max-model-len 4096 --gpu-memory-utilization 0.9 --max-num-seqs 256 --attention-backend TRITON_ATTN --enable-prefix-caching --enable-chunked-prefill --seed 0 --max-num-batched-tokens 8192
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/mixed_v1.jsonl --concurrency 4 16 32 --min-requests 40 --waves 4 --label chunk_8192/mixed_v1 --out /kaggle/working/week3b/experiments/chunk_8192/mixed_v1
+    c4: 0.85 req/s, 109 out tok/s, TTFT p95 1999 ms, TPOT p95 39.5 ms, errors 0.0%, KV max 6%, waiting max 0
+   c16: 1.39 req/s, 178 out tok/s, TTFT p95 4973 ms, TPOT p95 91.6 ms, errors 0.0%, KV max 16%, waiting max 2
+   c32: 1.72 req/s, 220 out tok/s, TTFT p95 8074 ms, TPOT p95 149.0 ms, errors 0.0%, KV max 32%, waiting max 20
+=== chunk_8192: ok in 274 s
+=== chunked_prefill_off: No chunking at all. vLLM V1 may refuse; if it runs, ITL p99 should be the worst of the three.
+$ vllm serve /kaggle/working/models/fp16 --served-model-name qwen-sql --port 8000 --dtype float16 --max-model-len 4096 --gpu-memory-utilization 0.9 --max-num-seqs 256 --attention-backend TRITON_ATTN --enable-prefix-caching --no-enable-chunked-prefill --seed 0 --max-num-batched-tokens 4096
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/mixed_v1.jsonl --concurrency 4 16 32 --min-requests 40 --waves 4 --label chunked_prefill_off/mixed_v1 --out /kaggle/working/week3b/experiments/chunked_prefill_off/mixed_v1
+    c4: 0.85 req/s, 109 out tok/s, TTFT p95 1888 ms, TPOT p95 41.6 ms, errors 0.0%, KV max 6%, waiting max 1
+   c16: 1.40 req/s, 179 out tok/s, TTFT p95 4774 ms, TPOT p95 90.7 ms, errors 0.0%, KV max 16%, waiting max 9
+   c32: 1.73 req/s, 222 out tok/s, TTFT p95 8183 ms, TPOT p95 167.2 ms, errors 0.0%, KV max 31%, waiting max 21
+=== chunked_prefill_off: ok in 271 s
+=== spec_ngram: Prompt-lookup drafts are free to propose. High acceptance on schema-copying SQL? Where does it stop paying?
+$ vllm serve /kaggle/working/models/fp16 --served-model-name qwen-sql --port 8000 --dtype float16 --max-model-len 4096 --gpu-memory-utilization 0.9 --max-num-seqs 256 --attention-backend TRITON_ATTN --enable-prefix-caching --enable-chunked-prefill --seed 0 --speculative-config {"method": "ngram", "num_speculative_tokens": 4, "prompt_lookup_max": 4, "prompt_lookup_min": 2}
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/spider_v1.jsonl --concurrency 1 4 16 64 --min-requests 40 --waves 4 --label spec_ngram/spider_v1 --out /kaggle/working/week3b/experiments/spec_ngram/spider_v1 --no-ignore-eos
+    c1: 1.72 req/s, 54 out tok/s, TTFT p95 119 ms, TPOT p95 20.2 ms, errors 0.0%, KV max 1%, waiting max 0
+    c4: 4.60 req/s, 144 out tok/s, TTFT p95 224 ms, TPOT p95 31.3 ms, errors 0.0%, KV max 2%, waiting max 0
+   c16: 8.58 req/s, 255 out tok/s, TTFT p95 539 ms, TPOT p95 59.6 ms, errors 0.0%, KV max 5%, waiting max 0
+   c64: 15.75 req/s, 480 out tok/s, TTFT p95 1804 ms, TPOT p95 127.0 ms, errors 0.0%, KV max 11%, waiting max 49
+=== spec_ngram: ok in 139 s
+=== spec_draft_0.6b: The draft is the stock 0.6B, not fine-tuned; it doesn't know the SQL style. Acceptance vs ngram?
+$ vllm serve /kaggle/working/models/fp16 --served-model-name qwen-sql --port 8000 --dtype float16 --max-model-len 4096 --gpu-memory-utilization 0.9 --max-num-seqs 256 --attention-backend TRITON_ATTN --enable-prefix-caching --enable-chunked-prefill --seed 0 --speculative-config {"method": "draft_model", "model": "Qwen/Qwen3-0.6B", "num_speculative_tokens": 4}
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/spider_v1.jsonl --concurrency 1 4 16 64 --min-requests 40 --waves 4 --label spec_draft_0.6b/spider_v1 --out /kaggle/working/week3b/experiments/spec_draft_0.6b/spider_v1 --no-ignore-eos
+    c1: 0.71 req/s, 22 out tok/s, TTFT p95 232 ms, TPOT p95 53.3 ms, errors 0.0%, KV max 3%, waiting max 0
+    c4: 2.26 req/s, 71 out tok/s, TTFT p95 1360 ms, TPOT p95 63.3 ms, errors 0.0%, KV max 6%, waiting max 0
+   c16: 5.25 req/s, 156 out tok/s, TTFT p95 1199 ms, TPOT p95 97.4 ms, errors 0.0%, KV max 13%, waiting max 0
+   c64: 8.67 req/s, 264 out tok/s, TTFT p95 3390 ms, TPOT p95 268.5 ms, errors 0.0%, KV max 26%, waiting max 52
+=== spec_draft_0.6b: ok in 241 s
+=== tp2: TP=2 halves weights and KV per GPU but all-reduces twice per layer over PCIe (no NVLink on T4).
+$ vllm serve /kaggle/working/models/fp16 --served-model-name qwen-sql --port 8000 --dtype float16 --max-model-len 4096 --gpu-memory-utilization 0.9 --max-num-seqs 256 --attention-backend TRITON_ATTN --enable-prefix-caching --enable-chunked-prefill --seed 0 --tensor-parallel-size 2
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/spider_v1.jsonl --concurrency 1 4 16 64 128 --min-requests 40 --waves 4 --label tp2/spider_v1 --out /kaggle/working/week3b/experiments/tp2/spider_v1 --no-ignore-eos
+    c1: 2.91 req/s, 91 out tok/s, TTFT p95 101 ms, TPOT p95 9.5 ms, errors 0.0%, KV max 0%, waiting max 0
+    c4: 7.16 req/s, 225 out tok/s, TTFT p95 166 ms, TPOT p95 20.7 ms, errors 0.0%, KV max 1%, waiting max 0
+   c16: 14.53 req/s, 432 out tok/s, TTFT p95 497 ms, TPOT p95 34.9 ms, errors 0.0%, KV max 2%, waiting max 0
+   c64: 24.75 req/s, 754 out tok/s, TTFT p95 1269 ms, TPOT p95 76.3 ms, errors 0.0%, KV max 4%, waiting max 0
+  c128: 26.56 req/s, 829 out tok/s, TTFT p95 1999 ms, TPOT p95 128.2 ms, errors 0.0%, KV max 6%, waiting max 53
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/short_v1.jsonl --concurrency 1 4 16 64 128 --min-requests 40 --waves 4 --label tp2/short_v1 --out /kaggle/working/week3b/experiments/tp2/short_v1
+    c1: 0.80 req/s, 102 out tok/s, TTFT p95 45 ms, TPOT p95 9.6 ms, errors 0.0%, KV max 0%, waiting max 0
+    c4: 2.56 req/s, 328 out tok/s, TTFT p95 137 ms, TPOT p95 11.8 ms, errors 0.0%, KV max 1%, waiting max 0
+   c16: 6.36 req/s, 815 out tok/s, TTFT p95 335 ms, TPOT p95 18.6 ms, errors 0.0%, KV max 2%, waiting max 0
+   c64: 10.07 req/s, 1289 out tok/s, TTFT p95 1278 ms, TPOT p95 44.4 ms, errors 0.0%, KV max 8%, waiting max 0
+  c128: 10.40 req/s, 1331 out tok/s, TTFT p95 5059 ms, TPOT p95 75.4 ms, errors 0.0%, KV max 15%, waiting max 65
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 --model qwen-sql --prompts /kaggle/working/week3b/workloads/long_v1.jsonl --concurrency 4 16 32 --min-requests 40 --waves 4 --label tp2/long_v1 --out /kaggle/working/week3b/experiments/tp2/long_v1
+    c4: 0.50 req/s, 128 out tok/s, TTFT p95 2288 ms, TPOT p95 28.8 ms, errors 0.0%, KV max 5%, waiting max 2
+   c16: 0.68 req/s, 173 out tok/s, TTFT p95 7909 ms, TPOT p95 88.5 ms, errors 0.0%, KV max 18%, waiting max 14
+   c32: 0.70 req/s, 179 out tok/s, TTFT p95 16405 ms, TPOT p95 168.4 ms, errors 0.0%, KV max 36%, waiting max 28
+=== tp2: ok in 666 s
+=== replicas2: Two independent copies behind round-robin. Expect 2x throughput at equal latency, no help at c=1.
+$ vllm serve /kaggle/working/models/fp16 --served-model-name qwen-sql --port 8000 --dtype float16 --max-model-len 4096 --gpu-memory-utilization 0.9 --max-num-seqs 256 --attention-backend TRITON_ATTN --enable-prefix-caching --enable-chunked-prefill --seed 0
+$ vllm serve /kaggle/working/models/fp16 --served-model-name qwen-sql --port 8001 --dtype float16 --max-model-len 4096 --gpu-memory-utilization 0.9 --max-num-seqs 256 --attention-backend TRITON_ATTN --enable-prefix-caching --enable-chunked-prefill --seed 0
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 http://localhost:8001 --model qwen-sql --prompts /kaggle/working/week3b/workloads/spider_v1.jsonl --concurrency 1 4 16 64 128 --min-requests 40 --waves 4 --label replicas2/spider_v1 --out /kaggle/working/week3b/experiments/replicas2/spider_v1 --no-ignore-eos
+    c1: 1.71 req/s, 54 out tok/s, TTFT p95 195 ms, TPOT p95 17.1 ms, errors 0.0%, KV max 1%, waiting max 0
+    c4: 4.92 req/s, 155 out tok/s, TTFT p95 235 ms, TPOT p95 22.5 ms, errors 0.0%, KV max 2%, waiting max 0
+   c16: 11.06 req/s, 329 out tok/s, TTFT p95 395 ms, TPOT p95 44.9 ms, errors 0.0%, KV max 4%, waiting max 0
+   c64: 22.96 req/s, 700 out tok/s, TTFT p95 1330 ms, TPOT p95 87.9 ms, errors 0.0%, KV max 8%, waiting max 8
+  c128: 26.78 req/s, 836 out tok/s, TTFT p95 2034 ms, TPOT p95 145.5 ms, errors 0.0%, KV max 10%, waiting max 37
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 http://localhost:8001 --model qwen-sql --prompts /kaggle/working/week3b/workloads/short_v1.jsonl --concurrency 1 4 16 64 128 --min-requests 40 --waves 4 --label replicas2/short_v1 --out /kaggle/working/week3b/experiments/replicas2/short_v1
+    c1: 0.43 req/s, 55 out tok/s, TTFT p95 53 ms, TPOT p95 22.8 ms, errors 0.0%, KV max 0%, waiting max 0
+    c4: 1.66 req/s, 213 out tok/s, TTFT p95 92 ms, TPOT p95 18.6 ms, errors 0.0%, KV max 1%, waiting max 0
+   c16: 5.09 req/s, 651 out tok/s, TTFT p95 247 ms, TPOT p95 24.0 ms, errors 0.0%, KV max 2%, waiting max 0
+   c64: 9.79 req/s, 1253 out tok/s, TTFT p95 904 ms, TPOT p95 45.5 ms, errors 0.0%, KV max 10%, waiting max 0
+  c128: 12.30 req/s, 1574 out tok/s, TTFT p95 1868 ms, TPOT p95 66.9 ms, errors 0.0%, KV max 19%, waiting max 19
+$ /usr/bin/python3 -m bench.client --url http://localhost:8000 http://localhost:8001 --model qwen-sql --prompts /kaggle/working/week3b/workloads/long_v1.jsonl --concurrency 4 16 32 --min-requests 40 --waves 4 --label replicas2/long_v1 --out /kaggle/working/week3b/experiments/replicas2/long_v1
+    c4: 0.42 req/s, 108 out tok/s, TTFT p95 1882 ms, TPOT p95 33.4 ms, errors 0.0%, KV max 8%, waiting max 0
+   c16: 0.67 req/s, 171 out tok/s, TTFT p95 7311 ms, TPOT p95 93.4 ms, errors 0.0%, KV max 26%, waiting max 10
+   c32: 0.72 req/s, 185 out tok/s, TTFT p95 14034 ms, TPOT p95 171.5 ms, errors 0.0%, KV max 49%, waiting max 26
+=== replicas2: ok in 726 s
+{
+  "fp16": "ok",
+  "awq_w4a16": "missing_model",
+  "gptq_w4a16": "ok",
+  "w8a8_int8": "ok",
+  "attn_flex": "ok",
+  "eager": "ok",
+  "kv_fp8_e5m2": "server_failed",
+  "kv_fp8_e4m3": "server_failed",
+  "util_0.5": "ok",
+  "capacity_awq_kv_fp8": "missing_model",
+  "prefix_cache_off": "ok",
+  "max_seqs_16": "ok",
+  "chunk_512": "ok",
+  "chunk_8192": "ok",
+  "chunked_prefill_off": "ok",
+  "spec_ngram": "ok",
+  "spec_draft_0.6b": "ok",
+  "tp2": "ok",
+  "replicas2": "ok"
+}

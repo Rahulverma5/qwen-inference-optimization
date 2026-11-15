@@ -1,0 +1,17 @@
+{
+  "name": "capacity_awq_kv_fp8",
+  "model": "awq_w4a16",
+  "set": {
+    "kv-cache-dtype": "fp8_e5m2"
+  },
+  "replicas": 1,
+  "gpus_per_replica": 1,
+  "quality": "awq_w4a16",
+  "question": "Combination, not an ablation. The README's 32 x 4k target needs smaller weights AND KV - does it fit?",
+  "num_gpus": 1,
+  "servers": [],
+  "workloads": {},
+  "status": "missing_model",
+  "error_tail": "no model for variant 'awq_w4a16' at /kaggle/working/models/awq_w4a16",
+  "wall_s": 0.0
+}

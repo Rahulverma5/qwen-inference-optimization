@@ -1,0 +1,35 @@
+{
+  "name": "spec_ngram",
+  "model": "fp16",
+  "set": {
+    "speculative-config": {
+      "method": "ngram",
+      "num_speculative_tokens": 4,
+      "prompt_lookup_max": 4,
+      "prompt_lookup_min": 2
+    }
+  },
+  "replicas": 1,
+  "gpus_per_replica": 1,
+  "quality": "fp16",
+  "question": "Prompt-lookup drafts are free to propose. High acceptance on schema-copying SQL? Where does it stop paying?",
+  "num_gpus": 1,
+  "servers": [
+    {
+      "ready": true,
+      "ready_s": 72.8,
+      "kv_cache_tokens": 81408,
+      "max_concurrency_seq_len": 4096,
+      "max_concurrency": 19.88,
+      "weights_gib": 3.22,
+      "weights_load_s": 2.353727,
+      "gpus": "0",
+      "port": 8000
+    }
+  ],
+  "workloads": {
+    "spider_v1": "ok"
+  },
+  "status": "ok",
+  "wall_s": 139.0
+}

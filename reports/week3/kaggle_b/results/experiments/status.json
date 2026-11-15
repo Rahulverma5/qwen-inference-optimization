@@ -1,0 +1,21 @@
+{
+  "fp16": "ok",
+  "awq_w4a16": "missing_model",
+  "gptq_w4a16": "ok",
+  "w8a8_int8": "ok",
+  "attn_flex": "ok",
+  "eager": "ok",
+  "kv_fp8_e5m2": "server_failed",
+  "kv_fp8_e4m3": "server_failed",
+  "util_0.5": "ok",
+  "capacity_awq_kv_fp8": "missing_model",
+  "prefix_cache_off": "ok",
+  "max_seqs_16": "ok",
+  "chunk_512": "ok",
+  "chunk_8192": "ok",
+  "chunked_prefill_off": "ok",
+  "spec_ngram": "ok",
+  "spec_draft_0.6b": "ok",
+  "tp2": "ok",
+  "replicas2": "ok"
+}

@@ -1,0 +1,9 @@
+{
+  "ready": true,
+  "ready_s": 106.2,
+  "kv_cache_tokens": 104640,
+  "max_concurrency_seq_len": 4096,
+  "max_concurrency": 25.55,
+  "weights_gib": 1.27,
+  "weights_load_s": 30.615792
+}

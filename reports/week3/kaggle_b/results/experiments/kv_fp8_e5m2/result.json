@@ -1,0 +1,27 @@
+{
+  "name": "kv_fp8_e5m2",
+  "model": "fp16",
+  "set": {
+    "kv-cache-dtype": "fp8_e5m2"
+  },
+  "replicas": 1,
+  "gpus_per_replica": 1,
+  "quality": "fp16_kv_fp8_e5m2",
+  "question": "Half the KV bytes - 2x the cache, and attention reads half as much. Faster on long_v1? Accuracy cost?",
+  "num_gpus": 1,
+  "servers": [
+    {
+      "ready": false,
+      "ready_s": 45.5,
+      "weights_gib": 3.22,
+      "weights_load_s": 2.429597,
+      "exit_code": 1,
+      "gpus": "0",
+      "port": 8000
+    }
+  ],
+  "workloads": {},
+  "status": "server_failed",
+  "error_tail": "rver pid=7733)   File \"/usr/local/lib/python3.13/dist-packages/vllm/entrypoints/openai/api_server.py\", line 136, in build_async_engine_client_from_engine_args\n(APIServer pid=7733)     async_llm = AsyncLLM.from_vllm_config(\n(APIServer pid=7733)         vllm_config=vllm_config,\n(APIServer pid=7733)     ...<6 lines>...\n(APIServer pid=7733)         client_index=client_index,\n(APIServer pid=7733)     )\n(APIServer pid=7733)   File \"/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/async_llm.py\", line 225, in from_vllm_config\n(APIServer pid=7733)     return cls(\n(APIServer pid=7733)         vllm_config=vllm_config,\n(APIServer pid=7733)     ...<9 lines>...\n(APIServer pid=7733)         client_index=client_index,\n(APIServer pid=7733)     )\n(APIServer pid=7733)   File \"/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/async_llm.py\", line 154, in __init__\n(APIServer pid=7733)     self.engine_core = EngineCoreClient.make_async_mp_client(\n(APIServer pid=7733)                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^\n(APIServer pid=7733)         vllm_config=vllm_config,\n(APIServer pid=7733)         ^^^^^^^^^^^^^^^^^^^^^^^^\n(APIServer pid=7733)     ...<4 lines>...\n(APIServer pid=7733)         client_index=client_index,\n(APIServer pid=7733)         ^^^^^^^^^^^^^^^^^^^^^^^^^^\n(APIServer pid=7733)     )\n(APIServer pid=7733)     ^\n(APIServer pid=7733)   File \"/usr/local/lib/python3.13/dist-packages/vllm/tracing/otel.py\", line 178, in sync_wrapper\n(APIServer pid=7733)     return func(*args, **kwargs)\n(APIServer pid=7733)   File \"/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core_client.py\", line 130, in make_async_mp_client\n(APIServer pid=7733)     return AsyncMPClient(*client_args)\n(APIServer pid=7733)   File \"/usr/local/lib/python3.13/dist-packages/vllm/tracing/otel.py\", line 178, in sync_wrapper\n(APIServer pid=7733)     return func(*args, **kwargs)\n(APIServer pid=7733)   File \"/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core_client.py\", line 887, in __init__\n(APIServer pid=7733)     super().__init__(\n(APIServer pid=7733)     ~~~~~~~~~~~~~~~~^\n(APIServer pid=7733)         asyncio_mode=True,\n(APIServer pid=7733)         ^^^^^^^^^^^^^^^^^^\n(APIServer pid=7733)     ...<3 lines>...\n(APIServer pid=7733)         client_addresses=client_addresses,\n(APIServer pid=7733)         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n(APIServer pid=7733)     )\n(APIServer pid=7733)     ^\n(APIServer pid=7733)   File \"/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/core_client.py\", line 535, in __init__\n(APIServer pid=7733)     with launch_core_engines(\n(APIServer pid=7733)          ~~~~~~~~~~~~~~~~~~~^\n(APIServer pid=7733)         vllm_config, executor_class, log_stats, addresses\n(APIServer pid=7733)         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n(APIServer pid=7733)     ) as (engine_manager, coordinator, addresses, tensor_queue):\n(APIServer pid=7733)     ^\n(APIServer pid=7733)   File \"/usr/lib/python3.13/contextlib.py\", line 148, in __exit__\n(APIServer pid=7733)     next(self.gen)\n(APIServer pid=7733)     ~~~~^^^^^^^^^^\n(APIServer pid=7733)   File \"/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/utils.py\", line 998, in launch_core_engines\n(APIServer pid=7733)     wait_for_engine_startup(\n(APIServer pid=7733)     ~~~~~~~~~~~~~~~~~~~~~~~^\n(APIServer pid=7733)         handshake_socket,\n(APIServer pid=7733)         ^^^^^^^^^^^^^^^^^\n(APIServer pid=7733)     ...<6 lines>...\n(APIServer pid=7733)         coordinator.proc if coordinator else None,\n(APIServer pid=7733)         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n(APIServer pid=7733)     )\n(APIServer pid=7733)     ^\n(APIServer pid=7733)   File \"/usr/local/lib/python3.13/dist-packages/vllm/v1/engine/utils.py\", line 1057, in wait_for_engine_startup\n(APIServer pid=7733)     raise RuntimeError(\n(APIServer pid=7733)     ...<3 lines>...\n(APIServer pid=7733)     )\n(APIServer pid=7733) RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}\n",
+  "wall_s": 45.5
+}

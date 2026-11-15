@@ -1,0 +1,30 @@
+{
+  "name": "chunk_512",
+  "model": "fp16",
+  "set": {
+    "max-num-batched-tokens": 512
+  },
+  "replicas": 1,
+  "gpus_per_replica": 1,
+  "quality": "fp16",
+  "question": "Smaller prefill chunks - smoother ITL for short requests, slower TTFT for long ones?",
+  "num_gpus": 1,
+  "servers": [
+    {
+      "ready": true,
+      "ready_s": 72.9,
+      "kv_cache_tokens": 86496,
+      "max_concurrency_seq_len": 4096,
+      "max_concurrency": 21.12,
+      "weights_gib": 3.22,
+      "weights_load_s": 2.416718,
+      "gpus": "0",
+      "port": 8000
+    }
+  ],
+  "workloads": {
+    "mixed_v1": "ok"
+  },
+  "status": "ok",
+  "wall_s": 269.1
+}
