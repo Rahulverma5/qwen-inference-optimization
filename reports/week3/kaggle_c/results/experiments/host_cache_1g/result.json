@@ -1,0 +1,57 @@
+{
+  "name": "host_cache_1g",
+  "model": "q4_k_m",
+  "set": {
+    "cache-ram": 1024
+  },
+  "quality": "q4_k_m",
+  "question": "A host-RAM prompt cache keeps schemas evicted from the 4 slots. 20 dev databases > 4 slots, so hits should rise.",
+  "engine": "llama.cpp",
+  "flags": {
+    "threads": 4,
+    "parallel": 4,
+    "ctx-size": 8192,
+    "flash-attn": "on",
+    "cache-prompt": true,
+    "cache-ram": 1024,
+    "metrics": true
+  },
+  "num_units": 1,
+  "servers": [
+    {
+      "ready": true,
+      "ready_s": 3.0
+    }
+  ],
+  "launches": [
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 1
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 2
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 4
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 8
+    }
+  ],
+  "workloads": {
+    "spider_v1": "ok"
+  },
+  "status": "ok",
+  "wall_s": 388.9
+}

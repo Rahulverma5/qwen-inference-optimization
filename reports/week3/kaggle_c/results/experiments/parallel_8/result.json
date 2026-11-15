@@ -1,0 +1,58 @@
+{
+  "name": "parallel_8",
+  "model": "q4_k_m",
+  "set": {
+    "parallel": 8,
+    "ctx-size": 16384
+  },
+  "quality": "q4_k_m",
+  "question": "More slots than cores. Throughput flat, latency worse?",
+  "engine": "llama.cpp",
+  "flags": {
+    "threads": 4,
+    "parallel": 8,
+    "ctx-size": 16384,
+    "flash-attn": "on",
+    "cache-prompt": true,
+    "cache-ram": 0,
+    "metrics": true
+  },
+  "num_units": 1,
+  "servers": [
+    {
+      "ready": true,
+      "ready_s": 6.1
+    }
+  ],
+  "launches": [
+    {
+      "ready": true,
+      "ready_s": 6.1,
+      "workload": "spider_v1",
+      "level": 1
+    },
+    {
+      "ready": true,
+      "ready_s": 3.1,
+      "workload": "spider_v1",
+      "level": 2
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 4
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 8
+    }
+  ],
+  "workloads": {
+    "spider_v1": "ok"
+  },
+  "status": "ok",
+  "wall_s": 514.3
+}

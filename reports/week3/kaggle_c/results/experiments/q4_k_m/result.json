@@ -1,0 +1,68 @@
+{
+  "name": "q4_k_m",
+  "model": "q4_k_m",
+  "set": {},
+  "quality": "llamacpp_q4_k_m",
+  "question": "Baseline. What does one 4-vCPU box serve within a 10 s p95?",
+  "engine": "llama.cpp",
+  "flags": {
+    "threads": 4,
+    "parallel": 4,
+    "ctx-size": 8192,
+    "flash-attn": "on",
+    "cache-prompt": true,
+    "cache-ram": 0,
+    "metrics": true
+  },
+  "num_units": 1,
+  "servers": [
+    {
+      "ready": true,
+      "ready_s": 6.1
+    }
+  ],
+  "launches": [
+    {
+      "ready": true,
+      "ready_s": 6.1,
+      "workload": "spider_v1",
+      "level": 1
+    },
+    {
+      "ready": true,
+      "ready_s": 6.1,
+      "workload": "spider_v1",
+      "level": 2
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 4
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 8
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "short_v1",
+      "level": 1
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "short_v1",
+      "level": 4
+    }
+  ],
+  "workloads": {
+    "spider_v1": "ok",
+    "short_v1": "ok"
+  },
+  "status": "ok",
+  "wall_s": 877.7
+}

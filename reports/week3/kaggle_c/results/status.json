@@ -1,0 +1,9 @@
+{
+  "workloads": "ok",
+  "llama_build": "ok",
+  "llama_bench": "ok",
+  "cpu_experiments": "ok",
+  "quality_q4_k_m": "ok",
+  "compare_q4_k_m": "ok",
+  "matrix": "ok"
+}

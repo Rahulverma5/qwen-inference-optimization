@@ -1,0 +1,57 @@
+{
+  "name": "flash_attn_off",
+  "model": "q4_k_m",
+  "set": {
+    "flash-attn": "off"
+  },
+  "quality": "q4_k_m",
+  "question": "llama.cpp's CPU flash attention vs the plain path.",
+  "engine": "llama.cpp",
+  "flags": {
+    "threads": 4,
+    "parallel": 4,
+    "ctx-size": 8192,
+    "flash-attn": "off",
+    "cache-prompt": true,
+    "cache-ram": 0,
+    "metrics": true
+  },
+  "num_units": 1,
+  "servers": [
+    {
+      "ready": true,
+      "ready_s": 3.0
+    }
+  ],
+  "launches": [
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 1
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 2
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 4
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 8
+    }
+  ],
+  "workloads": {
+    "spider_v1": "ok"
+  },
+  "status": "ok",
+  "wall_s": 532.6
+}

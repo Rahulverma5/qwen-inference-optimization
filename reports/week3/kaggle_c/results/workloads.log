@@ -1,0 +1,6 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+wrote 200 prompts -> /kaggle/working/week3c/workloads/short_v1.jsonl
+wrote 100 prompts -> /kaggle/working/week3c/workloads/long_v1.jsonl
+wrote 200 prompts -> /kaggle/working/week3c/workloads/shared_prefix_v1.jsonl
+wrote 300 prompts -> /kaggle/working/week3c/workloads/spider_v1.jsonl
+wrote 200 prompts -> /kaggle/working/week3c/workloads/mixed_v1.jsonl

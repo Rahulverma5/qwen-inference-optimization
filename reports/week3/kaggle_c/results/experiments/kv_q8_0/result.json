@@ -1,0 +1,60 @@
+{
+  "name": "kv_q8_0",
+  "model": "q4_k_m",
+  "set": {
+    "cache-type-k": "q8_0",
+    "cache-type-v": "q8_0"
+  },
+  "quality": "q4_k_m",
+  "question": "Half the KV memory (fits a smaller instance). Speed cost on CPU?",
+  "engine": "llama.cpp",
+  "flags": {
+    "threads": 4,
+    "parallel": 4,
+    "ctx-size": 8192,
+    "flash-attn": "on",
+    "cache-prompt": true,
+    "cache-ram": 0,
+    "metrics": true,
+    "cache-type-k": "q8_0",
+    "cache-type-v": "q8_0"
+  },
+  "num_units": 1,
+  "servers": [
+    {
+      "ready": true,
+      "ready_s": 3.0
+    }
+  ],
+  "launches": [
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 1
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 2
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 4
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 8
+    }
+  ],
+  "workloads": {
+    "spider_v1": "ok"
+  },
+  "status": "ok",
+  "wall_s": 574.6
+}

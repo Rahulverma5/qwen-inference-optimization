@@ -70,7 +70,8 @@ experiments:
     workloads: [spider_v1]
     question: A host-RAM prompt cache keeps schemas evicted from the 4 slots. 20 dev databases > 4 slots, so hits should rise.
   spec_ngram:
-    set: {spec-type: ngram-simple, draft-max: 4}
+    # b11600 removed --draft-max; ngram-simple's draft length is --spec-ngram-simple-size-m
+    set: {spec-type: ngram-simple, spec-ngram-simple-size-m: 4}
     workloads: [spider_v1]
     question: Prompt-lookup drafts (SQL copies schema identifiers). Does it pay on CPU, where verification costs real compute?
   flash_attn_off:
@@ -81,3 +82,7 @@ experiments:
     set: {cache-type-k: q8_0, cache-type-v: q8_0}
     workloads: [spider_v1]
     question: Half the KV memory (fits a smaller instance). Speed cost on CPU?
+  ship_p1_cache1g:
+    set: {parallel: 1, ctx-size: 2048, cache-ram: 1024}
+    workloads: [spider_v1, short_v1]
+    question: The two 3c winners together - host cache (+42% req/s) and one slot (FIFO, best p95 tail). Max c within 10 s p95?

@@ -1,0 +1,12 @@
+$ /kaggle/working/llama.cpp/build/bin/llama-server --model /kaggle/input/notebooks/rahulverma52/qwen-sql-week3a/models/gguf/qwen3-1.7b-spider-Q4_K_M.gguf --alias qwen-sql --port 8080 --threads 4 --parallel 4 --ctx-size 8192 --flash-attn on --cache-prompt --cache-ram 0 --metrics
+{
+  "n": 1034,
+  "exec_accuracy": 0.6431334622823984,
+  "valid_sql_rate": 0.8500967117988395,
+  "url": "http://localhost:8080",
+  "gen_time_s": 1975.503231415999,
+  "concurrency": 4,
+  "errors": 0,
+  "latency_s_p50": 5.883147595999617,
+  "latency_s_p95": 18.65843018800024
+}

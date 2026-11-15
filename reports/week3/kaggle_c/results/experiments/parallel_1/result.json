@@ -1,0 +1,58 @@
+{
+  "name": "parallel_1",
+  "model": "q4_k_m",
+  "set": {
+    "parallel": 1,
+    "ctx-size": 2048
+  },
+  "quality": "q4_k_m",
+  "question": "No batching - requests queue. How much do 4 slots buy on CPU, where there's little idle compute to share?",
+  "engine": "llama.cpp",
+  "flags": {
+    "threads": 4,
+    "parallel": 1,
+    "ctx-size": 2048,
+    "flash-attn": "on",
+    "cache-prompt": true,
+    "cache-ram": 0,
+    "metrics": true
+  },
+  "num_units": 1,
+  "servers": [
+    {
+      "ready": true,
+      "ready_s": 3.0
+    }
+  ],
+  "launches": [
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 1
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 2
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 4
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 8
+    }
+  ],
+  "workloads": {
+    "spider_v1": "ok"
+  },
+  "status": "ok",
+  "wall_s": 538.8
+}

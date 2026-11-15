@@ -1,0 +1,1 @@
+/kaggle/working/llama.cpp/build/bin/llama-server --model /kaggle/input/notebooks/rahulverma52/qwen-sql-week3a/models/gguf/qwen3-1.7b-spider-Q8_0.gguf --alias qwen-sql --port 8080 --threads 4 --parallel 4 --ctx-size 8192 --flash-attn on --cache-prompt --cache-ram 0 --metrics

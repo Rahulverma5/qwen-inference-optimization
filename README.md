@@ -17,7 +17,7 @@ free-tier resources.
 |---|---|---|
 | 1 | T4 smoke test, baseline Spider eval, QLoRA SFT, merge | **done**: Spider dev exec accuracy 55.9% → **64.6%** (+8.7, p≈4e-9) after 77 min QLoRA on 2× T4 ([write-up](docs/weeks/week1.md)) |
 | 2 | Streaming benchmark harness, KV-cache capacity model, T4 SLOs | **done**: one T4 serves Spider at **8.3 req/s** (8 concurrent) within p95 SLOs; KV model within 0.8% of vLLM; decode cost dominated by attention at ~11% of T4 bandwidth ([write-up](docs/weeks/week2.md)) |
-| 3 | AWQ / GPTQ / W8A8 / GGUF compression; serving study (CPU, llama.cpp) | compression **done**: GGUF Q4_K_M is 3.1× smaller with no measurable accuracy loss (+0.2 pts, p=0.92); llm-compressor variants vary ±1 pt run to run. CPU serving study pending. GPU serving experiments dropped: deployment is CPU-only ([write-up](docs/weeks/week3.md)) |
+| 3 | AWQ / GPTQ / W8A8 / GGUF compression; serving study (CPU, llama.cpp) | **done**: GGUF Q4_K_M is 3.1× smaller with no measurable accuracy loss (−0.4 pts served live on CPU, p=0.76). One 4-vCPU box serves **~0.2–0.3 req/s** within a 10 s p95. CPU batching buys nothing; a host-RAM prompt cache gives +42%. GPU reference: GPTQ is 2.7× cheaper per query than fp16 on T4 ([write-up](docs/weeks/week3.md)) |
 | 4 | FastAPI gateway (auth, rate limit, 429 back-pressure, health/ready, metrics), Docker, compose + Prometheus/Grafana | — |
 | 5 | Terraform: Cloud Run + EC2, CloudWatch / Cloud Monitoring, CI deploy, write-up | — |
 

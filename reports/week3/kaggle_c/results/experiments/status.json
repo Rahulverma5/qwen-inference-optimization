@@ -1,0 +1,12 @@
+{
+  "q4_k_m": "ok",
+  "q8_0": "ok",
+  "threads_2": "ok",
+  "parallel_1": "ok",
+  "parallel_8": "ok",
+  "no_prompt_cache": "ok",
+  "host_cache_1g": "ok",
+  "spec_ngram": "server_failed",
+  "flash_attn_off": "ok",
+  "kv_q8_0": "ok"
+}

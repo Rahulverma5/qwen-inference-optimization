@@ -48,6 +48,17 @@ async def send_one(client: httpx.AsyncClient, url: str, model: str, item: dict, 
     }
     if ignore_eos:  # fixed output length so configs are compared on equal work
         body["ignore_eos"] = True
+    for attempt in range(2):
+        rec = await _attempt(client, url, body, rid)
+        # llama-server (cpp-httplib) can close a pooled keep-alive connection just as httpx reuses
+        # it: the request fails before a byte comes back (Week 3c: 4-8% of requests at some
+        # levels). Nothing was generated, so one retry on a fresh connection is safe.
+        if rec.error != "RemoteProtocolError" or rec.chunk_times or attempt:
+            return rec
+    return rec
+
+
+async def _attempt(client: httpx.AsyncClient, url: str, body: dict, rid: int) -> RequestRecord:
     rec = RequestRecord(request_id=rid, t_send=time.perf_counter())
     try:
         async with client.stream("POST", f"{url}/v1/completions", json=body) as resp:

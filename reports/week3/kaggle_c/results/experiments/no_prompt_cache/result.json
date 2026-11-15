@@ -1,0 +1,57 @@
+{
+  "name": "no_prompt_cache",
+  "model": "q4_k_m",
+  "set": {
+    "cache-prompt": false
+  },
+  "quality": "q4_k_m",
+  "question": "Spider prompts share 91.6% per database. On CPU prefill dominates a request (~400 prompt vs ~25 output tokens) - this should be the biggest single lever.",
+  "engine": "llama.cpp",
+  "flags": {
+    "threads": 4,
+    "parallel": 4,
+    "ctx-size": 8192,
+    "flash-attn": "on",
+    "cache-prompt": false,
+    "cache-ram": 0,
+    "metrics": true
+  },
+  "num_units": 1,
+  "servers": [
+    {
+      "ready": true,
+      "ready_s": 3.1
+    }
+  ],
+  "launches": [
+    {
+      "ready": true,
+      "ready_s": 3.1,
+      "workload": "spider_v1",
+      "level": 1
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 2
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 4
+    },
+    {
+      "ready": true,
+      "ready_s": 3.0,
+      "workload": "spider_v1",
+      "level": 8
+    }
+  ],
+  "workloads": {
+    "spider_v1": "ok"
+  },
+  "status": "ok",
+  "wall_s": 606.5
+}

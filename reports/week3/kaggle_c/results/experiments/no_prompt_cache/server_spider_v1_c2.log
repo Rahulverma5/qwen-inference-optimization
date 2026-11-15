@@ -1,0 +1,219 @@
+0.00.001.202 I srv  llama_server: initializing ...
+0.00.002.727 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+0.00.003.153 W srv  llama_server: security: no API key is set and CORS allows all origins (see https://github.com/ggml-org/llama.cpp/pull/25655)
+0.00.005.006 I srv    load_model: loading model '/kaggle/input/notebooks/rahulverma52/qwen-sql-week3a/models/gguf/qwen3-1.7b-spider-Q4_K_M.gguf'
+0.00.529.160 W load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden
+0.01.887.682 I cmn          init: llama threadpool init, n_threads = 4
+0.02.210.983 I srv    load_model: initializing, n_slots = 4, n_ctx_slot = 2048, kv_unified = 'false'
+0.02.211.090 W srv          init: --cache-idle-slots requires --cache-ram, disabling
+0.02.218.821 I srv  llama_server: model loaded
+0.02.218.834 I srv  llama_server: listening on http://127.0.0.1:8080
+0.03.396.577 I slot get_availabl: id  3 | task -1 | selected slot by LRU, t_last = -1
+0.03.396.634 I slot launch_slot_: id  3 | task 0 | processing task, is_child = 0
+0.06.733.076 I slot print_timing: id  3 | task 0 | prompt eval time =    2742.15 ms /   181 tokens (   15.15 ms per token,    66.01 tokens per second)
+0.06.733.086 I slot print_timing: id  3 | task 0 |        eval time =     594.22 ms /    14 tokens (   45.71 ms per token,    21.88 tokens per second)
+0.06.733.087 I slot print_timing: id  3 | task 0 |       total time =    3336.38 ms /   195 tokens
+0.06.733.097 I slot print_timing: id  3 | task 0 |    graphs reused =         13
+0.06.733.098 I slot print_timing: id  3 | task 0 |   graph reallocs =          0    /     0        (same size) / (changed size)
+0.06.733.155 I slot      release: id  3 | task 0 | stop processing: n_tokens = 194, truncated = 0
+0.06.739.565 I slot get_availabl: id  3 | task -1 | selected slot by LCP similarity, f_sim_best = 0.181 (> 0.100 thold), f_keep = 0.196
+0.06.739.639 I slot launch_slot_: id  3 | task 15 | processing task, is_child = 0
+0.14.073.347 I slot print_timing: id  3 | task 15 | prompt eval time =    3183.68 ms /   210 tokens (   15.16 ms per token,    65.96 tokens per second)
+0.14.073.358 I slot print_timing: id  3 | task 15 |        eval time =    4149.97 ms /    87 tokens (   48.26 ms per token,    20.72 tokens per second)
+0.14.073.360 I slot print_timing: id  3 | task 15 |       total time =    7333.65 ms /   297 tokens
+0.14.073.361 I slot print_timing: id  3 | task 15 |    graphs reused =         97
+0.14.073.362 I slot print_timing: id  3 | task 15 |   graph reallocs =          0    /     0        (same size) / (changed size)
+0.14.073.404 I slot      release: id  3 | task 15 | stop processing: n_tokens = 296, truncated = 0
+0.14.121.170 I slot get_availabl: id  3 | task -1 | selected slot by LCP similarity, f_sim_best = 1.000 (> 0.100 thold), f_keep = 0.709
+0.14.121.225 I slot launch_slot_: id  3 | task 104 | processing task, is_child = 0
+0.17.301.361 I slot get_availabl: id  2 | task -1 | selected slot by LRU, t_last = -1
+0.17.301.398 I slot launch_slot_: id  2 | task 105 | processing task, is_child = 0
+0.21.169.759 I slot print_timing: id  2 | task 105 | prompt eval time =    2789.90 ms /   181 tokens (   15.41 ms per token,    64.88 tokens per second)
+0.21.169.770 I slot print_timing: id  2 | task 105 |        eval time =    1078.17 ms /    14 tokens (   82.94 ms per token,    12.06 tokens per second)
+0.21.169.772 I slot print_timing: id  2 | task 105 |       total time =    3868.07 ms /   195 tokens
+0.21.169.773 I slot print_timing: id  2 | task 105 |    graphs reused =        109
+0.21.169.774 I slot print_timing: id  2 | task 105 |   graph reallocs =          0    /     0        (same size) / (changed size)
+0.21.169.987 I slot      release: id  2 | task 105 | stop processing: n_tokens = 194, truncated = 0
+0.21.220.162 I slot get_availabl: id  2 | task -1 | selected slot by LCP similarity, f_sim_best = 0.124 (> 0.100 thold), f_keep = 0.196
+0.21.220.202 I slot launch_slot_: id  2 | task 129 | processing task, is_child = 0
+0.27.836.140 I slot print_timing: id  2 | task 129 | prompt eval time =    4688.85 ms /   306 tokens (   15.32 ms per token,    65.26 tokens per second)
+0.27.836.154 I slot print_timing: id  2 | task 129 |        eval time =    1926.85 ms /    23 tokens (   87.58 ms per token,    11.42 tokens per second)
+0.27.836.155 I slot print_timing: id  2 | task 129 |       total time =    6615.69 ms /   329 tokens
+0.27.836.156 I slot print_timing: id  2 | task 129 |    graphs reused =        131
+0.27.836.157 I slot print_timing: id  2 | task 129 |   graph reallocs =          0    /     0        (same size) / (changed size)
+0.27.836.401 I slot      release: id  2 | task 129 | stop processing: n_tokens = 328, truncated = 0
+0.27.888.029 I slot get_availabl: id  2 | task -1 | selected slot by LCP similarity, f_sim_best = 0.187 (> 0.100 thold), f_keep = 0.116
+0.27.888.068 I slot launch_slot_: id  2 | task 160 | processing task, is_child = 0
+0.32.582.260 I slot print_timing: id  2 | task 160 | prompt eval time =    3159.37 ms /   203 tokens (   15.56 ms per token,    64.25 tokens per second)
+0.32.582.270 I slot print_timing: id  2 | task 160 |        eval time =    1534.74 ms /    18 tokens (   90.28 ms per token,    11.08 tokens per second)
+0.32.582.272 I slot print_timing: id  2 | task 160 |       total time =    4694.11 ms /   221 tokens
+0.32.582.273 I slot print_timing: id  2 | task 160 |    graphs reused =        147
+0.32.582.274 I slot print_timing: id  2 | task 160 |   graph reallocs =          0    /     0        (same size) / (changed size)
+0.32.582.335 I slot      release: id  2 | task 160 | stop processing: n_tokens = 220, truncated = 0
+0.32.631.973 I slot get_availabl: id  2 | task -1 | selected slot by LCP similarity, f_sim_best = 0.180 (> 0.100 thold), f_keep = 0.173
+0.32.632.019 I slot launch_slot_: id  2 | task 185 | processing task, is_child = 0
+0.37.772.781 I slot print_timing: id  2 | task 185 | prompt eval time =    3213.45 ms /   211 tokens (   15.23 ms per token,    65.66 tokens per second)
+0.37.772.793 I slot print_timing: id  2 | task 185 |        eval time =    1927.08 ms /    24 tokens (   83.79 ms per token,    11.94 tokens per second)
+0.37.772.794 I slot print_timing: id  2 | task 185 |       total time =    5140.52 ms /   235 tokens
+0.37.772.796 I slot print_timing: id  2 | task 185 |    graphs reused =        170
+0.37.772.797 I slot print_timing: id  2 | task 185 |   graph reallocs =          0    /     0        (same size) / (changed size)
+0.37.772.980 I slot      release: id  2 | task 185 | stop processing: n_tokens = 234, truncated = 0
+0.37.825.147 I slot get_availabl: id  2 | task -1 | selected slot by LCP similarity, f_sim_best = 0.103 (> 0.100 thold), f_keep = 0.162
+0.37.825.214 I slot launch_slot_: id  2 | task 216 | processing task, is_child = 0
+0.43.671.616 I slot print_timing: id  3 | task 104 | prompt eval time =    3180.04 ms /   210 tokens (   15.14 ms per token,    66.04 tokens per second)
+0.43.671.628 I slot print_timing: id  3 | task 104 |        eval time =   26370.22 ms /    87 tokens (  306.63 ms per token,     3.26 tokens per second)
+0.43.671.630 I slot print_timing: id  3 | task 104 |       total time =   29550.26 ms /   297 tokens
+0.43.671.631 I slot print_timing: id  3 | task 104 |    graphs reused =        172
+0.43.671.632 I slot print_timing: id  3 | task 104 |   graph reallocs =          0    /     0        (same size) / (changed size)
+0.43.671.890 I slot      release: id  3 | task 104 | stop processing: n_tokens = 296, truncated = 0
+0.43.721.721 I slot get_availabl: id  3 | task -1 | selected slot by LCP similarity, f_sim_best = 0.901 (> 0.100 thold), f_keep = 0.615
+0.43.721.773 I slot launch_slot_: id  3 | task 227 | processing task, is_child = 0
+0.48.232.226 I slot print_timing: id  3 | task 227 | prompt eval time =    3195.98 ms /   202 tokens (   15.82 ms per token,    63.20 tokens per second)
+0.48.232.235 I slot print_timing: id  3 | task 227 |        eval time =    1314.26 ms /    16 tokens (   87.62 ms per token,    11.41 tokens per second)
+0.48.232.236 I slot print_timing: id  3 | task 227 |       total time =    4510.24 ms /   218 tokens
+0.48.232.237 I slot print_timing: id  3 | task 227 |    graphs reused =        186
+0.48.232.238 I slot print_timing: id  3 | task 227 |   graph reallocs =          0    /     0        (same size) / (changed size)
+0.48.233.726 I slot      release: id  3 | task 227 | stop processing: n_tokens = 217, truncated = 0
+0.48.284.494 I slot get_availabl: id  1 | task -1 | selected slot by LRU, t_last = -1
+0.48.284.572 I slot launch_slot_: id  1 | task 249 | processing task, is_child = 0
+0.58.087.933 I slot print_timing: id  1 | task 249 | prompt eval time =    7617.94 ms /   496 tokens (   15.36 ms per token,    65.11 tokens per second)
+0.58.087.946 I slot print_timing: id  1 | task 249 |        eval time =    2184.69 ms /    24 tokens (   94.99 ms per token,    10.53 tokens per second)
+0.58.087.948 I slot print_timing: id  1 | task 249 |       total time =    9802.63 ms /   520 tokens
+0.58.087.950 I slot print_timing: id  1 | task 249 |    graphs reused =        208
+0.58.087.951 I slot print_timing: id  1 | task 249 |   graph reallocs =          0    /     0        (same size) / (changed size)
+0.58.088.026 I slot      release: id  1 | task 249 | stop processing: n_tokens = 519, truncated = 0
+0.58.138.536 I slot print_timing: id  2 | task 216 | prompt eval time =    5666.71 ms /   368 tokens (   15.40 ms per token,    64.94 tokens per second)
+0.58.138.549 I slot print_timing: id  2 | task 216 |        eval time =   14645.93 ms /    46 tokens (  325.47 ms per token,     3.07 tokens per second)
+0.58.138.550 I slot print_timing: id  2 | task 216 |       total time =   20312.64 ms /   414 tokens
+0.58.138.552 I slot print_timing: id  2 | task 216 |    graphs reused =        208
+0.58.138.553 I slot print_timing: id  2 | task 216 |   graph reallocs =          0    /     0        (same size) / (changed size)
+0.58.138.731 I slot      release: id  2 | task 216 | stop processing: n_tokens = 413, truncated = 0
+0.58.139.216 I slot get_availabl: id  0 | task -1 | selected slot by LRU, t_last = -1
+0.58.139.255 I slot launch_slot_: id  0 | task 285 | processing task, is_child = 0
+1.04.357.298 I slot get_availabl: id  2 | task -1 | selected slot by LCP similarity, f_sim_best = 0.134 (> 0.100 thold), f_keep = 0.094
+1.04.357.338 I slot launch_slot_: id  2 | task 287 | processing task, is_child = 0
+1.11.232.240 I slot print_timing: id  0 | task 285 | prompt eval time =    6217.77 ms /   405 tokens (   15.35 ms per token,    65.14 tokens per second)
+1.11.232.252 I slot print_timing: id  0 | task 285 |        eval time =    6874.95 ms /    28 tokens (  254.63 ms per token,     3.93 tokens per second)
+1.11.232.254 I slot print_timing: id  0 | task 285 |       total time =   13092.72 ms /   433 tokens
+1.11.232.255 I slot print_timing: id  0 | task 285 |    graphs reused =        208
+1.11.232.255 I slot print_timing: id  0 | task 285 |   graph reallocs =          0    /     0        (same size) / (changed size)
+1.11.232.475 I slot      release: id  0 | task 285 | stop processing: n_tokens = 432, truncated = 0
+1.11.281.789 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.179 (> 0.100 thold), f_keep = 0.088
+1.11.281.832 I slot launch_slot_: id  0 | task 329 | processing task, is_child = 0
+1.15.680.550 I slot print_timing: id  2 | task 287 | prompt eval time =    4495.49 ms /   292 tokens (   15.40 ms per token,    64.95 tokens per second)
+1.15.680.561 I slot print_timing: id  2 | task 287 |        eval time =    6827.58 ms /    41 tokens (  170.69 ms per token,     5.86 tokens per second)
+1.15.680.562 I slot print_timing: id  2 | task 287 |       total time =   11323.07 ms /   333 tokens
+1.15.680.564 I slot print_timing: id  2 | task 287 |    graphs reused =        210
+1.15.680.564 I slot print_timing: id  2 | task 287 |   graph reallocs =          0    /     0        (same size) / (changed size)
+1.15.680.759 I slot      release: id  2 | task 287 | stop processing: n_tokens = 332, truncated = 0
+1.15.729.437 I slot get_availabl: id  2 | task -1 | selected slot by LCP similarity, f_sim_best = 0.232 (> 0.100 thold), f_keep = 0.117
+1.15.729.476 I slot launch_slot_: id  2 | task 349 | processing task, is_child = 0
+1.19.353.440 I slot print_timing: id  0 | task 329 | prompt eval time =    3306.67 ms /   212 tokens (   15.60 ms per token,    64.11 tokens per second)
+1.19.353.454 I slot print_timing: id  0 | task 329 |        eval time =    4764.88 ms /    26 tokens (  190.60 ms per token,     5.25 tokens per second)
+1.19.353.455 I slot print_timing: id  0 | task 329 |       total time =    8071.55 ms /   238 tokens
+1.19.353.456 I slot print_timing: id  0 | task 329 |    graphs reused =        211
+1.19.353.457 I slot print_timing: id  0 | task 329 |   graph reallocs =          0    /     0        (same size) / (changed size)
+1.19.353.501 I slot      release: id  0 | task 329 | stop processing: n_tokens = 237, truncated = 0
+1.19.403.686 I slot get_availabl: id  1 | task -1 | selected slot by LCP similarity, f_sim_best = 0.965 (> 0.100 thold), f_keep = 0.913
+1.19.403.730 I slot launch_slot_: id  1 | task 366 | processing task, is_child = 0
+1.27.176.686 I slot print_timing: id  2 | task 349 | prompt eval time =    2614.41 ms /   168 tokens (   15.56 ms per token,    64.26 tokens per second)
+1.27.176.699 I slot print_timing: id  2 | task 349 |        eval time =    8832.67 ms /    16 tokens (  588.84 ms per token,     1.70 tokens per second)
+1.27.176.700 I slot print_timing: id  2 | task 349 |       total time =   11447.08 ms /   184 tokens
+1.27.176.702 I slot print_timing: id  2 | task 349 |    graphs reused =        214
+1.27.176.703 I slot print_timing: id  2 | task 349 |   graph reallocs =          0    /     0        (same size) / (changed size)
+1.27.176.896 I slot      release: id  2 | task 349 | stop processing: n_tokens = 183, truncated = 0
+1.27.225.265 I slot get_availabl: id  2 | task -1 | selected slot by LCP similarity, f_sim_best = 0.133 (> 0.100 thold), f_keep = 0.213
+1.27.225.306 I slot launch_slot_: id  2 | task 379 | processing task, is_child = 0
+1.32.680.337 I slot print_timing: id  1 | task 366 | prompt eval time =    7596.43 ms /   491 tokens (   15.47 ms per token,    64.64 tokens per second)
+1.32.680.346 I slot print_timing: id  1 | task 366 |        eval time =    5680.07 ms /    14 tokens (  436.93 ms per token,     2.29 tokens per second)
+1.32.680.348 I slot print_timing: id  1 | task 366 |       total time =   13276.50 ms /   505 tokens
+1.32.680.349 I slot print_timing: id  1 | task 366 |    graphs reused =        222
+1.32.680.350 I slot print_timing: id  1 | task 366 |   graph reallocs =          0    /     0        (same size) / (changed size)
+1.32.680.437 I slot      release: id  1 | task 366 | stop processing: n_tokens = 504, truncated = 0
+1.32.735.103 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.132 (> 0.100 thold), f_keep = 0.160
+1.32.735.143 I slot launch_slot_: id  0 | task 397 | processing task, is_child = 0
+1.37.529.537 I slot print_timing: id  2 | task 379 | prompt eval time =    4604.78 ms /   293 tokens (   15.72 ms per token,    63.63 tokens per second)
+1.37.529.553 I slot print_timing: id  2 | task 379 |        eval time =    5699.31 ms /    16 tokens (  379.95 ms per token,     2.63 tokens per second)
+1.37.529.554 I slot print_timing: id  2 | task 379 |       total time =   10304.09 ms /   309 tokens
+1.37.529.556 I slot print_timing: id  2 | task 379 |    graphs reused =        223
+1.37.529.556 I slot print_timing: id  2 | task 379 |   graph reallocs =          0    /     0        (same size) / (changed size)
+1.37.529.774 I slot      release: id  2 | task 379 | stop processing: n_tokens = 308, truncated = 0
+1.37.578.473 I slot get_availabl: id  2 | task -1 | selected slot by LCP similarity, f_sim_best = 0.224 (> 0.100 thold), f_keep = 0.127
+1.37.578.519 I slot launch_slot_: id  2 | task 408 | processing task, is_child = 0
+1.42.480.984 I slot print_timing: id  0 | task 397 | prompt eval time =    4429.68 ms /   287 tokens (   15.43 ms per token,    64.79 tokens per second)
+1.42.481.000 I slot print_timing: id  0 | task 397 |        eval time =    5315.41 ms /    30 tokens (  183.29 ms per token,     5.46 tokens per second)
+1.42.481.001 I slot print_timing: id  0 | task 397 |       total time =    9745.09 ms /   317 tokens
+1.42.481.003 I slot print_timing: id  0 | task 397 |    graphs reused =        224
+1.42.481.004 I slot print_timing: id  0 | task 397 |   graph reallocs =          0    /     0        (same size) / (changed size)
+1.42.482.540 I slot      release: id  0 | task 397 | stop processing: n_tokens = 316, truncated = 0
+1.42.533.689 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.130 (> 0.100 thold), f_keep = 0.120
+1.42.533.738 I slot launch_slot_: id  0 | task 439 | processing task, is_child = 0
+1.48.250.748 I slot print_timing: id  2 | task 408 | prompt eval time =    2724.84 ms /   174 tokens (   15.66 ms per token,    63.86 tokens per second)
+1.48.250.757 I slot print_timing: id  2 | task 408 |        eval time =    7946.50 ms /    39 tokens (  209.12 ms per token,     4.78 tokens per second)
+1.48.250.758 I slot print_timing: id  2 | task 408 |       total time =   10671.34 ms /   213 tokens
+1.48.250.760 I slot print_timing: id  2 | task 408 |    graphs reused =        226
+1.48.250.760 I slot print_timing: id  2 | task 408 |   graph reallocs =          0    /     0        (same size) / (changed size)
+1.48.250.809 I slot      release: id  2 | task 408 | stop processing: n_tokens = 212, truncated = 0
+1.48.301.478 I slot get_availabl: id  2 | task -1 | selected slot by LCP similarity, f_sim_best = 0.170 (> 0.100 thold), f_keep = 0.184
+1.48.301.521 I slot launch_slot_: id  2 | task 461 | processing task, is_child = 0
+1.52.531.061 I slot print_timing: id  2 | task 461 | prompt eval time =    3583.70 ms /   230 tokens (   15.58 ms per token,    64.18 tokens per second)
+1.52.531.074 I slot print_timing: id  2 | task 461 |        eval time =     645.79 ms /     8 tokens (   92.26 ms per token,    10.84 tokens per second)
+1.52.531.075 I slot print_timing: id  2 | task 461 |       total time =    4229.49 ms /   238 tokens
+1.52.531.077 I slot print_timing: id  2 | task 461 |    graphs reused =        227
+1.52.531.077 I slot print_timing: id  2 | task 461 |   graph reallocs =          0    /     0        (same size) / (changed size)
+1.52.531.336 I slot      release: id  2 | task 461 | stop processing: n_tokens = 237, truncated = 0
+1.52.581.453 I slot get_availabl: id  2 | task -1 | selected slot by LCP similarity, f_sim_best = 0.138 (> 0.100 thold), f_keep = 0.165
+1.52.581.496 I slot launch_slot_: id  2 | task 475 | processing task, is_child = 0
+1.58.462.436 I slot print_timing: id  2 | task 475 | prompt eval time =    4324.60 ms /   282 tokens (   15.34 ms per token,    65.21 tokens per second)
+1.58.462.442 I slot print_timing: id  2 | task 475 |        eval time =    1556.30 ms /    18 tokens (   91.55 ms per token,    10.92 tokens per second)
+1.58.462.444 I slot print_timing: id  2 | task 475 |       total time =    5880.90 ms /   300 tokens
+1.58.462.445 I slot print_timing: id  2 | task 475 |    graphs reused =        228
+1.58.462.446 I slot print_timing: id  2 | task 475 |   graph reallocs =          0    /     0        (same size) / (changed size)
+1.58.462.507 I slot      release: id  2 | task 475 | stop processing: n_tokens = 299, truncated = 0
+1.58.513.229 I slot get_availabl: id  3 | task -1 | selected slot by LRU, t_last = 5445361067
+1.58.513.269 I slot launch_slot_: id  3 | task 501 | processing task, is_child = 0
+2.05.909.266 I slot print_timing: id  3 | task 501 | prompt eval time =    6190.71 ms /   398 tokens (   15.55 ms per token,    64.29 tokens per second)
+2.05.909.282 I slot print_timing: id  3 | task 501 |        eval time =    1204.85 ms /    14 tokens (   92.68 ms per token,    10.79 tokens per second)
+2.05.909.283 I slot print_timing: id  3 | task 501 |       total time =    7395.56 ms /   412 tokens
+2.05.909.285 I slot print_timing: id  3 | task 501 |    graphs reused =        229
+2.05.909.286 I slot print_timing: id  3 | task 501 |   graph reallocs =          0    /     0        (same size) / (changed size)
+2.05.910.644 I slot      release: id  3 | task 501 | stop processing: n_tokens = 411, truncated = 0
+2.05.959.584 I slot get_availabl: id  2 | task -1 | selected slot by LCP similarity, f_sim_best = 0.105 (> 0.100 thold), f_keep = 0.130
+2.05.959.627 I slot launch_slot_: id  2 | task 525 | processing task, is_child = 0
+2.14.765.078 I slot print_timing: id  0 | task 439 | prompt eval time =    4501.31 ms /   293 tokens (   15.36 ms per token,    65.09 tokens per second)
+2.14.765.094 I slot print_timing: id  0 | task 439 |        eval time =   27729.31 ms /    92 tokens (  304.72 ms per token,     3.28 tokens per second)
+2.14.765.096 I slot print_timing: id  0 | task 439 |       total time =   32230.62 ms /   385 tokens
+2.14.765.097 I slot print_timing: id  0 | task 439 |    graphs reused =        230
+2.14.765.098 I slot print_timing: id  0 | task 439 |   graph reallocs =          0    /     0        (same size) / (changed size)
+2.14.765.372 I slot      release: id  0 | task 439 | stop processing: n_tokens = 384, truncated = 0
+2.14.815.252 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.106 (> 0.100 thold), f_keep = 0.102
+2.14.815.297 I slot launch_slot_: id  0 | task 569 | processing task, is_child = 0
+2.20.543.096 I slot print_timing: id  2 | task 525 | prompt eval time =    5668.54 ms /   371 tokens (   15.28 ms per token,    65.45 tokens per second)
+2.20.543.112 I slot print_timing: id  2 | task 525 |        eval time =    8914.47 ms /    37 tokens (  247.62 ms per token,     4.04 tokens per second)
+2.20.543.113 I slot print_timing: id  2 | task 525 |       total time =   14583.01 ms /   408 tokens
+2.20.543.115 I slot print_timing: id  2 | task 525 |    graphs reused =        232
+2.20.543.115 I slot print_timing: id  2 | task 525 |   graph reallocs =          0    /     0        (same size) / (changed size)
+2.20.544.699 I slot      release: id  2 | task 525 | stop processing: n_tokens = 407, truncated = 0
+2.20.592.494 I slot get_availabl: id  1 | task -1 | selected slot by LCP similarity, f_sim_best = 0.192 (> 0.100 thold), f_keep = 0.075
+2.20.592.592 I slot launch_slot_: id  1 | task 579 | processing task, is_child = 0
+2.24.190.790 I slot print_timing: id  1 | task 579 | prompt eval time =    3162.53 ms /   198 tokens (   15.97 ms per token,    62.61 tokens per second)
+2.24.190.864 I slot print_timing: id  1 | task 579 |        eval time =     435.43 ms /     6 tokens (   87.09 ms per token,    11.48 tokens per second)
+2.24.190.899 I slot print_timing: id  1 | task 579 |       total time =    3597.96 ms /   204 tokens
+2.24.190.928 I slot print_timing: id  1 | task 579 |    graphs reused =        236
+2.24.190.955 I slot print_timing: id  1 | task 579 |   graph reallocs =          0    /     0        (same size) / (changed size)
+2.24.191.242 I slot      release: id  1 | task 579 | stop processing: n_tokens = 203, truncated = 0
+2.24.241.275 I slot get_availabl: id  3 | task -1 | selected slot by LRU, t_last = 5523037989
+2.24.241.366 I slot launch_slot_: id  3 | task 591 | processing task, is_child = 0
+2.34.258.487 I slot print_timing: id  3 | task 591 | prompt eval time =    7745.80 ms /   501 tokens (   15.46 ms per token,    64.68 tokens per second)
+2.34.258.549 I slot print_timing: id  3 | task 591 |        eval time =    2271.26 ms /    24 tokens (   98.75 ms per token,    10.13 tokens per second)
+2.34.258.573 I slot print_timing: id  3 | task 591 |       total time =   10017.05 ms /   525 tokens
+2.34.258.595 I slot print_timing: id  3 | task 591 |    graphs reused =        237
+2.34.258.616 I slot print_timing: id  3 | task 591 |   graph reallocs =          0    /     0        (same size) / (changed size)
+2.34.258.728 I slot      release: id  3 | task 591 | stop processing: n_tokens = 524, truncated = 0
+2.34.804.604 I slot print_timing: id  0 | task 569 | prompt eval time =    5635.38 ms /   367 tokens (   15.36 ms per token,    65.12 tokens per second)
+2.34.804.675 I slot print_timing: id  0 | task 569 |        eval time =   14353.71 ms /    45 tokens (  326.22 ms per token,     3.07 tokens per second)
+2.34.804.724 I slot print_timing: id  0 | task 569 |       total time =   19989.09 ms /   412 tokens
+2.34.804.743 I slot print_timing: id  0 | task 569 |    graphs reused =        247
+2.34.804.760 I slot print_timing: id  0 | task 569 |   graph reallocs =          0    /     0        (same size) / (changed size)
+2.34.804.963 I slot      release: id  0 | task 569 | stop processing: n_tokens = 411, truncated = 0
+2.34.882.953 I srv    operator(): operator(): cleaning up before exit...
