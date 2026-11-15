@@ -1,0 +1,18 @@
+# EC2 override (infra/aws): container logs -> CloudWatch Logs; Prometheus/Grafana private
+# (reach Grafana with the SSM port-forward from `terraform output grafana_tunnel`).
+x-cloudwatch: &cw
+  driver: awslogs
+  options:
+    awslogs-region: ${AWS_REGION}
+    awslogs-group: ${LOG_GROUP}
+    tag: "{{.Name}}"   # log stream per container: qwen-sql-gateway-1, qwen-sql-llama-1
+
+services:
+  llama:
+    logging: *cw
+  gateway:
+    logging: *cw
+  prometheus:
+    ports: !override ["127.0.0.1:9090:9090"]
+  grafana:
+    ports: !override ["127.0.0.1:3000:3000"]

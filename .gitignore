@@ -22,3 +22,5 @@ reports/**/*_results.zip
 reports/week3/**/qwen-sql-*.log
 # compose secrets
 serving/.env
+infra/**/terraform.tfvars
+infra/**/.terraform.lock.hcl.bak

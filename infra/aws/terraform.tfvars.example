@@ -1,0 +1,5 @@
+# cp terraform.tfvars.example terraform.tfvars  (git-ignored)
+allowed_cidrs = ["203.0.113.7/32"] # your public IP: curl -s https://checkip.amazonaws.com
+alert_email   = "you@example.com"
+hf_model_repo = "<hf-user>/qwen3-1.7b-spider-sql-GGUF"
+# git_ref     = "<commit sha>"   # pin for a reproducible deploy

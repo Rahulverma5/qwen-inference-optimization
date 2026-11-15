@@ -1,0 +1,50 @@
+#!/bin/bash
+# Boot script (cloud-init, runs once as root). Timings go to /var/log/qwen-sql-timings.log so the
+# cold start can be broken down: packages -> code -> model download -> images -> model loaded.
+set -euxo pipefail
+exec > >(tee -a /var/log/qwen-sql-boot.log) 2>&1
+T=/var/log/qwen-sql-timings.log
+mark() { echo "$(date +%s.%N) $1" >> "$T"; }
+mark boot_script_start
+
+dnf install -y docker git
+systemctl enable --now docker
+mkdir -p /usr/local/lib/docker/cli-plugins
+curl -fsSL https://github.com/docker/compose/releases/download/v5.6.1/docker-compose-linux-x86_64 \
+  -o /usr/local/lib/docker/cli-plugins/docker-compose
+curl -fsSL https://github.com/docker/buildx/releases/download/v0.38.1/buildx-v0.38.1.linux-amd64 \
+  -o /usr/local/lib/docker/cli-plugins/docker-buildx
+chmod +x /usr/local/lib/docker/cli-plugins/*
+mark packages_done
+
+git clone "${repo_url}" /opt/app
+git -C /opt/app checkout "${git_ref}"
+mark code_done
+
+mkdir -p /opt/models
+curl -fsSL --retry 3 -o /opt/models/model.gguf "${hf_url}"
+mark model_downloaded
+
+API_KEY=$(aws ssm get-parameter --region "${region}" --name "${api_key_param}" --with-decryption \
+  --query Parameter.Value --output text)
+umask 077
+cat > /opt/app/serving/.env <<ENV
+GATEWAY_API_KEYS=$API_KEY
+MODEL_DIR=/opt/models
+MODEL_FILE=model.gguf
+LLAMA_THREADS=${llama_threads}
+LLAMA_CACHE_RAM_MIB=1024
+GATEWAY_MAX_QUEUE_WAIT_S=${queue_wait_s}
+AWS_REGION=${region}
+LOG_GROUP=${log_group}
+ENV
+umask 022
+
+cd /opt/app
+docker compose -f serving/compose.yml -f serving/compose.ec2.yml up -d --build
+mark containers_started
+for i in $(seq 1 120); do
+  curl -fs http://127.0.0.1:8000/ready && break
+  sleep 2
+done
+mark gateway_ready
